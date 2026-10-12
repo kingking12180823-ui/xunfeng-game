@@ -561,6 +561,20 @@ h1,h2,.big,.kicker,.hook b{text-wrap:balance}
 .hookh{font-family:var(--display);font-weight:700;color:#FFE9A8;font-size:clamp(26px,7.4vw,40px);line-height:1.25;margin:2px 0 6px;text-align:center;letter-spacing:.04em;text-shadow:0 2px 12px rgba(0,0,0,.6);text-wrap:balance}
 .hookh em{font-style:normal;color:#FF8A6A}
 .sptag{font-family:var(--display);font-weight:700;color:#FFE9A8;font-size:clamp(20px,5.6vw,30px);margin:4px 0 2px;text-align:center;letter-spacing:.04em;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+
+/* ===== UX 優化：快速開局、精簡首頁、點擊回饋 ===== */
+.modes2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modes2 .mode{min-height:72px;padding:10px 12px;gap:10px}
+.modes2 .mode b{font-size:clamp(16px,4.6vw,19px)}
+.modes2 .mode .mi{width:40px;height:40px;font-size:20px;flex:none}
+.modes2 .mode .go{display:none}
+.moretitle{font-size:13px;color:var(--muted);letter-spacing:.2em;text-align:center;margin:14px 0 8px}
+.ftoast{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:5;padding:8px 18px;border-radius:999px;font-weight:700;font-size:17px;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:ftIn 1.8s ease forwards}
+.ftoast.bad{background:#B3261E;color:#FFF3E0;border:2px solid #FFD27A}
+.ftoast.ok{background:#1F4E3D;color:#E8F5E9;border:2px solid #9ED9B5}
+@keyframes ftIn{0%{opacity:0;transform:translate(-50%,-8px) scale(.9)}12%{opacity:1;transform:translate(-50%,0) scale(1.06)}20%{transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0}}
+.storetag{display:inline-block;margin:6px auto 0;padding:4px 14px;border-radius:999px;border:1px solid rgba(227,183,92,.7);color:#FFE9A8;font-size:13px;letter-spacing:.08em;background:rgba(0,0,0,.35)}
+@media (max-width:520px){.scene{padding:6px;margin-inline:-8px}}
 </style>
 
 <div class="wrap">
@@ -1519,15 +1533,15 @@ function pick(idx){
  if(cur.done)return;const sc=S[cur.i],it=sc.it[idx];
  if(it.s){
   const sh=SHA[it.s],again=cur.found.has(it.s);cur.found.add(it.s);cur.last=again?null:it.s;const isNew=!codex.has(it.s);codex.add(it.s);saveCodex();
-  if(!again)sfx("bell");cur.g=again?["hand",pickOne(G_FOUND)]:["hand",TALK.hand.t,!badKeys(S[cur.i]).every(k=>cur.found.has(k))];saveMid();
+  if(!again){sfx("bell");buzz(40)}cur.g=again?["hand",pickOne(G_FOUND)]:["hand",TALK.hand.t,!badKeys(S[cur.i]).every(k=>cur.found.has(k))];saveMid();
   const card=`<span class="tag bad">找到煞氣</span>${isNew?'<span class="tag hint" style="margin-left:6px">收入圖鑑</span>':""}<h3>${sh.n}</h3><p>${sh.w}</p><div class="fix"><b>化解方法</b>${sh.f}</div>${homeCheck(it.s)}${toolHook(it.s)}${askLink(sh.n)}`;
   if(badKeys(sc).every(k=>cur.found.has(k))){cur.done=true;render(card);setTimeout(()=>finish(true),900);return}
-  render(card);return;
+  render(card);ftoast(again?"已找到過":"煞！"+sh.n,"bad");return;
  }
  if(!cur.cleared.has(idx)){cur.cleared.add(idx);cur.qi--;cur.mis++;sfx("wood");}saveMid();cur.g=["stop",TALK.stop.t,true];
  const card=`<span class="tag ok">合宜・元氣 −1</span><h3>${it.l}沒有問題</h3><p>${OK[it.o]||it.o}</p>`;
  if(cur.qi<=0){cur.done=true;render(card);setTimeout(()=>finish(false),700);return}
- render(card);const s=document.getElementById("scene");s.classList.remove("shake");void s.offsetWidth;s.classList.add("shake");
+ render(card);ftoast(it.l+"沒問題・元氣 −1","ok");buzz([20,40,20]);const s=document.getElementById("scene");s.classList.remove("shake");void s.offsetWidth;s.classList.add("shake");
 }
 function finish(win){
  const sc=S[cur.i],stars=win?(cur.mis===0?3:cur.mis===1?2:1):0;
@@ -2392,12 +2406,12 @@ function home(){
   <p class="hhint">☝ 手指撥動天盤，羅盤會轉</p>
   <p class="kicker">風羿老師陽宅教室</p>
   <h1 class="vh">陽宅辨煞</h1>
-  <p class="hookh"><span class="nw"><em>錢</em>留不住？</span><br><span class="nw">先看你家大門。</span></p><p class="lead s" style="text-align:center"><span class="nw">漏財、爛桃花、運勢卡關，</span><span class="nw">常常是房子先出問題。</span></p>
+  ${storeName()?`<p style="text-align:center;margin:0"><span class="storetag">${storeName()} 招待</span></p>`:""}<p class="hookh"><span class="nw"><em>錢</em>留不住？</span><br><span class="nw">先看你家大門。</span></p><p class="lead s" style="text-align:center"><span class="nw">漏財、爛桃花、運勢卡關，</span><span class="nw">常常是房子先出問題。</span></p>
   <button class="btn big" id="cont"><span>${c.t}</span><small>${c.sub}</small></button>
   <div class="modes">
    <button class="mode" id="m1" style="--bg:url('${IMG("r_siling")}')">${vbg("siling","mvid")}<span class="mi">煞</span><span><b>陽宅辨煞</b><small><span class="nw">找出你家漏財、</span><span class="nw">傷感情的格局</span></small><span class="pg"><i style="width:${pl/30*100}%"></i></span></span><span class="go">›</span></button>
-   <button class="mode" id="m2" style="--bg:url('${IMG("r_bagua")}')">${vbg("storm","mvid")}<span class="mi">寶</span><span><b>七寶尋謀</b><small><span class="nw">破七間密室、收齊七寶</span>・<span class="nw">已得 ${n}/7</span></small><span class="pg"><i style="width:${n/7*100}%"></i></span></span><span class="go">›</span></button>
-   <button class="mode" id="m3" style="--bg:url('${IMG("r_tiangan")}')">${vbg("tiangan","mvid")}<span class="mi">圖</span><span><b>藏寶圖・尋龍點穴</b><small><span class="nw">拼出藏寶圖，找真龍穴</span>・<span class="nw">碎片 ${mp}/10</span>${np?`・<em>新碎片 ${np}</em>`:""}</small><span class="pg"><i style="width:${mp*10}%"></i></span></span><span class="go">›</span></button>
+   </div><p class="moretitle">更多玩法</p><div class="modes2"><button class="mode" id="m2" style="--bg:url('${IMG("r_bagua")}')">${vbg("storm","mvid")}<span class="mi">寶</span><span><b>七寶尋謀</b><small><span class="nw">密室逃脫 ${n}/7</span></small><span class="pg"><i style="width:${n/7*100}%"></i></span></span><span class="go">›</span></button>
+   <button class="mode" id="m3" style="--bg:url('${IMG("r_tiangan")}')">${vbg("tiangan","mvid")}<span class="mi">圖</span><span><b>尋龍點穴</b><small><span class="nw">碎片 ${mp}/10</span>${np?`・<em>新 ${np}</em>`:""}</small><span class="pg"><i style="width:${mp*10}%"></i></span></span><span class="go">›</span></button>
   </div>
   <div class="toolbar"><a href="${TOOLS[0].url}" target="_blank" rel="noopener"><span class="tch sm">卦</span><span><b>四象問天機</b><small><span class="nw">該不該買、該不該換？</span><span class="nw">問一件事就好</span></small></span></a><a href="${TOOLS[1].url}" target="_blank" rel="noopener"><span class="tch sm">相</span><span><b>面相系統</b><small>看你最近的財運、感情、健康</small></span></a></div>
   <div class="quick">
@@ -2536,12 +2550,13 @@ function introCine(k,img,lines,html,btn,force,talk){
 let entered=false;
 function enterSplash(go){
  if(entered||introSeen.has("home"))return go();
- ovl.innerHTML=`<div class="splash" role="dialog" aria-modal="true"><div class="spbg"></div>${silingHTML(`<div class="spin2wrap" id="splp">${luopanHTML()}</div>`,"sls")}<p class="sptag">錢留不住？先看你家大門。</p><p class="kicker">巽風堪輿研究中心</p><button class="btn big" id="enter"><span>點一下，看你家有沒有煞</span><small>建議開啟聲音</small></button></div>`;
+ ovl.innerHTML=`<div class="splash" role="dialog" aria-modal="true"><div class="spbg"></div>${silingHTML(`<div class="spin2wrap" id="splp">${luopanHTML()}</div>`,"sls")}<p class="sptag">錢留不住？先看你家大門。</p>${storeName()?`<p class="storetag">${storeName()} 招待</p>`:""}<p class="kicker">巽風堪輿研究中心</p><button class="btn big" id="enter"><span>點一下，看你家有沒有煞</span><small>建議開啟聲音</small></button></div>`;
  livePan("splp");lp3d("splp");silingFX("sls");
  document.getElementById("enter").onclick=()=>{entered=true;startAudio();sfx("tick");go()};return true;
 }
 const INTRO={
- home:()=>enterSplash(()=>introCine("home","tiangan",["你家大門外，","有什麼正對著它？","我帶你看懂。"],
+ home:()=>{if(entered||introSeen.has("home"))return false;return enterSplash(()=>{markIntro("home");markIntro("levels");quickStart()})},
+ homeCine:()=>enterSplash(()=>introCine("home","tiangan",["你家大門外，","有什麼正對著它？","我帶你看懂。"],
   `<p class="kicker" style="text-align:center">風羿老師陽宅教室</p><p class="big" style="text-align:center;font-size:26px">你家的錢、感情、運勢，<br>房子先知道</p>
   <ul class="ilist"><li><b>${S.length} 關、${SHA_KEYS.length} 種煞</b>，都是台灣人家裡最常見的漏財、傷感情格局：<span class="nw">路沖、天斬煞、</span><span class="nw">開門見廁、樑壓床……</span></li><li>每找到一種煞，都告訴你<b class="nw">它影響什麼</b><span class="nw">（財運、健康、</span><span class="nw">睡眠、家人和睦）</span>、<b class="nw">怎麼化解</b>，以及<b class="nw">回家要看哪裡</b>。</li><li>過關還能領<b>《巽風陽宅自檢表》</b>，<span class="nw">拿著它</span><span class="nw">把自己家看一遍。</span></li></ul>`,"帶我看看",false,"vt_open")),
  levels:()=>introCard("levels",`${guide("lv",TALK.lv.t,true)}<p class="big" style="font-size:24px">陽宅辨煞・怎麼玩</p>
@@ -2560,8 +2575,8 @@ function levelIntro(sc,go){
   <div class="lvthumb">${sceneSVG(sc,EMPTYST,true)}</div>
   <p style="color:#DCE5DF;margin:10px 0 6px">${sc.d===3?"宗師關：煞的數量不公開，小心陷阱。這裡的煞會影響：":`這間屋子藏著 <b style="color:var(--gold2)">${badKeys(sc).length}</b> 處煞，會影響住在裡面的人的：`}</p>
   <div class="areas">${ar.map(a=>`<span>${a}</span>`).join("")}</div>
-  <p class="muted" style="margin:10px 0 0">找到之後，記下「回家看一下」那一句，對照你自己家。</p>
-  <div class="row" style="justify-content:center;margin-top:14px"><button class="btn" id="lvgo">開始堪輿</button></div></div></div>`;
+  <p class="muted" style="margin:10px 0 0"><span class="nw">找到之後，記下「回家看一下」那一句，</span><span class="nw">對照你自己家。</span></p>
+  <div class="row" style="justify-content:center;margin-top:14px"><button class="btn" id="lvgo">開始找煞</button></div></div></div>`;
  sfx("gong");document.getElementById("lvgo").onclick=()=>{ovl.innerHTML="";sfx("tick");go()};
 }
 
@@ -2687,6 +2702,15 @@ function sfx(k){if(!ac)return;const t=ac.currentTime;try{
  if(k==="gong"){tone(98,t,.22,3.2);tone(147,t,.12,2.6);tone(392,t+.02,.05,2)}
 }catch(e){}}
 
+
+
+/* ===== UX 優化 ===== */
+function quickStart(){if(midSave&&S[midSave.i])return resumeMid();const nx=ORDER.find(i=>!(prog[i]>=1));if(nx==null)return levels();tabD=S[nx].d;play(nx)}
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+function ftoast(t,cls){const s=document.getElementById("scene");if(!s)return;const d=document.createElement("div");d.className="ftoast "+cls;d.textContent=t;s.appendChild(d);setTimeout(()=>d.remove(),1900)}
+/* 合作店家：推薦碼對應店名，從店家 QR 進來會顯示「○○ 招待」 */
+const STORES={};
+const storeName=()=>REF&&STORES[REF]?STORES[REF]:"";
 
 /* ====== v14 掛勾：切換音樂、引導畫面 ====== */
 (function(){
