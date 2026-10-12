@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="陽宅辨煞：132 關風水眼力挑戰，風羿老師帶你看懂房子的煞。巽風堪輿研究中心"><meta property="og:title" content="陽宅辨煞｜你家有煞嗎？"><meta property="og:description" content="132 關・104 種煞，免下載免註冊，手機直接玩。"><meta property="og:image" content="https://game.xunfeng.tw/assets/r_siling.jpg"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>陽宅辨煞</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="陽宅辨煞：132 關風水眼力挑戰，風羿老師帶你看懂房子的煞。巽風堪輿研究中心"><meta property="og:title" content="陽宅辨煞｜你家有煞嗎？"><meta property="og:description" content="132 關・104 種煞，免下載免註冊，手機直接玩。"><meta property="og:image" content="https://xunfeng-game.vercel.app/assets/r_siling.jpg"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>陽宅辨煞</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Shippori+Mincho+B1:wght@800&display=swap">
@@ -547,6 +547,16 @@ html,body{overflow-x:hidden}
 @keyframes bgt{0%{opacity:0;transform:scale(1.6)}45%{opacity:1;transform:scale(.96)}100%{opacity:.62;transform:scale(1)}}
 @keyframes bgtb{0%,100%{opacity:.62}50%{opacity:.8}}
 .splash .kicker{margin-top:6px}
+
+/* 排版：避免單字落行、短句被擠到下一行 */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+p,li,small,.lead,.muted,.ilist{text-wrap:pretty;line-break:strict}
+h1,h2,.big,.kicker,.hook b{text-wrap:balance}
+.nw{white-space:nowrap}
+.mode b,.toolbar b{white-space:nowrap}
+.mode b{font-size:clamp(18px,5.6vw,22px)}
+.mode small{text-wrap:balance}
+.toolbar{grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))}
 </style>
 
 <div class="wrap">
@@ -572,7 +582,7 @@ const SITE="https://www.xunfeng.tw/";
 const PHONE="0980 199 156";
 const BOOK="https://www.xunfeng.tw/booking";
 /* ====== 推廣來源（業務推薦碼）：遊戲網址帶 #r=推薦碼，前往 xunfeng.tw 的連結自動帶上 ref，沿用網站原有的推薦制度 ====== */
-const GAME_URL="https://game.xunfeng.tw/";
+const GAME_URL="https://xunfeng-game.vercel.app/";
 let REF="";
 (function(){const m=(location.hash||"").match(/[#&]r=([A-Za-z0-9_-]{3,32})/);
  try{if(m){REF=m[1];localStorage.setItem("xunfeng-ref",REF)}else REF=localStorage.getItem("xunfeng-ref")||""}catch(e){REF=m?m[1]:""}})();
@@ -2381,11 +2391,11 @@ function home(){
   <p class="lead s">看懂房子的煞，學會化解的方法。</p>
   <button class="btn big" id="cont"><span>${c.t}</span><small>${c.sub}</small></button>
   <div class="modes">
-   <button class="mode" id="m1" style="--bg:url('${IMG("r_siling")}')">${vbg("siling","mvid")}<span class="mi">煞</span><span><b>陽宅辨煞</b><small>${S.length} 關・${SHA_KEYS.length} 種煞・外在環境為主</small><span class="pg"><i style="width:${pl/30*100}%"></i></span></span><span class="go">›</span></button>
+   <button class="mode" id="m1" style="--bg:url('${IMG("r_siling")}')">${vbg("siling","mvid")}<span class="mi">煞</span><span><b>陽宅辨煞</b><small><span class="nw">${S.length} 關</span>・<span class="nw">${SHA_KEYS.length} 種煞</span>・<span class="nw">外在環境為主</span></small><span class="pg"><i style="width:${pl/30*100}%"></i></span></span><span class="go">›</span></button>
    <button class="mode" id="m2" style="--bg:url('${IMG("r_bagua")}')">${vbg("storm","mvid")}<span class="mi">寶</span><span><b>七寶尋謀</b><small>風水密室逃脫・已得 ${n}/7 寶</small><span class="pg"><i style="width:${n/7*100}%"></i></span></span><span class="go">›</span></button>
    <button class="mode" id="m3" style="--bg:url('${IMG("r_tiangan")}')">${vbg("tiangan","mvid")}<span class="mi">圖</span><span><b>藏寶圖・尋龍點穴</b><small>碎片 ${mp}/10${np?`・<em>新碎片 ${np}</em>`:""}</small><span class="pg"><i style="width:${mp*10}%"></i></span></span><span class="go">›</span></button>
   </div>
-  <div class="toolbar"><a href="${TOOLS[0].url}" target="_blank" rel="noopener"><span class="tch sm">卦</span><span><b>四象問天機</b><small>買房、搬家、換工作，問一件事</small></span></a><a href="${TOOLS[1].url}" target="_blank" rel="noopener"><span class="tch sm">相</span><span><b>面相系統</b><small>宅看格局，人看面相</small></span></a></div>
+  <div class="toolbar"><a href="${TOOLS[0].url}" target="_blank" rel="noopener"><span class="tch sm">卦</span><span><b>四象問天機</b><small><span class="nw">買房、搬家、換工作，</span><span class="nw">問一件事</span></small></span></a><a href="${TOOLS[1].url}" target="_blank" rel="noopener"><span class="tch sm">相</span><span><b>面相系統</b><small>宅看格局，人看面相</small></span></a></div>
   <div class="quick">
    <button id="q1">煞氣圖鑑 ${codex.size}/${SHA_KEYS.length}</button>
    <button id="q2">破關獎勵${nr?'<i class="dot"></i>':""}</button>
@@ -2528,8 +2538,8 @@ function enterSplash(go){
 }
 const INTRO={
  home:()=>enterSplash(()=>introCine("home","tiangan",["你家大門外，","有什麼正對著它？","我帶你看懂。"],
-  `<p class="kicker" style="text-align:center">風羿老師陽宅教室</p><p class="big" style="text-align:center;font-size:26px">這不是猜謎，是看懂自己家</p>
-  <ul class="ilist"><li><b>${S.length} 關、${SHA_KEYS.length} 種煞</b>，都是台灣最常見的格局：路沖、天斬煞、開門見廁、樑壓床……</li><li>每找到一種煞，都告訴你<b>它影響什麼</b>（財運、健康、睡眠、家人和睦）、<b>怎麼化解</b>，以及<b>回家要看哪裡</b>。</li><li>過關還能領<b>《巽風陽宅自檢表》</b>，拿著它把自己家看一遍。</li></ul>`,"帶我看看",false,"vt_open")),
+  `<p class="kicker" style="text-align:center">風羿老師陽宅教室</p><p class="big" style="text-align:center;font-size:26px">這不是猜謎，<br>是看懂自己家</p>
+  <ul class="ilist"><li><b>${S.length} 關、${SHA_KEYS.length} 種煞</b>，都是台灣最常見的格局：<span class="nw">路沖、天斬煞、</span><span class="nw">開門見廁、樑壓床……</span></li><li>每找到一種煞，都告訴你<b class="nw">它影響什麼</b><span class="nw">（財運、健康、</span><span class="nw">睡眠、家人和睦）</span>、<b class="nw">怎麼化解</b>，以及<b class="nw">回家要看哪裡</b>。</li><li>過關還能領<b>《巽風陽宅自檢表》</b>，<span class="nw">拿著它</span><span class="nw">把自己家看一遍。</span></li></ul>`,"帶我看看",false,"vt_open")),
  levels:()=>introCard("levels",`${guide("lv",TALK.lv.t,true)}<p class="big" style="font-size:24px">陽宅辨煞・怎麼玩</p>
   <ul class="ilist"><li>每關是一張平面圖，<b>上北下南</b>，金黃色是「你家」。</li><li>點你覺得有問題的道路、建築或擺設。點錯扣元氣，3 次用完就失敗（宗師只有 2 次）。</li><li><b>易</b> 1 處煞 ・ <b>中</b> 2 處 ・ <b>難</b> 3 處 ・ <b>宗師</b> 4–5 處而且不告訴你有幾處，還會出現「看起來像煞、其實沒問題」的陷阱。</li><li>共 ${S.length} 關、${SHA_KEYS.length} 種煞，外在環境為主。</li></ul>`,"選第一關"),
  book:()=>introCard("book",`${guide("peek","這裡收著你找過的每一種煞。")}<p class="big" style="font-size:24px">煞氣圖鑑</p><p class="muted">玩過的煞會自動收進來，可以隨時回來查：它長什麼樣、影響什麼、怎麼化解。收齊 ${SHA_KEYS.length} 種，還有「圖鑑大全」獎勵。</p>`),
