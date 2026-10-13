@@ -590,6 +590,12 @@ h1,h2,.big,.kicker,.hook b{text-wrap:balance}
 /* 中文斷行：只在標點、空白處換行，詞組不拆開；放不下時才強制斷 */
 body{word-break:keep-all;overflow-wrap:anywhere;line-break:strict}
 .gbub{text-wrap:balance}.tipbar b{white-space:nowrap;flex:none}
+
+/* 立面圖：你家標示 */
+svg .homering{animation:homeRing 1.6s linear infinite}
+@keyframes homeRing{to{stroke-dashoffset:-24}}
+svg .youpin{animation:youPin 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+@keyframes youPin{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 </style>
 
 <div class="wrap">
@@ -711,7 +717,7 @@ const OK={
 /* ====== 30 關（d:0易 1中 2難；t:外/內） ====== */
 const S=[
 /* ---------- 易 ---------- */
-{d:0,t:"外",n:"巷口的家",tip:"先看大門正前方，有什麼直直衝過來？",it:[
+{d:0,t:"外",n:"巷口的家",elev:1,tip:"先看大門正前方，有什麼直直衝過來？",it:[
  {k:"road",x:0,y:130,w:400,h:34,o:"side",l:"道路"},
  {k:"road",x:183,y:164,w:34,h:136,s:"lu",l:"直路",lx:200,ly:240,ln:[200,290,200,118]},
  {k:"home",x:150,y:35,w:100,h:78,door:"s"},
@@ -1350,7 +1356,89 @@ const esc=s=>String(s);
 function plate(t,x,y){const w=[...t].length*11.5+14;return `<g class="plate"><rect x="${x-w/2}" y="${y-10}" width="${w}" height="20" rx="10"/><text x="${x}" y="${y+.5}">${t}</text></g>`}
 function bctr(it){if(it.cx!=null)return[it.cx,it.cy];if(it.x!=null)return[it.x+it.w/2,it.y+it.h/2];return[it.lx,it.ly]}
 function windows(x,y,w,h,col){let s="";const st=13;for(let yy=y+8;yy+6<y+h-4;yy+=st)for(let xx=x+8;xx+6<x+w-4;xx+=st)s+=`<rect x="${xx}" y="${yy}" width="6" height="6" fill="${col}" opacity=".7"/>`;return s}
+
+/* ===== 立面圖模式（試作：第一關「巷口的家」） ===== */
+let _elev=false;
+const EV={
+ shadow:(x,y,w,h)=>`<ellipse cx="${x+w/2}" cy="${y+h-1}" rx="${w/2+4}" ry="5" fill="#000" opacity=".18"/>`,
+ hit:(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent"/>`,
+ win:(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c||"#BFD9E8"}" stroke="#4E5A63" stroke-width="1"/><line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+h}" stroke="#4E5A63" stroke-width=".8"/>`,
+ bldg(it){const{x,y,w,h}=it;let o=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h);
+  if(it.tall){o+=`<rect x="${x+4}" y="${y}" width="${w-8}" height="${h}" fill="#AEB9C7" stroke="#52606F" stroke-width="1.5"/><rect x="${x+2}" y="${y-4}" width="${w-4}" height="6" fill="#7D8896" stroke="#52606F"/>`;
+   for(let yy=y+8;yy<y+h-16;yy+=12)for(let xx=x+10;xx<x+w-14;xx+=13)o+=`<rect x="${xx}" y="${yy}" width="8" height="7" fill="#5D7E9E" opacity=".8"/>`;
+   return o+`<rect x="${x+w/2-6}" y="${y+h-14}" width="12" height="14" fill="#3E4850"/>`}
+  const rt=y+h*.32;o+=`<polygon points="${x-3},${rt} ${x+w/2},${y} ${x+w+3},${rt}" fill="#8E3B2A" stroke="#5A2216" stroke-width="1.5"/><rect x="${x+4}" y="${rt}" width="${w-8}" height="${y+h-rt}" fill="#E6DCCB" stroke="#7A6A55" stroke-width="1.5"/><line x1="${x+4}" y1="${rt+(y+h-rt)/2}" x2="${x+w-4}" y2="${rt+(y+h-rt)/2}" stroke="#B9AB93"/>`;
+  const fh=(y+h-rt)/2;[0,1].forEach(f=>{const fy=rt+f*fh+fh*.22;o+=EV.win(x+12,fy,14,fh*.45)+EV.win(x+w-26,fy,14,fh*.45)});
+  return o+`<rect x="${x+w/2-7}" y="${y+h-fh*.75}" width="14" height="${fh*.75}" fill="#7A5A35" stroke="#4B3A22"/>`},
+ shop(it){const{x,y,w,h}=it;const top=y+h*.12;let o=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x+4}" y="${top}" width="${w-8}" height="${y+h-top}" fill="#F2EEE6" stroke="#8A7C66" stroke-width="1.5"/><rect x="${x+4}" y="${top}" width="${w-8}" height="${h*.2}" fill="#2D6A4F"/><rect x="${x+4}" y="${top+h*.2}" width="${w-8}" height="10" fill="url(#awning)"/>`;
+  const gy=top+h*.2+12,gh=y+h-gy;o+=`<rect x="${x+12}" y="${gy+2}" width="${w*.42}" height="${gh-2}" fill="#BFE3F2" stroke="#3F7E99"/><rect x="${x+w*.58}" y="${gy+2}" width="${w*.3}" height="${gh-2}" fill="#9CC9DD" stroke="#3F7E99"/><line x1="${x+w*.73}" y1="${gy+2}" x2="${x+w*.73}" y2="${y+h}" stroke="#3F7E99"/>`;return o},
+ park(it){const{x,y,w,h}=it;let o=EV.hit(x,y,w,h)+`<rect x="${x}" y="${y+h*.62}" width="${w}" height="${h*.38}" rx="8" fill="#A8D28A" stroke="#6FA25A" stroke-width="1.5"/>`;
+  [[.18,.9],[.5,1.1],[.82,.85]].forEach(([fx,s])=>{const cx=x+w*fx,base=y+h*.8,r=14*s;o+=`<rect x="${cx-2.5}" y="${base-r*1.3}" width="5" height="${r*1.3}" fill="#7A5A35"/><circle cx="${cx}" cy="${base-r*1.6}" r="${r}" fill="#4F8F45"/><circle cx="${cx-r*.3}" cy="${base-r*1.8}" r="${r*.55}" fill="#7DBB62"/>`});
+  return o+`<rect x="${x+w*.32}" y="${y+h*.8}" width="26" height="4" fill="#8A6424"/><line x1="${x+w*.32+3}" y1="${y+h*.8+4}" x2="${x+w*.32+3}" y2="${y+h*.9}" stroke="#5A3B0E" stroke-width="2"/><line x1="${x+w*.32+23}" y1="${y+h*.8+4}" x2="${x+w*.32+23}" y2="${y+h*.9}" stroke="#5A3B0E" stroke-width="2"/>`},
+ tree(it){const{cx,cy}=it,r=it.r||20,base=cy+r;return `<rect x="${cx-r}" y="${cy-r*1.2}" width="${r*2}" height="${r*2.3}" fill="transparent"/><ellipse cx="${cx}" cy="${base}" rx="${r*.8}" ry="4" fill="#000" opacity=".18"/><rect x="${cx-4}" y="${cy}" width="8" height="${r}" fill="#7A5A35" stroke="#4B3A22"/><g class="leaf"><circle cx="${cx}" cy="${cy-r*.25}" r="${r*.85}" fill="#3F7E3A"/><circle cx="${cx-r*.45}" cy="${cy+r*.05}" r="${r*.55}" fill="#4F8F45"/><circle cx="${cx+r*.45}" cy="${cy+r*.05}" r="${r*.55}" fill="#4F8F45"/><circle cx="${cx-r*.2}" cy="${cy-r*.55}" r="${r*.4}" fill="#7DBB62"/></g>`}
+};
+
+/* ===== 立面圖：其餘室外物件 ===== */
+function evFacade(x,y,w,h,f,s,o){o=o||{};const top=y+h*(o.top??.14);let r=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x+3}" y="${top}" width="${w-6}" height="${y+h-top}" fill="${f}" stroke="${s}" stroke-width="1.5"/>`;
+ if(o.parapet!==false)r+=`<rect x="${x+1}" y="${top-4}" width="${w-2}" height="5" fill="${s}" opacity=".85"/>`;
+ if(o.win!==false){const wc=o.wc||"#9FBFD2",gy=top+(o.sign?h*.2:8);for(let yy=gy;yy<y+h-20;yy+=13)for(let xx=x+10;xx<x+w-14;xx+=14)r+=`<rect x="${xx}" y="${yy}" width="8" height="7" fill="${wc}" stroke="${s}" stroke-width=".6"/>`}
+ if(o.door!==false)r+=`<rect x="${x+w/2-6}" y="${y+h-14}" width="12" height="14" fill="#5A4632" stroke="${s}"/>`;
+ return r}
+function evSign(x,y,w,h,g,gc,bg){if(!g)return"";const top=y+h*.14;return `<rect x="${x+w/2-18}" y="${top+4}" width="36" height="${Math.min(22,h*.22)}" rx="3" fill="${bg||"#FFF8E6"}" stroke="#5A4632" stroke-width="1"/><text x="${x+w/2}" y="${top+4+Math.min(22,h*.22)/2+1}" text-anchor="middle" dominant-baseline="middle" font-size="${Math.min(16,h*.18)}" font-weight="700" fill="${gc||"#333"}">${g}</text>`}
+function evTreeAt(cx,base,r,dark,light){return `<ellipse cx="${cx}" cy="${base}" rx="${r*.8}" ry="4" fill="#000" opacity=".16"/><rect x="${cx-3.5}" y="${base-r*1.1}" width="7" height="${r*1.1}" fill="#7A5A35" stroke="#4B3A22"/><g class="leaf"><circle cx="${cx}" cy="${base-r*1.55}" r="${r*.8}" fill="${dark||"#3F7E3A"}"/><circle cx="${cx-r*.45}" cy="${base-r*1.25}" r="${r*.5}" fill="${dark||"#4F8F45"}"/><circle cx="${cx+r*.45}" cy="${base-r*1.25}" r="${r*.5}" fill="${dark||"#4F8F45"}"/><circle cx="${cx-r*.2}" cy="${base-r*1.85}" r="${r*.38}" fill="${light||"#7DBB62"}"/></g>`}
+Object.assign(EV,{
+ glass(it){const{x,y,w,h}=it;let o=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x+4}" y="${y}" width="${w-8}" height="${h}" fill="url(#glassG)" stroke="#2F6E8E" stroke-width="1.5"/>`;for(let yy=y+10;yy<y+h;yy+=10)o+=`<line x1="${x+4}" y1="${yy}" x2="${x+w-4}" y2="${yy}" stroke="#2F6E8E" stroke-width=".6" opacity=".6"/>`;return o+`<path d="M${x+12},${y+h} L${x+w*.6},${y}" stroke="#fff" stroke-width="6" opacity=".4"/>`},
+ school(it){const{x,y,w,h}=it;return evFacade(x,y,w,h,"#EBD6B1","#9A7A47",{wc:"#A8C8DA"})+`<circle cx="${x+w/2}" cy="${y+h*.14+12}" r="7" fill="#fff" stroke="#9A7A47"/><line x1="${x+w-10}" y1="${y+h*.14}" x2="${x+w-10}" y2="${y-16}" stroke="#555" stroke-width="1.5"/><rect x="${x+w-10}" y="${y-16}" width="13" height="8" fill="#D33"/>`},
+ hospital(it){const{x,y,w,h}=it;return evFacade(x,y,w,h,"#F5F7F8","#7D8A92",{wc:"#B9D3E0"})+`<rect x="${x+w/2-4}" y="${y+h*.14+4}" width="8" height="20" fill="#D63A2B"/><rect x="${x+w/2-10}" y="${y+h*.14+10}" width="20" height="8" fill="#D63A2B"/>`},
+ temple(it){const{x,y,w,h}=it,rt=y+h*.36;return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x+8}" y="${rt}" width="${w-16}" height="${y+h-rt}" fill="#B8372A" stroke="#6E1A12" stroke-width="1.5"/><path d="M${x-6},${rt+4} Q${x+w*.1},${rt-6} ${x+w*.2},${rt-2} L${x+w*.5},${y+h*.08} L${x+w*.8},${rt-2} Q${x+w*.9},${rt-6} ${x+w+6},${rt+4} Z" fill="#2E5E4E" stroke="#1E3A30" stroke-width="1.5"/><circle cx="${x+w/2}" cy="${y+h*.08}" r="4" fill="#F1C35A"/><rect x="${x+w/2-9}" y="${y+h-22}" width="18" height="22" fill="#5A1A10"/><rect x="${x+w/2-14}" y="${rt+6}" width="28" height="10" fill="#F1C35A"/>`},
+ deadtree(it){const{cx,cy}=it,r=it.r||20,base=cy+r;let b=`<ellipse cx="${cx}" cy="${base}" rx="${r*.7}" ry="4" fill="#000" opacity=".16"/><path d="M${cx},${base} L${cx},${cy-r*.6}" stroke="#6B4A2E" stroke-width="6" stroke-linecap="round"/>`;[[-.9,-.5],[.8,-.3],[-.6,-1],[.5,-1.1],[0,-1.4]].forEach(([dx,dy])=>{b+=`<path d="M${cx},${cy-r*.1} L${cx+dx*r},${cy+dy*r}" stroke="#6B4A2E" stroke-width="3" stroke-linecap="round"/>`});return `<rect x="${cx-r}" y="${cy-r*1.5}" width="${r*2}" height="${r*2.5}" fill="transparent"/>`+b},
+ pole(it){const{cx,cy}=it;return `<rect x="${cx-14}" y="${cy-40}" width="28" height="56" fill="transparent"/><ellipse cx="${cx}" cy="${cy+14}" rx="9" ry="3" fill="#000" opacity=".2"/><rect x="${cx-2}" y="${cy-34}" width="4" height="48" fill="#3E4448"/><path d="M${cx},${cy-34} q10,-4 14,4" stroke="#3E4448" stroke-width="3" fill="none"/><circle cx="${cx+14}" cy="${cy-28}" r="9" fill="#FFE27A" opacity=".55" class="glow"/><rect x="${cx+9}" y="${cy-31}" width="10" height="5" rx="2" fill="#FFF3B0" stroke="#3E4448"/>`},
+ box(it){const{cx,cy}=it;return `<ellipse cx="${cx}" cy="${cy+14}" rx="20" ry="4" fill="#000" opacity=".18"/><rect x="${cx-16}" y="${cy-14}" width="32" height="28" rx="2" fill="#6F8F7C" stroke="#3E5446" stroke-width="1.5"/><rect x="${cx-18}" y="${cy-17}" width="36" height="5" fill="#4E6A58"/><path d="M${cx+2},${cy-8} L${cx-5},${cy+1} L${cx},${cy+1} L${cx-3},${cy+8} L${cx+5},${cy-2} L${cx},${cy-2}Z" fill="#FFE27A"/>`},
+ diamond(it){const{cx,cy}=it,r=it.r||30;return `<rect x="${cx-r}" y="${cy-r}" width="${r*2}" height="${r*2}" fill="transparent"/><ellipse cx="${cx}" cy="${cy+r}" rx="${r}" ry="5" fill="#000" opacity=".18"/><polygon points="${cx-r},${cy-r*.7} ${cx},${cy-r} ${cx},${cy+r} ${cx-r},${cy+r}" fill="#C4C9CC" stroke="#7A8086" stroke-width="1.5"/><polygon points="${cx},${cy-r} ${cx+r},${cy-r*.7} ${cx+r},${cy+r} ${cx},${cy+r}" fill="#9AA2A8" stroke="#7A8086" stroke-width="1.5"/><line x1="${cx}" y1="${cy-r}" x2="${cx}" y2="${cy+r}" stroke="#E25A3B" stroke-width="2.5"/>`},
+ obj(it){const{x,y,w,h}=it,I=ICON[it.ic]||{},cx=x+w/2;
+  if(I.rail||I.slope||I.ditch||I.pit||I.span||I.ramp||I.hill)return drawObj(it);
+  if(I.palm){const base=y+h,r=Math.min(w,h)/2;let s=`<ellipse cx="${cx}" cy="${base-2}" rx="${r*.6}" ry="4" fill="#000" opacity=".16"/><path d="M${cx},${base-2} q-4,-${r} 0,-${r*1.7}" stroke="#7A5A35" stroke-width="5" fill="none"/>`;const tx=cx,ty=base-2-r*1.7;[[-1,.2],[1,.2],[-.8,-.4],[.8,-.4],[0,-.7]].forEach(([dx,dy])=>{s+=`<path d="M${tx},${ty} q${dx*r*.5},${dy*r*.5-6} ${dx*r},${dy*r*.6+8}" stroke="#3E8A3A" stroke-width="5" fill="none" stroke-linecap="round"/>`});return EV.hit(x,y,w,h)+s}
+  if(I.willow){const base=y+h,r=Math.min(w,h)/2;let s=`<ellipse cx="${cx}" cy="${base-2}" rx="${r*.7}" ry="4" fill="#000" opacity=".16"/><rect x="${cx-3}" y="${base-r*1.2}" width="6" height="${r*1.2}" fill="#7A5A35"/><ellipse cx="${cx}" cy="${base-r*1.5}" rx="${r*.8}" ry="${r*.5}" fill="#9CC97F"/>`;for(let i=-3;i<=3;i++)s+=`<path d="M${cx+i*r*.22},${base-r*1.5} q${i*2},${r*.5} ${i*3},${r*1}" stroke="#7FB86A" stroke-width="2.5" fill="none"/>`;return EV.hit(x,y,w,h)+s}
+  if(I.bigtree){const r=Math.min(w,h)/2.4;return EV.hit(x,y,w,h)+evTreeAt(cx,y+h-2,r)}
+  if(I.board)return EV.hit(x,y,w,h)+`<ellipse cx="${cx}" cy="${y+h}" rx="${w*.3}" ry="4" fill="#000" opacity=".18"/>`+drawObj(it);
+  if(I.church)return EV.shadow(x,y,w,h)+drawObj(it);
+  if(I.burner||I.hat||I.ruin||I.slab)return EV.shadow(x,y,w,h)+drawObj(it);
+  if(I.cont){let c=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h);const n=Math.max(2,Math.floor(w/34)),cw=w/n;for(let i=0;i<n;i++){c+=`<rect x="${x+i*cw+1}" y="${y+h*.55}" width="${cw-3}" height="${h*.45}" fill="${["#C2582F","#3E7FA6","#5E8A4A"][i%3]}" stroke="#333"/>`;if(i%2===0)c+=`<rect x="${x+i*cw+cw*.2}" y="${y+h*.15}" width="${cw-3}" height="${h*.4}" fill="${["#3E7FA6","#C2582F","#5E8A4A"][i%3]}" stroke="#333"/>`}return c}
+  if(I.dig){let st=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x}" y="${y+h*.55}" width="${w}" height="${h*.45}" fill="#E0B54A" stroke="#8C6A16" stroke-width="1.5"/>`;for(let i=0;i<6;i++)st+=`<rect x="${x+i*w/6}" y="${y+h*.55}" width="${w/12}" height="${h*.45}" fill="#222" opacity=".8"/>`;return st+`<line x1="${x+w*.75}" y1="${y+h*.55}" x2="${x+w*.75}" y2="${y}" stroke="#D9A23F" stroke-width="4"/><line x1="${x+w*.2}" y1="${y+4}" x2="${x+w*.9}" y2="${y+4}" stroke="#D9A23F" stroke-width="4"/><line x1="${x+w*.3}" y1="${y+4}" x2="${x+w*.3}" y2="${y+h*.3}" stroke="#555" stroke-width="1.5"/>`}
+  if(it.ic==="grave"){let g=EV.hit(x,y,w,h)+`<path d="M${x},${y+h} Q${cx},${y+h*.5} ${x+w},${y+h} Z" fill="#9AA27A" stroke="#6F7550"/>`;[.25,.5,.75].forEach((p,i)=>{const gx=x+w*p,gh=h*(i===1?.42:.32);g+=`<path d="M${gx-9},${y+h-6} v-${gh-8} a9,9 0 0 1 18,0 v${gh-8}z" fill="#C9C7BC" stroke="#6F6D63"/>`});return g}
+  if(it.ic==="paifang"){const t=y+h*.18;return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x+w*.12}" y="${t}" width="10" height="${y+h-t}" fill="#B8372A" stroke="#6E1A12"/><rect x="${x+w*.88-10}" y="${t}" width="10" height="${y+h-t}" fill="#B8372A" stroke="#6E1A12"/><path d="M${x},${t+6} Q${cx},${y-4} ${x+w},${t+6} L${x+w-6},${t+14} L${x+6},${t+14}Z" fill="#2E5E4E" stroke="#1E3A30"/><rect x="${cx-16}" y="${t+16}" width="32" height="14" fill="#F1C35A" stroke="#6E1A12"/><text x="${cx}" y="${t+24}" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="700" fill="#6E1A12">坊</text>`}
+  if(it.ic==="gas"){const t=y+h*.2;return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<rect x="${x}" y="${t}" width="${w}" height="10" fill="#D9483A" stroke="#8E2B1E"/><rect x="${x+8}" y="${t+10}" width="5" height="${y+h-t-10}" fill="#bbb"/><rect x="${x+w-13}" y="${t+10}" width="5" height="${y+h-t-10}" fill="#bbb"/><rect x="${cx-14}" y="${y+h-24}" width="10" height="24" fill="#F2EFE6" stroke="#B23A26"/><rect x="${cx+4}" y="${y+h-24}" width="10" height="24" fill="#F2EFE6" stroke="#B23A26"/><text x="${cx}" y="${t+5.5}" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#fff">油</text>`}
+  if(it.ic==="trash"){return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<path d="M${x+4},${y+h} Q${x+w*.3},${y+h*.3} ${cx},${y+h*.4} T${x+w-4},${y+h} Z" fill="#8F8A6E" stroke="#55513C"/><rect x="${cx-12}" y="${y+h*.5}" width="24" height="${h*.5}" fill="#3E6A4A" stroke="#253D2B"/><circle cx="${x+w*.25}" cy="${y+h*.75}" r="5" fill="#55513C"/><circle cx="${x+w*.72}" cy="${y+h*.7}" r="6" fill="#6E694F"/>`}
+  if(it.ic==="market"){let m=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h);const n=Math.max(2,Math.floor(w/32)),sw=w/n;for(let i=0;i<n;i++){const sx=x+i*sw;m+=`<rect x="${sx+2}" y="${y+h*.35}" width="${sw-4}" height="10" fill="url(#awning)"/><rect x="${sx+4}" y="${y+h*.35+10}" width="${sw-8}" height="${h*.65-10}" fill="#F0D7A8" stroke="#9A7A47"/><rect x="${sx+6}" y="${y+h*.7}" width="${sw-12}" height="6" fill="#B23A26"/>`}return m}
+  if(it.ic==="toilet")return evFacade(x,y,w,h,"#E4EEF1","#6F8F9F",{win:false,top:.3})+evSign(x,y+h*.16,w,h,"廁","#3F6E7E");
+  if(it.ic==="coffin"){const t=y+h*.35;return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<path d="M${x+4},${y+h} L${x+4},${t} Q${cx},${y} ${x+w-4},${t} L${x+w-4},${y+h}Z" fill="#A39C8E" stroke="#5F5A50" stroke-width="1.5"/><rect x="${cx-8}" y="${y+h-20}" width="16" height="20" fill="#5F5A50"/>`}
+  if(I.saw){let p=`M${x+3},${y+h} L${x+3},${y+h*.4}`;const n=4;for(let i=0;i<n;i++)p+=` L${x+3+(w-6)*(i+.5)/n},${y+h*.18} L${x+3+(w-6)*(i+.5)/n},${y+h*.4} L${x+3+(w-6)*(i+1)/n},${y+h*.4}`;return EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<path d="${p} L${x+w-3},${y+h} Z" fill="#D5D9DC" stroke="#7A8086" stroke-width="1.5"/><rect x="${x+w*.7}" y="${y-6}" width="8" height="${h*.5}" fill="#8F877B"/><rect x="${cx-8}" y="${y+h-16}" width="16" height="16" fill="#5A4632"/>`}
+  if(I.tin){let r=EV.hit(x,y,w,h)+EV.shadow(x,y,w,h)+`<polygon points="${x},${y+h*.35} ${x+w},${y+h*.22} ${x+w},${y+h*.32} ${x},${y+h*.45}" fill="#7F949F"/><rect x="${x+4}" y="${y+h*.4}" width="${w-8}" height="${h*.6}" fill="#AFC0C9" stroke="#5E7480"/>`;for(let xx=x+8;xx<x+w-4;xx+=7)r+=`<line x1="${xx}" y1="${y+h*.4}" x2="${xx}" y2="${y+h}" stroke="#7F949F"/>`;return r}
+  // 一般建築：立面＋招牌
+  let b=evFacade(x,y,w,h,I.f||"#D5D9DC",I.s||"#7A8086",{sign:!!I.g,top:I.wtank||I.ant?.3:.14});
+  if(I.g)b+=evSign(x,y,w,h,I.g,I.gc);
+  const rt=y+h*(I.wtank||I.ant?.3:.14);
+  if(I.wtank)b+=`<rect x="${cx-12}" y="${rt-24}" width="24" height="18" rx="3" fill="#3E7FA6" stroke="#22506B"/><line x1="${cx-8}" y1="${rt-6}" x2="${cx-8}" y2="${rt}" stroke="#22506B" stroke-width="2.5"/><line x1="${cx+8}" y1="${rt-6}" x2="${cx+8}" y2="${rt}" stroke="#22506B" stroke-width="2.5"/>`;
+  if(I.ant)b+=`<line x1="${cx}" y1="${rt}" x2="${cx}" y2="${y-14}" stroke="#52606F" stroke-width="2.5"/><path d="M${cx-10},${y-2} L${cx},${y-12} L${cx+10},${y-2} M${cx-14},${y+6} L${cx+14},${y+6}" stroke="#52606F" stroke-width="2" fill="none"/><circle cx="${cx}" cy="${y-16}" r="3" fill="#E25A3B"/>`;
+  if(I.pipes)for(let xx=x+10;xx<x+w-6;xx+=14)b+=`<rect x="${xx}" y="${rt-10}" width="5" height="${y+h-rt+10}" fill="#9C9182" stroke="#6F675C"/>`;
+  if(I.bulge)b+=`<rect x="${x+w-8}" y="${y+h*.3}" width="18" height="${h*.35}" rx="2" fill="#B8A88E" stroke="#6E655A" stroke-width="1.5"/>`;
+  return b}
+});
+
+function homePin(it){const{x,y,w}=it,cx=x+w/2;const py=Math.max(6,y-30);return `<g class="youpin"><rect x="${cx-30}" y="${py}" width="60" height="26" rx="13" fill="#B3261E" stroke="#FFD27A" stroke-width="2"/><path d="M${cx-6} ${py+25} L${cx} ${py+33} L${cx+6} ${py+25}Z" fill="#B3261E"/><text x="${cx}" y="${py+18}" text-anchor="middle" font-size="15" font-weight="900" fill="#FFF3D6" letter-spacing="2">你家</text></g>`}
+function homeElev(it){const{x,y,w,h,door}=it;const rt=y+h*.34,cx=x+w/2;
+ let o=`<g class="home nolink"><rect x="${x-8}" y="${y-8}" width="${w+16}" height="${h+16}" rx="10" fill="#FFD95A" opacity=".28"/><rect class="homering" x="${x-8}" y="${y-8}" width="${w+16}" height="${h+16}" rx="10" fill="none" stroke="#E0A92E" stroke-width="3" stroke-dasharray="7 5"/>`+EV.shadow(x,y,w,h);
+ o+=`<polygon points="${x-6},${rt} ${cx},${y} ${x+w+6},${rt}" fill="#B3261E" stroke="#6E1A12" stroke-width="2"/><line x1="${x+4}" y1="${rt-3}" x2="${x+w-4}" y2="${rt-3}" stroke="#F1C35A" stroke-width="2"/><rect x="${x+4}" y="${rt}" width="${w-8}" height="${y+h-rt}" fill="#F7E3A6" stroke="#8C5A17" stroke-width="2"/>`;
+ o+=EV.win(x+12,rt+8,18,16,"#CFE6F0")+EV.win(x+w-30,rt+8,18,16,"#CFE6F0")+`<rect x="${cx-10}" y="${y+h-26}" width="20" height="26" fill="#8E3B2A" stroke="#4B1E12" stroke-width="1.5"/><circle cx="${cx+5}" cy="${y+h-12}" r="1.8" fill="#F1C35A"/>`;
+ let ar="";
+ if(door==="s")ar=`<path d="M${cx} ${y+h+4} v14 m-6 -6 l6 6 l6 -6" stroke="#B3261E" stroke-width="3" fill="none" stroke-linecap="round"/><text x="${cx+24}" y="${y+h+16}" text-anchor="middle" font-size="12" font-weight="700" fill="#B3261E">大門</text>`;
+ if(door==="n")ar=`<path d="M${cx} ${y-4} v-14 m-6 6 l6 -6 l6 6" stroke="#B3261E" stroke-width="3" fill="none" stroke-linecap="round"/><text x="${cx+24}" y="${y-10}" text-anchor="middle" font-size="12" font-weight="700" fill="#B3261E">大門</text>`;
+ if(door==="e")ar=`<path d="M${x+w+4} ${y+h/2} h14 m-6 -6 l6 6 l-6 6" stroke="#B3261E" stroke-width="3" fill="none" stroke-linecap="round"/><text x="${x+w+14}" y="${y+h/2-10}" text-anchor="middle" font-size="12" font-weight="700" fill="#B3261E">大門</text>`;
+ o+=ar+`</g>`;
+ return o}
+
 function draw(it){
+ if(_elev&&EV[it.k])return EV[it.k](it);
  const{x,y,w,h,cx,cy}=it;let r=it.r||20;
  switch(it.k){
  case"road":{const hz=w>=h;return `<rect x="${x-(hz?0:3)}" y="${y-(hz?3:0)}" width="${w+(hz?0:6)}" height="${h+(hz?6:0)}" fill="#D9D1BE"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#5F6467"/>`+(hz?`<path d="M${x} ${y+2.5}H${x+w}M${x} ${y+h-2.5}H${x+w}" stroke="#E9E4D6" stroke-width="1"/>`:`<path d="M${x+2.5} ${y}V${y+h}M${x+w-2.5} ${y}V${y+h}" stroke="#E9E4D6" stroke-width="1"/>`)+(hz?`<line x1="${x}" y1="${y+h/2}" x2="${x+w}" y2="${y+h/2}" stroke="#F7F1DC" stroke-width="2" stroke-dasharray="12 10"/>`:`<line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+h}" stroke="#F7F1DC" stroke-width="2" stroke-dasharray="12 10"/>`)}
@@ -1375,7 +1463,7 @@ function draw(it){
  case"chimney":return `<circle cx="${cx+8}" cy="${cy-22}" r="9" fill="#9AA0A3" class="smoke"/><circle cx="${cx+8}" cy="${cy-22}" r="9" fill="#9AA0A3" class="smoke s2"/><circle cx="${cx+8}" cy="${cy-22}" r="9" fill="#9AA0A3" class="smoke s3"/><rect x="${cx-26}" y="${cy-4}" width="52" height="30" fill="#CBB79A" stroke="#7E6A4D" stroke-width="1.5" rx="2"/><rect x="${cx-8}" y="${cy-26}" width="16" height="30" fill="#A8513B" stroke="#6A2D1F" stroke-width="1.5"/><rect x="${cx-8}" y="${cy-26}" width="16" height="5" fill="#333"/>`;
  case"box":return `<rect x="${cx-16}" y="${cy-12}" width="32" height="24" rx="3" fill="#6F8F7C" stroke="#3E5446" stroke-width="1.5"/><path d="M${cx+2},${cy-8} L${cx-5},${cy+1} L${cx},${cy+1} L${cx-3},${cy+8} L${cx+5},${cy-2} L${cx},${cy-2}Z" fill="#FFE27A"/>`;
  case"diamond":return `<polygon points="${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}" fill="#D5D9DC" stroke="#7A8086" stroke-width="1.5"/><polygon points="${cx},${cy-r+10} ${cx+r-10},${cy} ${cx},${cy+r-10} ${cx-r+10},${cy}" fill="none" stroke="#9AA6AE" stroke-width="1"/>`;
- case"home":return homeSVG(it);
+ case"home":return _elev?homeElev(it):homeSVG(it);
  /* interior */
  case"wall":return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(0,0,0,.03)" stroke="#3B3A36" stroke-width="4"/><text class="walltxt" x="${x+w/2}" y="${it.ly??y+h/2}">${it.l}</text>`;
  case"wcroom":return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#tile)" stroke="#3B3A36" stroke-width="4"/><ellipse cx="${x+w/2}" cy="${y+h/2+6}" rx="10" ry="13" fill="#fff" stroke="#8A9399" stroke-width="1.5"/><rect x="${x+w/2-12}" y="${y+h/2-16}" width="24" height="8" rx="2" fill="#fff" stroke="#8A9399" stroke-width="1.5"/>`;
@@ -1499,14 +1587,14 @@ function sceneSVG(sc,stt,lite){
  const C=stt||cur||EMPTYST;
  const bg=sc.in?`<rect width="400" height="300" fill="#3A322A"/><rect x="20" y="20" width="360" height="260" fill="url(#wood)"/>`+(lite?"":`<rect x="20" y="20" width="360" height="260" fill="url(#floorLight)"/>`)
   :`<rect width="400" height="300" fill="#AFCB8E"/>`+(lite?`<rect width="400" height="300" fill="url(#grass)" opacity=".6"/>`:`<rect width="400" height="300" filter="url(#mottle)" opacity=".6"/><rect width="400" height="300" fill="url(#grass)" opacity=".35"/>`);
- const solid=(it,inner)=>{if(!SOLID.has(it.k)||it.x==null)return inner;inner=inner.replace(/<rect[^>]*fill="#000" opacity="\.1\d?"[^>]*\/>/g,"");
+ _elev=!sc.in;const solid=(it,inner)=>{if(_elev||!SOLID.has(it.k)||it.x==null)return inner;inner=inner.replace(/<rect[^>]*fill="#000" opacity="\.1\d?"[^>]*\/>/g,"");
   return `<g ${lite?"":'filter="url(#ds)"'}>${inner}<rect x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" rx="3" fill="url(#roof)" pointer-events="none"/></g>`};
  let body="",top="",marks="";
  sc.it.forEach((it,idx)=>{
-  if(it.k==="beam"){if(clickable(it)&&!lite){const st=it.s&&C.found.has(it.s)?"found":C.cleared.has(idx)?"cleared":"";const c=bctr(it);top+=`<g class="item ${st}" data-x="${idx}" tabindex="0" role="button" aria-label="${it.l}">${draw(it)}${plate(it.l,it.lx??c[0],it.ly??c[1])}</g>`}else top+=`<g class="nolink">${draw(it)}${lite?"":plate(it.l,it.lx,it.ly)}</g>`;return}
+  if(it.k==="beam"){if(clickable(it)&&!lite){const st=it.s&&C.found.has(it.s)?"found":C.cleared.has(idx)?"cleared":"";const c=bctr(it);top+=`<g class="item ${st}" data-x="${idx}" tabindex="0" role="button" aria-label="${it.l}">${draw(it)}${plate(it.l,it.lx??c[0],it.ly??c[1])}</g>`}else top+=`<g class="nolink">${draw(it)}${lite&&!C.labels?"":plate(it.l,it.lx,it.ly)}</g>`;return}
   const c=bctr(it),lx=it.lx??c[0],ly=it.ly??c[1];
   if(it.k==="home"){body+=`<g ${lite?"":'filter="url(#ds)"'}>${draw(it)}</g>`;return}
-  if(!clickable(it)||lite){body+=`<g class="nolink">${solid(it,draw(it))}${it.k==="wcroom"&&!lite?`<text class="walltxt" x="${it.x+it.w/2}" y="${it.y+14}">${it.l}</text>`:""}</g>`;return}
+  if(!clickable(it)||lite){body+=`<g class="nolink">${solid(it,draw(it))}${lite&&C.labels&&it.l&&it.k!=="wall"?plate(it.l,lx,ly):""}${it.k==="wcroom"&&!lite?`<text class="walltxt" x="${it.x+it.w/2}" y="${it.y+14}">${it.l}</text>`:""}</g>`;return}
   const st=it.s&&C.found.has(it.s)?"found":C.cleared.has(idx)?"cleared":"";
   body+=`<g class="item ${st}" data-x="${idx}" tabindex="0" role="button" aria-label="${it.l}">${solid(it,draw(it))}${plate(it.l,lx,ly)}</g>`;
  });
@@ -1520,7 +1608,7 @@ function sceneSVG(sc,stt,lite){
   marks+=`<g class="seal"><g class="${got&&C.last===it.s?"pop":""}"><rect x="${lx-11}" y="${ly-11}" width="22" height="22" rx="3" ${got?"":'style="fill:#666"'}/><text x="${lx}" y="${ly}">${got?"煞":"漏"}</text></g></g>`;
  });}
  const north=lite?"":`<g transform="translate(378,32)" pointer-events="none"><circle r="16" fill="rgba(255,250,236,.92)" stroke="#8C5A17" stroke-width="1.5"/><circle r="12" fill="none" stroke="#C9A35A" stroke-dasharray="1 2"/><path d="M0,-11 L4,1 L0,-1 L-4,1Z" fill="#C9301C"/><path d="M0,11 L4,-1 L0,1 L-4,-1Z" fill="#3A4A4C"/><text y="-17" text-anchor="middle" font-size="9" font-weight="700" fill="#8C5A17">北</text></g>`;
- return `<svg viewBox="0 0 400 300" role="img" aria-label="${sc.n}平面圖">${DEFS}${bg}${sc.in?`<rect x="20" y="20" width="360" height="260" fill="none" stroke="#2E2A25" stroke-width="7"/><rect x="23.5" y="23.5" width="353" height="253" fill="none" stroke="#6A6155" stroke-width="1"/>`:""}${body}${top}${light}${marks}${north}</svg>`;
+ return `<svg viewBox="0 0 400 300" role="img" aria-label="${sc.n}平面圖">${DEFS}${bg}${sc.in?`<rect x="20" y="20" width="360" height="260" fill="none" stroke="#2E2A25" stroke-width="7"/><rect x="23.5" y="23.5" width="353" height="253" fill="none" stroke="#6A6155" stroke-width="1"/>`:""}${body}${top}${light}${_elev?sc.it.filter(i=>i.k==="home").map(homePin).join(""):""}${marks}${north}</svg>`;
 }
 function render(panel){
  const sc=S[cur.i],keys=badKeys(sc),n=S.filter(s=>s.d===sc.d).indexOf(sc)+1;
@@ -2587,7 +2675,7 @@ function levelIntro(sc,go){
  const n=lvNo(S.indexOf(sc)),ar=scAreas(sc);
  ovl.innerHTML=`<div class="ov" role="dialog" aria-modal="true"><div class="box introbox lvintro">
   <p class="kicker">${DIFF[sc.d].c}・第 ${n} 關・${sc.t==="外"?"外在環境":"室內格局"}</p><p class="big" style="font-size:28px;margin:4px 0">${sc.n}</p>
-  <div class="lvthumb">${sceneSVG(sc,EMPTYST,true)}</div>
+  <div class="lvthumb">${sceneSVG(sc,{...EMPTYST,labels:1},true)}</div>
   <p style="color:#DCE5DF;margin:10px 0 6px">${sc.d===3?"宗師關：煞的數量不公開，小心陷阱。這裡的煞會影響：":`這間屋子藏著 <b style="color:var(--gold2)">${badKeys(sc).length}</b> 處煞，會影響住在裡面的人的：`}</p>
   <div class="areas">${ar.map(a=>`<span>${a}</span>`).join("")}</div>
   <p class="muted" style="margin:10px 0 0"><span class="nw">找到之後，記下「回家看一下」那一句，</span><span class="nw">對照你自己家。</span></p>
