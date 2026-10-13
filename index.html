@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="陽宅辨煞：132 關風水眼力挑戰，風羿老師帶你看懂房子的煞。巽風堪輿研究中心"><meta property="og:title" content="錢留不住？先看你家大門｜風羿老師風水小遊戲"><meta property="og:description" content="漏財、爛桃花、運勢卡關，常常是房子先出問題。132 關，免下載免註冊，手機直接玩。"><meta property="og:image" content="https://xunfeng-game.vercel.app/assets/r_siling.jpg"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>陽宅辨煞</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="陽宅辨煞：132 關風水眼力挑戰，風羿老師帶你看懂房子的煞。巽風堪輿研究中心"><meta property="og:title" content="錢留不住？先看你家大門｜風羿老師風水小遊戲"><meta property="og:description" content="漏財、爛桃花、運勢卡關，常常是房子先出問題。132 關，免下載免註冊，手機直接玩。"><meta property="og:image" content="https://xunfeng-game.vercel.app/assets/r_siling.jpg"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]{display:none!important}</style><script defer src="/_vercel/insights/script.js"></script></head><body><title>陽宅辨煞</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Shippori+Mincho+B1:wght@800&display=swap">
@@ -576,6 +576,9 @@ h1,h2,.big,.kicker,.hook b{text-wrap:balance}
 .storetag{display:inline-block;margin:6px auto 0;padding:4px 14px;border-radius:999px;border:1px solid rgba(227,183,92,.7);color:#FFE9A8;font-size:13px;letter-spacing:.08em;background:rgba(0,0,0,.35)}
 @media (max-width:520px){.scene{padding:6px;margin-inline:-8px}}
 
+.sharebox{margin:10px 0 4px;padding:12px;border-radius:14px;border:1px dashed rgba(227,183,92,.55);text-align:center}
+.sharebox p{margin:0 0 8px;color:#FFE9A8;font-size:14px;text-wrap:balance}
+.sharebox .btn{display:inline-flex;min-width:60%;justify-content:center}
 /* ===== 轉換：過關後導向四象天機書／面相系統 ===== */
 .conv{margin:14px 0 6px;padding:14px;border-radius:16px;text-align:left;background:linear-gradient(150deg,rgba(227,183,92,.20),rgba(179,38,30,.16));border:1px solid rgba(227,183,92,.6)}
 .conv .ct{font-family:var(--display);font-size:20px;color:#FFE9A8;margin:0 0 4px;text-wrap:balance}
@@ -628,6 +631,8 @@ let REF="";
 function xfLink(u){try{const x=new URL(u,location.href);if(!/(^|\.)xunfeng\.tw$/.test(x.hostname))return u;
  x.searchParams.set("utm_source","game");x.searchParams.set("utm_campaign","yangzhai");if(REF)x.searchParams.set("ref",REF);return x.toString()}catch(e){return u}}
 function gameLink(){return REF?GAME_URL+"#r="+REF:GAME_URL}
+function shareURL(src){return GAME_URL+"?utm_source="+src+"&utm_medium=share"+(REF?"#r="+REF:"")}
+function lineShare(t,src){return "https://line.me/R/share?text="+encodeURIComponent(t+"\n"+shareURL(src||"line"))}
 ["click","auxclick","contextmenu"].forEach(ev=>document.addEventListener(ev,e=>{const a=e.target&&e.target.closest&&e.target.closest("a[href]");if(a){const h=a.getAttribute("href");const n=xfLink(h);if(n!==h)a.setAttribute("href",n)}},true));
 const TEACHER="風羿老師";
 
@@ -1549,11 +1554,11 @@ function starStr(n,big){return [0,1,2].map(i=>`<span class="${i<n?"":"off"}">★
 function rankCard(ts){
  return `<div class="rankcard"><div class="r">${rankOf(ts)}</div><div><b style="font-family:var(--display);font-size:20px">你的堪輿等級</b>
  <p class="muted" style="margin:4px 0 10px">累積星數決定等級：風水學徒 → 入門弟子（30★）→ 堪輿師（55★）→ 資深堪輿師（80★）→ 地理明師（160★）→ 堪輿宗師（300★）。</p>
- <div class="row"><button class="btn ghost" id="share" style="font-size:14px;padding:8px 16px">複製成績分享</button></div><p class="muted" id="shared" hidden></p></div></div>
+ <div class="row"><a class="btn line" style="font-size:14px;padding:8px 16px" href="${lineShare(`我在「陽宅辨煞」拿到 ${ts} 顆星，等級「${rankOf(ts)}」！你家有沒有煞？來挑戰看看：`,"line_rank")}" target="_blank" rel="noopener">傳到 LINE</a><button class="btn ghost" id="share" style="font-size:14px;padding:8px 16px">複製成績分享</button></div><p class="muted" id="shared" hidden></p></div></div>
  <div class="rankcard" style="grid-template-columns:1fr"><div><p class="kicker" style="margin-bottom:4px">命、局、卦、象，四術合參，一事定向</p><b style="font-family:var(--display);font-size:22px">想知道你家真實的格局？</b><p class="muted" style="margin:4px 0 10px">遊戲只看得到平面圖，真實的房子還要看坐向、外在環境與住的人。風羿老師陰陽宅現場堪驗超過 2,200 個案例，全台到府服務。電話 <span class="tel" style="user-select:all;color:var(--gold2);font-weight:700">${PHONE}</span></p><div class="row"><a class="btn line" href="${LINE}" target="_blank" rel="noopener">加 LINE 諮詢</a><a class="btn red" href="${BOOK}" target="_blank" rel="noopener">線上預約</a><a class="btn ghost" href="${FB}" target="_blank" rel="noopener">FB 粉專</a><a class="btn ghost" href="${SITE}" target="_blank" rel="noopener">巽風官網</a></div></div></div>`;
 }
 function bindShare(ts){const b=document.getElementById("share");if(!b)return;b.onclick=()=>{
- const t=`我在「陽宅辨煞」拿到 ${ts} 顆星，等級「${rankOf(ts)}」！你家有沒有煞？來挑戰看看～ ${BRAND} ${gameLink()}`;
+ const t=`我在「陽宅辨煞」拿到 ${ts} 顆星，等級「${rankOf(ts)}」！你家有沒有煞？來挑戰看看～ ${BRAND} ${shareURL("copy")}`;
  const p=document.getElementById("shared");const done=m=>{p.textContent=m;p.hidden=false};
  try{navigator.clipboard.writeText(t).then(()=>done("已複製，貼到臉書或 LINE 就能分享。"),()=>done(t))}catch(e){done(t)}}}
 function panSVG(){
@@ -2825,13 +2830,19 @@ function sfx(k){if(!ac)return;const t=ac.currentTime;try{
 
 
 /* ===== 轉換卡：依這關的煞影響的面向，導到面相系統／四象天機書 ===== */
+/* ===== 分享：結果卡一鍵傳 LINE（帶追蹤碼） ===== */
+function shareCard(ks){
+ const nm=(ks||[]).map(k=>SHA[k]&&SHA[k].n).filter(Boolean).slice(0,2);
+ const t=nm.length?`我剛在風水小遊戲找到「${nm.join("」「")}」！你家門口中了幾個煞？三分鐘就看得出來：`:"你家門口中了幾個煞？風羿老師的風水小遊戲，三分鐘就看得出來：";
+ return `<div class="sharebox"><p>覺得準？傳給家人朋友，看看他們家中了幾個</p><a class="btn line" href="${lineShare(t,"line")}" target="_blank" rel="noopener">傳到 LINE</a></div>`;
+}
 function convCard(sc){
  const ks=(cur&&cur.found&&cur.found.size?[...cur.found]:badKeys(sc));
  const ar=[...new Set(ks.flatMap(k=>(IMP[k]?IMP[k][0]:"家運").split("・")))];
  const faceFirst=ar.some(a=>/健康|睡眠|和睦|感情/.test(a))&&!ar.some(a=>/財運|事業/.test(a));
  const F=`<a href="${TOOLS[1].url}" target="_blank" rel="noopener" class="${faceFirst?"":"alt"}"><span class="tch sm">相</span><span>面相系統<small>看你最近的財運、感情、健康</small></span></a>`;
  const D=`<a href="${TOOLS[0].url}" target="_blank" rel="noopener" class="${faceFirst?"alt":""}"><span class="tch sm">卦</span><span>四象天機書<small>該不該買、該不該搬？問一件事</small></span></a>`;
- return `<div class="conv"><p class="ct">房子看完了，換看你自己</p><p class="cs">這關的煞傷的是<b>「${ar.join("、")}」</b>。同一間房子，每個人受的影響不一樣，關鍵在住的人。</p>${faceFirst?F+D:D+F}<p class="cn">巽風官網新會員註冊送 30 點，可直接使用</p></div>`;
+ return `<div class="conv"><p class="ct">房子看完了，換看你自己</p><p class="cs">這關的煞傷的是<b>「${ar.join("、")}」</b>。同一間房子，每個人受的影響不一樣，關鍵在住的人。</p>${faceFirst?F+D:D+F}<p class="cn">巽風官網新會員註冊送 30 點，可直接使用</p></div>${shareCard(ks)}`;
 }
 
 /* ===== UX 優化 ===== */
