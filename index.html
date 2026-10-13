@@ -1358,7 +1358,7 @@ function bctr(it){if(it.cx!=null)return[it.cx,it.cy];if(it.x!=null)return[it.x+i
 function windows(x,y,w,h,col){let s="";const st=13;for(let yy=y+8;yy+6<y+h-4;yy+=st)for(let xx=x+8;xx+6<x+w-4;xx+=st)s+=`<rect x="${xx}" y="${yy}" width="6" height="6" fill="${col}" opacity=".7"/>`;return s}
 
 /* ===== 立面圖模式（試作：第一關「巷口的家」） ===== */
-let _elev=false;
+let _elev=false,_in3d=false;
 const EV={
  shadow:(x,y,w,h)=>`<ellipse cx="${x+w/2}" cy="${y+h-1}" rx="${w/2+4}" ry="5" fill="#000" opacity=".18"/>`,
  hit:(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent"/>`,
@@ -1425,6 +1425,21 @@ Object.assign(EV,{
   return b}
 });
 
+
+/* ===== 室內：平面配置不變，家具加厚度（立體小圖示） ===== */
+const BOX3D={bed:["#B9A88C","#7A6A55",.16],sofa:["#7E5E3E","#4F3A26",.22],furn:["#A88450","#6B4F2A",.24],desk:["#9C7444","#5E4424",.2],fridge:["#AEB8BF","#5F6A72",.2],stove:["#2A2D30","#121416",.2],sink:["#B4BDC2","#5F6A72",.2],altar:["#6E1A12","#3A0A06",.24],tank:["#2F6E8E","#1A4458",.22]};
+function box3d(it){const{x,y,w,h}=it,[fc,sc,k]=BOX3D[it.k];const d=Math.max(6,Math.min(16,Math.min(w,h)*k));
+ it.__r=1;const raw=draw(it);delete it.__r;
+ let f=`<rect x="${x+3}" y="${y+5}" width="${w}" height="${h}" rx="4" fill="#000" opacity=".22"/><g transform="translate(0,${y}) scale(1,${((h-d)/h).toFixed(3)}) translate(0,${-y})">${raw.replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*" fill="#000" opacity="\.1\d?"[^>]*\/>/,"")}</g>`;
+ f+=`<rect x="${x}" y="${y+h-d}" width="${w}" height="${d}" rx="2" fill="${fc}" stroke="${sc}" stroke-width="1.2"/><line x1="${x+1}" y1="${y+h-d+1}" x2="${x+w-1}" y2="${y+h-d+1}" stroke="#fff" stroke-opacity=".35"/>`;
+ if(it.k==="furn"&&w>24){const n=Math.max(1,Math.round(w/40));for(let i=0;i<n;i++){const hx=x+(i+.5)*w/n;f+=`<rect x="${hx-5}" y="${y+h-d/2-1.5}" width="10" height="3" rx="1.5" fill="#F1C35A"/>`}}
+ if(it.k==="bed"||it.k==="sofa"||it.k==="desk")f+=`<rect x="${x+3}" y="${y+h-2}" width="4" height="3" fill="${sc}"/><rect x="${x+w-7}" y="${y+h-2}" width="4" height="3" fill="${sc}"/>`;
+ if(it.k==="fridge")f+=`<rect x="${x+w-8}" y="${y+h-d+2}" width="2.5" height="${d-4}" fill="#5F6A72"/>`;
+ if(it.k==="stove")f+=`<circle cx="${x+w*.3}" cy="${y+h-d/2}" r="2" fill="#F26A3D"/><circle cx="${x+w*.7}" cy="${y+h-d/2}" r="2" fill="#F26A3D"/>`;
+ return f}
+function plant3d(it,raw){const{cx,cy}=it,r=it.r||16;return `<ellipse cx="${cx+2}" cy="${cy+r*.95}" rx="${r*.75}" ry="4" fill="#000" opacity=".22"/><path d="M${cx-r*.55},${cy+r*.25} L${cx+r*.55},${cy+r*.25} L${cx+r*.4},${cy+r*.95} L${cx-r*.4},${cy+r*.95}Z" fill="#B0703E" stroke="#6B3E1E" stroke-width="1.2"/><rect x="${cx-r*.62}" y="${cy+r*.18}" width="${r*1.24}" height="5" rx="2" fill="#C9844C" stroke="#6B3E1E"/>`+`<g transform="translate(0,${-r*.3})">${raw}</g>`}
+function lamp3d(it,raw){const{cx,cy}=it,r=it.r||8;return `<ellipse cx="${cx}" cy="${cy+r*2.4}" rx="${r*.9}" ry="3" fill="#000" opacity=".22"/><rect x="${cx-1.5}" y="${cy}" width="3" height="${r*2.4}" fill="#6B4E24"/><ellipse cx="${cx}" cy="${cy+r*2.4}" rx="${r*.7}" ry="2.5" fill="#6B4E24"/>`+raw}
+
 function homePin(it){const{x,y,w}=it,cx=x+w/2;const py=Math.max(6,y-30);return `<g class="youpin"><rect x="${cx-30}" y="${py}" width="60" height="26" rx="13" fill="#B3261E" stroke="#FFD27A" stroke-width="2"/><path d="M${cx-6} ${py+25} L${cx} ${py+33} L${cx+6} ${py+25}Z" fill="#B3261E"/><text x="${cx}" y="${py+18}" text-anchor="middle" font-size="15" font-weight="900" fill="#FFF3D6" letter-spacing="2">你家</text></g>`}
 function homeElev(it){const{x,y,w,h,door}=it;const rt=y+h*.34,cx=x+w/2;
  let o=`<g class="home nolink"><rect x="${x-8}" y="${y-8}" width="${w+16}" height="${h+16}" rx="10" fill="#FFD95A" opacity=".28"/><rect class="homering" x="${x-8}" y="${y-8}" width="${w+16}" height="${h+16}" rx="10" fill="none" stroke="#E0A92E" stroke-width="3" stroke-dasharray="7 5"/>`+EV.shadow(x,y,w,h);
@@ -1439,6 +1454,7 @@ function homeElev(it){const{x,y,w,h,door}=it;const rt=y+h*.34,cx=x+w/2;
 
 function draw(it){
  if(_elev&&EV[it.k])return EV[it.k](it);
+ if(_in3d&&!it.__r){if(BOX3D[it.k]&&it.x!=null)return box3d(it);if(it.k==="plant"&&it.cx!=null){it.__r=1;const r=draw(it);delete it.__r;return plant3d(it,r)}if(it.k==="lamp"&&it.cx!=null){it.__r=1;const r=draw(it);delete it.__r;return lamp3d(it,r)}}
  const{x,y,w,h,cx,cy}=it;let r=it.r||20;
  switch(it.k){
  case"road":{const hz=w>=h;return `<rect x="${x-(hz?0:3)}" y="${y-(hz?3:0)}" width="${w+(hz?0:6)}" height="${h+(hz?6:0)}" fill="#D9D1BE"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#5F6467"/>`+(hz?`<path d="M${x} ${y+2.5}H${x+w}M${x} ${y+h-2.5}H${x+w}" stroke="#E9E4D6" stroke-width="1"/>`:`<path d="M${x+2.5} ${y}V${y+h}M${x+w-2.5} ${y}V${y+h}" stroke="#E9E4D6" stroke-width="1"/>`)+(hz?`<line x1="${x}" y1="${y+h/2}" x2="${x+w}" y2="${y+h/2}" stroke="#F7F1DC" stroke-width="2" stroke-dasharray="12 10"/>`:`<line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+h}" stroke="#F7F1DC" stroke-width="2" stroke-dasharray="12 10"/>`)}
@@ -1587,7 +1603,7 @@ function sceneSVG(sc,stt,lite){
  const C=stt||cur||EMPTYST;
  const bg=sc.in?`<rect width="400" height="300" fill="#3A322A"/><rect x="20" y="20" width="360" height="260" fill="url(#wood)"/>`+(lite?"":`<rect x="20" y="20" width="360" height="260" fill="url(#floorLight)"/>`)
   :`<rect width="400" height="300" fill="#AFCB8E"/>`+(lite?`<rect width="400" height="300" fill="url(#grass)" opacity=".6"/>`:`<rect width="400" height="300" filter="url(#mottle)" opacity=".6"/><rect width="400" height="300" fill="url(#grass)" opacity=".35"/>`);
- _elev=!sc.in;const solid=(it,inner)=>{if(_elev||!SOLID.has(it.k)||it.x==null)return inner;inner=inner.replace(/<rect[^>]*fill="#000" opacity="\.1\d?"[^>]*\/>/g,"");
+ _elev=!sc.in;_in3d=!!sc.in;const solid=(it,inner)=>{if(_elev||_in3d||!SOLID.has(it.k)||it.x==null)return inner;inner=inner.replace(/<rect[^>]*fill="#000" opacity="\.1\d?"[^>]*\/>/g,"");
   return `<g ${lite?"":'filter="url(#ds)"'}>${inner}<rect x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" rx="3" fill="url(#roof)" pointer-events="none"/></g>`};
  let body="",top="",marks="";
  sc.it.forEach((it,idx)=>{
