@@ -2850,7 +2850,7 @@ function quickStart(){if(midSave&&S[midSave.i])return resumeMid();const nx=ORDER
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 function ftoast(t,cls){const s=document.getElementById("scene");if(!s)return;const d=document.createElement("div");d.className="ftoast "+cls;d.textContent=t;s.appendChild(d);setTimeout(()=>d.remove(),1900)}
 /* 合作店家：推薦碼對應店名，從店家 QR 進來會顯示「○○ 招待」 */
-const STORES={sdytc:"星斗雲旅行社",zhenjiu:"震玖健康"};
+const STORES={};
 const storeName=()=>REF&&STORES[REF]?STORES[REF]:"";
 
 /* ====== v14 掛勾：切換音樂、引導畫面 ====== */
