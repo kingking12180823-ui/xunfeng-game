@@ -1639,7 +1639,7 @@ function render(panel){
  <aside class="panel" aria-live="polite">${cur.g?guide(cur.g[0],cur.g[1],cur.g[2]):""}${panel||`<span class="tag hint">堪輿中</span><h3>${sc.d===3?"這間屋子藏著幾處煞？自己判斷":`這間屋子藏著 ${keys.length} 處煞`}</h3><p>點選平面圖上你覺得有問題的建築、道路、門窗或擺設。</p><p class="muted">提醒：平面圖上北下南，金黃色是你家。</p>`}
  <div class="found-list">${sc.d===3&&!cur.done?[...cur.found].map(k=>`<span class="on">${SHA[k].n}</span>`).join("")+`<span>還有嗎？</span>`:keys.map(k=>`<span class="${cur.found.has(k)?"on":""}">${cur.found.has(k)||cur.done?SHA[k].n:"？？？"}</span>`).join("")}</div></aside></div>`;
  document.getElementById("back").onclick=()=>{sfx("tick");levels()};
- if(cur.done&&!/id="(nx2|lv2)"/.test(panel||"")){ // 關卡結束後（含開完寶箱回來），面板一定有下一步按鈕
+ if(cur.done&&!/id="(nx2|lv2|tofinish)"/.test(panel||"")){ // 關卡結束後（含開完寶箱回來），面板一定有下一步按鈕
   const win=keys.every(k=>cur.found.has(k)),same=S.map((s,i)=>i).filter(i=>S[i].d===sc.d),nI=same[same.indexOf(cur.i)+1];
   const p=app.querySelector(".panel");const r=document.createElement("div");r.className="row";r.style.cssText="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)";
   r.innerHTML=(win&&nI!=null?`<button class="btn" data-a="dnx">下一關 →</button>`:!win?`<button class="btn" data-a="dre">再試一次</button>`:"")+`<button class="btn ghost" data-a="dlv">關卡列表</button>`;
@@ -1659,7 +1659,7 @@ function pick(idx){
   const sh=SHA[it.s],again=cur.found.has(it.s);cur.found.add(it.s);cur.last=again?null:it.s;const isNew=!codex.has(it.s);codex.add(it.s);saveCodex();
   if(!again){sfx("bell");buzz(40)}cur.g=again?["hand",pickOne(G_FOUND)]:["hand",TALK.hand.t,!badKeys(S[cur.i]).every(k=>cur.found.has(k))];saveMid();
   const card=`<span class="tag bad">找到煞氣</span>${isNew?'<span class="tag hint" style="margin-left:6px">收入圖鑑</span>':""}<h3>${sh.n}</h3><p>${sh.w}</p><div class="fix"><b>化解方法</b>${sh.f}</div>${homeCheck(it.s)}${toolHook(it.s)}${askLink(sh.n)}`;
-  if(badKeys(sc).every(k=>cur.found.has(k))){cur.done=true;render(card);setTimeout(()=>finish(true),900);return}
+  if(badKeys(sc).every(k=>cur.found.has(k))){cur.done=true;render(card+`<div class="row" style="justify-content:center;margin-top:14px"><button class="btn big" id="tofinish">看懂了，看這關結果 →</button></div>`);ftoast("煞全部找到了！","bad");const tf=document.getElementById("tofinish");if(tf)tf.onclick=()=>finish(true);const pn=app.querySelector(".panel");if(pn)pn.scrollIntoView({behavior:"smooth",block:"start"});return}
   render(card);ftoast(again?"已找到過":"煞！"+sh.n,"bad");return;
  }
  if(!cur.cleared.has(idx)){cur.cleared.add(idx);cur.qi--;cur.mis++;sfx("wood");}saveMid();cur.g=["stop",TALK.stop.t,true];
