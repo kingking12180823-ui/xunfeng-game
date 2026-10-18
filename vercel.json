@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/assets/:path*","destination":"/:path*"}]}
+{"rewrites":[{"source":"/assets/:path*","destination":"/:path*"}],"redirects":[{"source":"/p/:code","destination":"/?utm_source=partner&utm_campaign=:code#r=:code","permanent":false}]}
