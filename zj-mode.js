@@ -78,6 +78,12 @@
       ovl.querySelector('button')?.focus();
     }
     const originalFinish = window.finish;
+    // 續玩不經關卡介紹，須先移除開場，否則遊戲會在遮罩後方開始。
+    const originalResumeMid = window.resumeMid;
+    window.resumeMid = function () {
+      ovl.querySelector('.splash')?.remove();
+      return originalResumeMid.apply(this, arguments);
+    };
     window.finish = function (win) {
       const index = cur && cur.i;
       const result = originalFinish.apply(this, arguments);
