@@ -8,7 +8,7 @@ function setup(hash, initial = {}) {
     append() {}, prepend() {}, before() {}, after() {}, focus() {}, setAttribute() {}, remove() {},
     querySelector(sel) { return element(id + sel); }, querySelectorAll() { return []; }
   });
-  const originalFinish = () => {}, originalMap = () => 10, originalGame = () => 'original';
+  const originalFinish = win => { if (win) box.prog[box.cur.i] = 3; }, originalMap = () => 10, originalGame = () => 'original';
   const scenes = Array.from({ length: 132 }, () => ({ n: 'other', d: 0 }));
   ['巷口的家', '高樓夾縫', '電塔下的家', '左右高低', '大樓之間'].forEach((n, j) => { scenes[course[j]] = { n, d: j < 2 ? 0 : j < 4 ? 1 : 2 }; });
   const box = {
@@ -20,6 +20,7 @@ function setup(hash, initial = {}) {
     GAME_URL: 'https://xunfeng-game.vercel.app/', app: element('app'), ovl: element('ovl'),
     finish: originalFinish, mapScreen: originalMap, gameLink: originalGame, shareURL: () => 'originalShare',
     quickStart: () => 'originalStart', resumeMid: () => 'resumed', midSave: null, tabD: 0,
+    prog: {}, ORDER: Array.from({ length: 132 }, (_, i) => i), levels: () => 'allLevels',
     badKeys: () => ['target'], play: i => played.push(i), navigator: {},
     addEventListener: (e, fn) => callbacks[e] = fn
   };
@@ -49,12 +50,29 @@ async function main() {
   t.box.cur.i = 23; t.box.finish(true);
   let state = JSON.parse(t.store['xunfeng-zj-reward-v1']);
   assert(/^\d{6}$/.test(state.code)); assert(state.earnedAt); assert(t.box.ovl.innerHTML.includes('五關完成'));
+  assert(t.box.ovl.innerHTML.includes('完整遊戲共有 132 關'));
+  assert(t.box.ovl.innerHTML.includes('還有 126 關'));
+  assert(t.box.ovl.innerHTML.indexOf('zj-moreplay') < t.box.ovl.innerHTML.indexOf('<picture>'));
+  const ticketBeforePlay = t.store['xunfeng-zj-reward-v1'];
+  t.els['zj-play-more'].onclick(); assert.equal(t.played.at(-1), 3);
+  assert.equal(t.store['xunfeng-zj-reward-v1'], ticketBeforePlay);
+  assert.equal(t.els['zj-all-levels'].onclick(), undefined);
+  t.box.midSave = { i: 42, f: [] }; assert.equal(t.box.quickStart(), 'resumed'); t.box.midSave = null;
   console.log('PASS 3/4 wins stay locked; failures, repeats and unrelated levels cannot bypass final stage; progress resumes');
   t.els['zj-confirm'].dataset.staffConfirmed = 'yes'; await t.els['zj-confirm'].onclick();
   state = JSON.parse(t.store['xunfeng-zj-reward-v1']); assert(state.redeemedAt);
   const next = setup('#r=Rose&m=zj', t.store); next.box.mapScreen();
   assert(next.box.ovl.innerHTML.includes('已兌換 · 不可再次領取'));
+  assert(next.box.ovl.innerHTML.includes('完整遊戲共有 132 關'));
+  next.box.prog = { ...t.box.prog };
+  next.box.quickStart(); assert.equal(next.played.at(-1), 3);
   assert.equal(JSON.parse(next.store['xunfeng-zj-reward-v1']).code, state.code);
+  const redeemedBeforePlay = next.store['xunfeng-zj-reward-v1'];
+  next.box.cur.i = 3; next.box.finish(true);
+  assert.equal(JSON.parse(next.store['xunfeng-zj-reward-v1']).redeemedAt, JSON.parse(redeemedBeforePlay).redeemedAt);
+  next.box.prog = Object.fromEntries(next.box.ORDER.map(i => [i, 3]));
+  assert.equal(next.box.quickStart(), 'allLevels');
+  console.log('PASS 132-level invitation above poster; continue before/after redeem, saved game, all-levels fallback, ticket retained');
   for (const redeemedAt of ['', state.redeemedAt]) {
     const legacy = { version: 1, cleared: [0, 1, 2], code: '012345', earnedAt: state.earnedAt, redeemedAt };
     const old = setup('#r=Rose&m=zj', { 'xunfeng-zj-reward-v1': JSON.stringify(legacy) });
