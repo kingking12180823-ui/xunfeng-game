@@ -13,6 +13,12 @@
     const BRANDING = '震玖極品皇膠 × 巽風堪輿研究中心';
     const LOCATION = '換獎位置：中山路 & 三民路 震玖極品皇膠 A';
     const CANONICAL = '#r=Rose&m=zj';
+    const CHALLENGE = ['巷口的家', '高樓夾縫', '電塔下的家', '左右高低', '大樓之間'].map(name => S.findIndex(scene => scene.n === name));
+    const REQUIRED = 5;
+    const completed = value => CHALLENGE.filter(index => index >= 0 && value.cleared.includes(index)).length;
+    // 已發出的舊三關兌獎碼繼續有效，尤其不可重設已兌換紀錄。
+    const hasTicket = value => Boolean(value.code && value.earnedAt);
+    const eligibleForReward = value => hasTicket(value) || completed(value) >= REQUIRED;
     let writable = true;
     function empty() { return { version: 1, cleared: [], code: '', earnedAt: '', redeemedAt: '' }; }
     function read() {
@@ -37,7 +43,7 @@
     REF = 'Rose';
     function timestamp(value) { return new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date(value)); }
     function award(value) {
-      if (value.cleared.length >= 3 && !value.code) {
+      if (completed(value) >= REQUIRED && !value.code) {
         const random = new Uint32Array(1); crypto.getRandomValues(random);
         value.code = String(random[0] % 1000000).padStart(6, '0');
         value.earnedAt = new Date().toISOString();
@@ -47,12 +53,19 @@
     const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/zj-mode.css'; document.head.append(css);
     function renderReward() {
       state = read();
-      if (state.cleared.length >= 3 && !state.code) persist(award(state));
-      const eligible = state.cleared.length >= 3 && state.code && state.earnedAt;
+      if (completed(state) >= REQUIRED && !state.code) persist(award(state));
+      const eligible = hasTicket(state);
       const redeemed = Boolean(state.redeemedAt);
       const preview = eligible ? `<picture><source media="(min-width: 720px)" srcset="/zj-gift-landscape.jpg"><img class="zj-gift" src="/zj-gift-portrait.jpg" alt="震玖極品皇膠粉贈品海報，換獎位置中山路與三民路震玖極品皇膠A" width="1024" height="1536"></picture>` : '';
-      ovl.innerHTML = `<section class="zj-reward" role="dialog" aria-modal="true" aria-label="震玖藏寶圖獎勵"><div class="zj-reward-inner"><header class="zj-reward-header"><span>震玖市集限定 · 藏寶圖獎勵</span><button class="btn ghost" id="zj-close">返回遊戲</button></header><p class="zj-brand">${BRANDING}</p><h2>${redeemed ? '已兌換' : eligible ? '三關完成，寶藏找到了！' : `再破 ${Math.max(0, 3 - state.cleared.length)} 關，解鎖贈品`}</h2>${!eligible ? '<p>在震玖入口成功通過任意三個不同關卡即可解鎖。重玩同一關不重複計數；失敗不計入。</p>' : ''}${preview}<p class="zj-location">${LOCATION}</p>${eligible ? `<div class="zj-ticket ${redeemed ? 'zj-used' : ''}"><span>此裝置兌獎碼</span><strong id="zj-code">${state.code}</strong><p>取得時間：<time id="zj-earned" datetime="${state.earnedAt}">${timestamp(state.earnedAt)}（台北）</time></p>${redeemed ? `<b class="zj-redeemed">已兌換 · 不可再次領取</b><p>兌換時間：${timestamp(state.redeemedAt)}（台北）</p>` : '<p>請出示本頁，由攤位人員核對後操作。</p>'}</div>` : `<p class="zj-progress">已通過 ${Math.min(3,state.cleared.length)} / 3 關</p>`}${eligible && !redeemed ? `<button class="btn red zj-claim" id="zj-confirm" ${writable ? '' : 'disabled'}>攤位人員按此確認已兌換</button>` : ''}${!writable ? '<p role="alert">此瀏覽器無法保存兌換紀錄，請先允許網站儲存資料；目前不能兌換。</p>' : ''}<p class="muted">每個瀏覽器限領一次。退出震玖模式不會清除已兌換紀錄。</p><a class="btn" id="zj-official" href="https://www.xunfeng.tw/?ref=Rose" target="_blank" rel="noopener">前往巽風官網</a></div></section>`;
+      ovl.innerHTML = `<section class="zj-reward" role="dialog" aria-modal="true" aria-label="震玖藏寶圖獎勵"><div class="zj-reward-inner"><header class="zj-reward-header"><span>震玖市集限定 · 藏寶圖獎勵</span><button class="btn ghost" id="zj-close">返回遊戲</button></header><p class="zj-brand">${BRANDING}</p><h2>${redeemed ? '已兌換' : eligible ? (completed(state) >= REQUIRED ? '五關完成，寶藏找到了！' : '寶藏找到了！') : `再破 ${Math.max(0, REQUIRED - completed(state))} 關，解鎖贈品`}</h2>${!eligible ? '<p>在震玖入口成功通過五關挑戰（兩關入門、兩關進階、一關綜合觀察）即可解鎖。重玩同一關不重複計數；失敗不計入。</p>' : ''}${preview}<p class="zj-location">${LOCATION}</p>${eligible ? `<div class="zj-ticket ${redeemed ? 'zj-used' : ''}"><span>此裝置兌獎碼</span><strong id="zj-code">${state.code}</strong><p>取得時間：<time id="zj-earned" datetime="${state.earnedAt}">${timestamp(state.earnedAt)}（台北）</time></p>${redeemed ? `<b class="zj-redeemed">已兌換 · 不可再次領取</b><p>兌換時間：${timestamp(state.redeemedAt)}（台北）</p>` : '<p>請出示本頁，由攤位人員核對後操作。</p>'}</div>` : `<p class="zj-progress">已通過 ${completed(state)} / ${REQUIRED} 關</p>`}${eligible && !redeemed ? `<button class="btn red zj-claim" id="zj-confirm" ${writable ? '' : 'disabled'}>攤位人員按此確認已兌換</button>` : ''}${!writable ? '<p role="alert">此瀏覽器無法保存兌換紀錄，請先允許網站儲存資料；目前不能兌換。</p>' : ''}<p class="muted">每個瀏覽器限領一次。退出震玖模式不會清除已兌換紀錄。</p><a class="btn" id="zj-official" href="https://www.xunfeng.tw/?ref=Rose" target="_blank" rel="noopener">前往巽風官網</a></div></section>`;
       document.getElementById('zj-close').onclick = () => { ovl.innerHTML = ''; };
+      if (!eligible) {
+        const continueButton = document.createElement('button');
+        continueButton.id = 'zj-continue'; continueButton.className = 'btn red';
+        continueButton.textContent = `繼續第 ${completed(state) + 1} 關挑戰`;
+        continueButton.onclick = nextChallenge;
+        ovl.querySelector('.zj-progress').after(continueButton);
+      }
       const confirmButton = document.getElementById('zj-confirm');
       if (confirmButton) confirmButton.onclick = async () => {
         if (confirmButton.dataset.staffConfirmed !== 'yes') {
@@ -68,7 +81,7 @@
         const commit = () => {
           const latest = read();
           if (latest.redeemedAt) { renderReward(); return; }
-          if (!writable || latest.cleared.length < 3 || !latest.code || !latest.earnedAt) { renderReward(); return; }
+          if (!writable || !eligibleForReward(latest) || !latest.code || !latest.earnedAt) { renderReward(); return; }
           latest.redeemedAt = new Date().toISOString();
           if (!persist(latest)) { renderReward(); return; }
           renderReward();
@@ -84,16 +97,32 @@
       ovl.querySelector('.splash')?.remove();
       return originalResumeMid.apply(this, arguments);
     };
+    function nextChallenge() {
+      const latest = read();
+      if (eligibleForReward(latest)) return renderReward();
+      const index = CHALLENGE.find(i => i >= 0 && !latest.cleared.includes(i));
+      if (index == null) return;
+      ovl.innerHTML = '';
+      // 正常續玩；若上次已找齊但尚未結算，重開該關以免卡在完成畫面。
+      if (midSave && midSave.i === index && midSave.f.length < badKeys(S[index]).length) return window.resumeMid();
+      tabD = S[index].d;
+      return window.play(index);
+    }
+    window.quickStart = nextChallenge;
     window.finish = function (win) {
       const index = cur && cur.i;
       const result = originalFinish.apply(this, arguments);
       if (win === true && Number.isInteger(index)) {
-        const latest = read(), wasUnlocked = latest.cleared.length >= 3;
+        const latest = read(), wasUnlocked = eligibleForReward(latest);
         if (!latest.cleared.includes(index)) latest.cleared.push(index);
         if (persist(award(latest))) {
           updateStatus();
-          if (!wasUnlocked && latest.cleared.length >= 3) renderReward();
+          if (!wasUnlocked && eligibleForReward(latest)) renderReward();
         }
+      }
+      if (!document.querySelector('.zj-reward')) {
+        const next = document.getElementById('nx');
+        if (next) { next.textContent = '繼續震玖挑戰'; next.onclick = nextChallenge; }
       }
       return result;
     };
@@ -107,13 +136,34 @@
       });
     }
     const status = document.createElement('button'); status.className = 'zj-status'; status.type = 'button'; status.onclick = renderReward; document.body.append(status);
-    function updateStatus() { state = read(); status.textContent = state.redeemedAt ? '震玖市集 · 已兌換' : state.cleared.length >= 3 ? '震玖市集 · 查看領獎頁' : `震玖市集 · 闖關 ${state.cleared.length}/3`; }
+    function updateStatus() { state = read(); status.textContent = state.redeemedAt ? '震玖市集 · 已兌換' : eligibleForReward(state) ? '震玖市集 · 查看領獎頁' : `震玖市集 · 闖關 ${completed(state)}/${REQUIRED}`; }
     function decorate() {
+      // 手機上的浮動進度不可遮到開場、關卡介紹或結算按鈕。
+      status.hidden = Boolean(ovl.querySelector('.ov,.splash,.zj-reward'));
+      const resultBox = ovl.querySelector('.ov .box');
+      if (resultBox && !resultBox.querySelector('.zj-run-progress')) {
+        const progress = document.createElement('p'); progress.className = 'zj-run-progress';
+        progress.textContent = `震玖尋寶挑戰 ${completed(read())} / ${REQUIRED}`;
+        resultBox.prepend(progress);
+      }
       document.querySelectorAll('.splash,.h2').forEach(el => {
         if (el.querySelector('.zj-brand')) return;
         const label = document.createElement('p'); label.className = 'zj-brand'; label.textContent = BRANDING;
         const anchor = el.querySelector('#enter,#cont'); if (anchor) anchor.before(label); else el.prepend(label);
+        const note = document.createElement('p'); note.className = 'zj-challenge-note';
+        note.textContent = '五關尋寶挑戰｜入門 → 進階 → 綜合觀察';
+        label.after(note);
       });
+      ['cont', 'm1'].forEach(id => {
+        const button = document.getElementById(id); if (!button) return;
+        button.onclick = nextChallenge;
+        if (id === 'cont') {
+          const latest = read();
+          const text = eligibleForReward(latest) ? '查看震玖藏寶獎勵' : `震玖尋寶挑戰 · 已完成 ${completed(latest)} / ${REQUIRED} 關`;
+          if (button.textContent !== text) button.textContent = text;
+        }
+      });
+      const diagramNext = document.getElementById('nx2'); if (diagramNext) diagramNext.onclick = nextChallenge;
       roseLinks();
     }
     const observer = new MutationObserver(decorate); observer.observe(app, { childList: true, subtree: true }); observer.observe(ovl, { childList: true, subtree: true });
