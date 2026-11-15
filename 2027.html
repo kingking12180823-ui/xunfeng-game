@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>2027 丁未流年卡｜巽風堪輿研究中心</title>
+<meta name="description" content="輸入生日，30 秒看懂你的 2027 丁未年劇本、開運色、居家三個動作與天赦日。風羿老師｜巽風堪輿研究中心">
+<meta property="og:title" content="2027 丁未流年卡｜30 秒看懂你的丁未年">
+<meta property="og:description" content="火土旺盛的一年，你的日主劇本是什麼？輸入生日就知道。">
+<meta property="og:image" content="https://xunfeng-game.vercel.app/assets/r_wuxing.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+:root{--bg:#120e0b;--panel:#1e1712;--panel2:#2a2018;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;--red2:#d23b2f;
+--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC","Kaiti TC","DFKai-SB",serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);word-break:keep-all;line-height:1.6}
+body{background:radial-gradient(120% 60% at 50% 0%,#2b1a10 0%,var(--bg) 60%) fixed}
+main{max-width:560px;margin:auto;padding:18px 16px calc(28px + env(safe-area-inset-bottom,0px))}
+.nw{white-space:nowrap}
+header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.seal{display:inline-grid;place-items:center;width:32px;height:32px;background:var(--red);color:#fff3d6;border-radius:5px;font-family:var(--display);font-weight:700}
+.brand{font-family:var(--display);color:var(--gold);font-size:19px;font-weight:700;letter-spacing:.06em}
+h1{font-family:var(--display);font-size:34px;line-height:1.2;margin:22px 0 6px;color:var(--gold2)}
+h1 small{display:block;font-size:17px;color:var(--mute);font-family:var(--body);font-weight:500;margin-top:6px}
+.quote{border-left:4px solid var(--red);padding:8px 12px;background:var(--panel);margin:14px 0 18px;font-size:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+label{display:block;font-size:16px;margin:0 0 6px;color:var(--gold)}
+input[type=date]{width:100%;font:inherit;font-size:18px;padding:12px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);color-scheme:dark}
+.chk{display:flex;align-items:center;gap:10px;margin:14px 0 4px;font-size:16px;color:var(--ink)}
+.chk input{width:22px;height:22px;accent-color:var(--red)}
+.hint{font-size:13px;color:var(--mute);margin:4px 0 0}
+.btn{display:block;width:100%;text-align:center;font:inherit;font-size:18px;font-weight:700;padding:14px;border-radius:12px;border:0;cursor:pointer;text-decoration:none;margin-top:12px}
+.btn.main{background:linear-gradient(180deg,var(--red2),var(--red));color:#fff3d6}
+.btn.gold{background:var(--gold);color:#231607}
+.btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn.line{background:#06C755;color:#fff}
+.err{color:#ff9b8f;font-size:15px;margin-top:8px;min-height:1em}
+#result[hidden]{display:none}
+.hero{text-align:center;padding:22px 16px;background:linear-gradient(180deg,#2c1b10,#1a120c);border:1px solid var(--gold);border-radius:16px;margin-top:18px}
+.hero .k{font-size:15px;color:var(--mute)}
+.hero .g{font-family:var(--display);font-size:76px;line-height:1.1;color:var(--gold2);margin:4px 0}
+.hero .g span{font-size:34px;color:var(--ink);margin-left:6px}
+.hero .t{font-family:var(--display);font-size:22px;color:var(--gold)}
+.hero .s{font-size:13px;color:var(--mute);margin-top:6px}
+h2{font-family:var(--display);font-size:22px;color:var(--gold);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:6px;height:20px;background:var(--red);border-radius:2px}
+.story{font-size:17px;margin:0 0 10px}
+.do,.dont{font-size:16px;margin:4px 0}
+.do b{color:var(--gold)} .dont b{color:#ff9b8f}
+.colors{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:16px}
+.dot{width:16px;height:16px;border-radius:50%;border:1px solid #fff5}
+.taisui{background:#3a1410;border:1px solid var(--red2)}
+.taisui p{margin:0;font-size:16px}
+.acts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.acts li{display:flex;gap:12px;align-items:flex-start}
+.acts .n{flex:none;font-family:var(--display);font-size:20px;width:64px;text-align:center;padding:4px 0;border-radius:8px;background:var(--red);color:#fff3d6}
+.acts p{margin:0;font-size:16px}
+.note{font-size:13px;color:var(--mute);margin:12px 0 0;border-top:1px dashed var(--line);padding-top:10px}
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.days div{text-align:center;padding:8px 4px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;font-size:18px;font-weight:700;color:var(--gold2)}
+.days div small{display:block;font-size:12px;color:var(--mute);font-weight:400}
+.yuan{font-size:15px;margin:10px 0 0;color:var(--ink)}
+.cta .tip{font-size:15px;margin:0 0 4px;color:var(--ink)}
+.small-link{display:block;text-align:center;margin-top:12px;color:var(--mute);font-size:14px}
+.foot{text-align:center;color:var(--mute);font-size:13px;margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+.foot b{color:var(--gold)}
+.save{font-size:13px;color:var(--mute);text-align:center;margin:8px 0 0}
+</style>
+</head>
+<body>
+<main>
+<header><span class="seal">巽</span><span class="brand">巽風堪輿研究中心</span></header>
+
+<h1>2027 丁未流年卡<small>輸入生日，<span class="nw">30 秒</span>看懂你的丁未年</small></h1>
+<div class="quote">2026 丙午是「火」，熱度往外擴散；<br>2027 丁未是「火生土」，熱度落地成形。<br><b>你專注的那件事，會在今年成形。</b></div>
+
+<form id="f" class="card" autocomplete="off">
+  <label for="bd">出生日期（國曆）</label>
+  <input type="date" id="bd" min="1920-01-01" max="2026-12-31" value="1980-01-01" required>
+  <div class="chk"><input type="checkbox" id="late"><label for="late" style="margin:0;color:var(--ink)">我是晚上 11 點（23:00）以後出生</label></div>
+  <p class="hint">晚上 11 點後出生，日主以隔天計算。</p>
+  <button class="btn main" type="submit">算出我的流年卡</button>
+  <div class="err" id="err"></div>
+</form>
+
+<section id="result" hidden>
+  <div class="hero">
+    <div class="k">你的日主</div>
+    <div class="g" id="rGan"></div>
+    <div class="t" id="rTitle"></div>
+    <div class="s" id="rPillar"></div>
+  </div>
+
+  <div class="card">
+    <h2>你的 2027 劇本</h2>
+    <p class="story" id="rStory"></p>
+    <p class="do"><b>宜：</b><span id="rDo"></span></p>
+    <p class="dont"><b>忌：</b><span id="rDont"></span></p>
+  </div>
+
+  <div class="card">
+    <h2>開運色</h2>
+    <p class="hint" style="margin:0">多穿戴此色系的衣物或飾品</p>
+    <div class="colors" id="rColors"></div>
+  </div>
+
+  <div class="card taisui" id="rTaisui" hidden>
+    <h2>太歲提醒</h2>
+    <p id="rTaisuiText"></p>
+  </div>
+
+  <div class="card">
+    <h2>居家三個動作</h2>
+    <ul class="acts">
+      <li><span class="n">中宮清</span><p>九紫入中，家的中心要明亮、整潔、不堆雜物。</p></li>
+      <li><span class="n">北方鎮</span><p>五黃在北方，放一瓶安忍水化解。</p></li>
+      <li><span class="n">東南旺</span><p>八白財星在東南，放紅、黃色催財擺件或生命力強的植栽。</p></li>
+    </ul>
+    <p class="note">年飛星就像天氣預報，家家相同；房屋坐向與宅盤才是房子的「體質」，每間都不一樣，需要專業到府堪驗。</p>
+  </div>
+
+  <div class="card">
+    <h2>2027 天赦日</h2>
+    <p class="hint" style="margin:0 0 8px">一年六次的「宇宙赦免日」，適合啟動、簽約、許願</p>
+    <div class="days">
+      <div>2/28<small>正月廿三</small></div><div>4/29<small>三月廿三</small></div><div>5/15<small>四月初十</small></div>
+      <div>7/14<small>六月十一</small></div><div>9/26<small>八月廿六</small></div><div>12/11<small>十一月十四</small></div>
+    </div>
+    <p class="yuan">三元節：上元 2/20・中元 8/16・下元 11/12</p>
+  </div>
+
+  <div class="card cta">
+    <h2>下一步</h2>
+    <p class="tip">流年卡給你的是一整年的天氣。<br>面對一件具體的事，讓四象天機書幫你做一次判斷。</p>
+    <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">這件事今年能不能做？→ 四象天機書</a>
+    <a class="btn main" id="lkBook" href="https://www.xunfeng.tw/booking" target="_blank" rel="noopener">預約到府堪驗・命理服務</a>
+    <a class="btn line" id="lkLine" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE 官方帳號</a>
+    <button class="btn ghost" type="button" id="share">把流年卡傳給家人（LINE）</button>
+    <p class="save">想保存？直接截圖這一頁即可。</p>
+    <a class="small-link" id="lkCourse" href="https://www.xunfeng.tw/courses" target="_blank" rel="noopener">12/13 掌訣課程報名 →</a>
+    <a class="small-link" href="#" id="again">重新輸入生日</a>
+  </div>
+</section>
+
+<div class="foot"><b>巽風堪輿研究中心</b>｜風羿老師<br>陰陽宅現場堪驗 2,200+ 案例</div>
+</main>
+
+<script>
+(function(){
+const G="甲乙丙丁戊己庚辛壬癸",Z="子丑寅卯辰巳午未申酉戌亥",SX="鼠牛虎兔龍蛇馬羊猴雞狗豬";
+const WX={甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
+const C={藍:"#2f5fa8",黑:"#111",綠:"#2e8b57",白:"#f4f1ea",金:"#d4a93c"};
+const DATA={
+ 木:{t:"食傷生財年",s:"才華有出口，想法能變現；但火土旺，木被洩得厲害，體力與耐心容易透支。",d:"開副業、教學、發表作品",n:"同時開太多戰線",c:["藍","黑","綠"]},
+ 火:{t:"比劫＋食傷年",s:"去年的波動轉為輸出，口才與表現力強；火土兩旺，情緒易燥、說話易傷人。",d:"演講、行銷、創作",n:"衝動投資、與人爭口舌",c:["白","金"]},
+ 土:{t:"印＋比劫年",s:"貴人多、靠山穩，但同類競爭也多；土過旺易固執、保守過頭。",d:"進修、取得資格、穩健評估置產",n:"合夥、借貸、作保",c:["白","金","藍","黑"]},
+ 金:{t:"官印相生年",s:"去年的壓力轉為地位與名聲，利升遷、考證照；但燥土不生金，人際要主動潤滑。",d:"爭取職位、考證照、建立專業形象",n:"與上級硬碰硬",c:["藍","黑"]},
+ 水:{t:"財官並見年",s:"機會與責任一起來，財來壓力也大；火土雙旺，水最受壓，是五行中最需要保養的一組。",d:"量力接案、穩住現金流",n:"熬夜、過度承諾",c:["白","金"]}
+};
+// 推薦碼：?r= 或 #r=
+let REF="";
+try{const q=new URLSearchParams(location.search).get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
+ if(q){REF=decodeURIComponent(q);localStorage.setItem("xunfeng-ref",REF)}else REF=localStorage.getItem("xunfeng-ref")||""}catch(e){}
+function withRef(u){if(!REF)return u;return u+(u.indexOf("?")>-1?"&":"?")+"ref="+encodeURIComponent(REF)}
+["lkTianji","lkBook","lkCourse"].forEach(id=>{const a=document.getElementById(id);a.href=withRef(a.href)});
+
+function dayIdx(y,m,d){const jdn=Math.floor(Date.UTC(y,m-1,d)/86400000)+2440588;return((jdn+49)%60+60)%60}
+// 立春（太陽黃經 315°）日期，UTC+8
+function sunLon(jd){const T=(jd-2451545)/36525,r=Math.PI/180;
+ const L0=280.46646+36000.76983*T,M=(357.52911+35999.05029*T)*r;
+ const Cc=(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M)+0.000289*Math.sin(3*M);
+ const om=(125.04-1934.136*T)*r;return(((L0+Cc-0.00569-0.00478*Math.sin(om))%360)+360)%360}
+function lichunDay(y){let jd=Date.UTC(y,1,2,-8)/86400000+2440587.5; // 2/2 00:00 UTC+8
+ for(let i=0;i<6*24;i++){const a=sunLon(jd),b=sunLon(jd+1/24);if(a<315&&b>=315){return new Date((jd+1/24-2440587.5)*86400000+8*3600000).getUTCDate()}jd+=1/24}return 4}
+
+const f=document.getElementById("f"),err=document.getElementById("err");
+f.addEventListener("submit",e=>{e.preventDefault();err.textContent="";
+ const v=document.getElementById("bd").value;if(!v){err.textContent="請先選擇出生日期";return}
+ let[y,m,d]=v.split("-").map(Number);if(y<1920||y>2026){err.textContent="請輸入 1920–2026 年之間的生日";return}
+ const late=document.getElementById("late").checked;
+ let dt=new Date(Date.UTC(y,m-1,d));if(late)dt=new Date(dt.getTime()+86400000);
+ const i=dayIdx(dt.getUTCFullYear(),dt.getUTCMonth()+1,dt.getUTCDate()),gan=G[i%10],wx=WX[gan],D=DATA[wx];
+ // 生肖：以立春為界（用原始出生日期）
+ const lc=lichunDay(y);let yy=(m<2||(m===2&&d<lc))?y-1:y;const zi=((yy-4)%12+12)%12;
+ const edge=(m===2&&Math.abs(d-lc)<=1);
+ document.getElementById("rGan").innerHTML=gan+"<span>"+wx+"</span>";
+ document.getElementById("rTitle").textContent=gan+"日主｜"+D.t;
+ document.getElementById("rPillar").textContent="日柱 "+G[i%10]+Z[i%12]+"・生肖屬"+SX[zi]+(edge?"（生日在立春前後，以交節時刻為準）":"");
+ document.getElementById("rStory").textContent=D.s;
+ document.getElementById("rDo").textContent=D.d;
+ document.getElementById("rDont").textContent=D.n;
+ document.getElementById("rColors").innerHTML=D.c.map(k=>'<span class="chip"><span class="dot" style="background:'+C[k]+'"></span>'+k+"色</span>").join("");
+ const ts=document.getElementById("rTaisui"),z=Z[zi];
+ if(z==="未"||z==="子"||z==="亥"){ts.hidden=false;
+  document.getElementById("rTaisuiText").textContent=(z==="未"?"屬羊，2027 年值太歲。":"屬"+SX[zi]+"，2027 年未土剋水，受太歲影響。")+"宜至宮廟安太歲，凡事以穩為先。"}
+ else ts.hidden=true;
+ const r=document.getElementById("result");r.hidden=false;
+ window._card={gan,wx,t:D.t};
+ setTimeout(()=>r.scrollIntoView({behavior:"smooth",block:"start"}),50);
+ try{window.va&&window.va("event",{name:"card",data:{gan}})}catch(e){}
+});
+document.getElementById("again").addEventListener("click",e=>{e.preventDefault();document.getElementById("result").hidden=true;window.scrollTo({top:0,behavior:"smooth"})});
+document.getElementById("share").addEventListener("click",()=>{
+ const c=window._card||{};const url="https://xunfeng-game.vercel.app/2027"+(REF?"#r="+encodeURIComponent(REF):"");
+ const txt="我的 2027 丁未年是「"+(c.gan||"")+c.wx+"日主｜"+(c.t||"")+"」，你的呢？輸入生日 30 秒就知道 👉 "+url;
+ location.href="https://line.me/R/share?text="+encodeURIComponent(txt)});
+})();
+</script>
+</body>
+</html>
