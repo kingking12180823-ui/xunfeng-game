@@ -31,6 +31,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);line-height:1.2;m
 .quote b{color:var(--gold2)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
 label{display:block;font-size:var(--fs);margin:0 0 6px;color:var(--gold)}
+select{width:100%;font:inherit;font-size:17px;padding:12px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);color-scheme:dark}
 input[type=date]{width:100%;font:inherit;font-size:18px;padding:12px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);color-scheme:dark}
 .chk{display:flex;align-items:center;gap:10px;margin:14px 0 2px;font-size:var(--fs)}
 .chk input{width:22px;height:22px;accent-color:var(--red);flex:none}
@@ -42,6 +43,7 @@ input[type=date]{width:100%;font:inherit;font-size:18px;padding:12px;border-radi
 .btn.gold{background:var(--gold);color:#231607}
 .btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold)}
 .btn.line{background:#06C755;color:#fff}
+.sex{display:flex;align-items:center;gap:18px;margin:14px 0 2px;font-size:var(--fs)}.sex span{color:var(--gold)}.sex label{display:flex;align-items:center;gap:6px;margin:0;color:var(--ink)}.sex input{width:20px;height:20px;accent-color:var(--red)}
 .err{color:#ff9b8f;font-size:15px;margin-top:8px;min-height:1em}
 #result[hidden]{display:none}
 .hero{text-align:center;padding:20px 14px 18px;background:linear-gradient(180deg,#2c1b10,#1a120c);border:1px solid var(--gold);border-radius:16px;margin-top:16px}
@@ -49,6 +51,12 @@ input[type=date]{width:100%;font:inherit;font-size:18px;padding:12px;border-radi
 .hero .g{font-family:var(--display);font-size:clamp(60px,19vw,78px);line-height:1.1;color:var(--gold2);margin:2px 0;letter-spacing:.04em}
 .hero .t{font-family:var(--display);font-size:clamp(19px,5.6vw,22px);color:var(--gold)}
 .hero .s{font-size:13px;color:var(--mute);margin-top:4px}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 10px}
+.pillars div{border:1px solid var(--line);border-radius:10px;padding:6px 0 8px;background:#1a120c}
+.pillars small{display:block;font-size:12px;color:var(--mute)}
+.pillars b{display:block;font-family:var(--display);font-size:clamp(30px,9.5vw,40px);line-height:1.15;color:var(--ink);font-weight:700}
+.pillars .me{border-color:var(--gold);background:#2c1b10}.pillars .me b{color:var(--gold2)}
+.pillars .na b{color:#5e4528}
 .tags{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:10px}
 .tag{font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink);background:var(--panel2)}
 h2{font-family:var(--display);font-size:20px;color:var(--gold);margin:0 0 2px;display:flex;align-items:center;gap:8px}
@@ -92,16 +100,34 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 <form id="f" class="card" autocomplete="off">
   <label for="bd">出生日期（國曆）</label>
   <input type="date" id="bd" min="1920-01-01" max="2026-12-31" value="1980-01-01" required>
-  <div class="chk"><input type="checkbox" id="late"><label for="late">晚上 11 點（23:00）後出生</label></div>
-  <p class="hint">勾選後，日柱以隔天計算</p>
+  <label for="hr" style="margin-top:14px">出生時辰</label>
+  <select id="hr">
+    <option value="">不知道（不排時柱）</option>
+    <option value="0">早子時 00:00–00:59</option>
+    <option value="1">丑時 01:00–02:59</option>
+    <option value="2">寅時 03:00–04:59</option>
+    <option value="3">卯時 05:00–06:59</option>
+    <option value="4">辰時 07:00–08:59</option>
+    <option value="5">巳時 09:00–10:59</option>
+    <option value="6">午時 11:00–12:59</option>
+    <option value="7">未時 13:00–14:59</option>
+    <option value="8">申時 15:00–16:59</option>
+    <option value="9">酉時 17:00–18:59</option>
+    <option value="10">戌時 19:00–20:59</option>
+    <option value="11">亥時 21:00–22:59</option>
+    <option value="12">晚子時 23:00–23:59</option>
+  </select>
+  <p class="hint">晚子時出生，日柱以隔天計算</p>
+  <div class="sex"><span>性別</span><label><input type="radio" name="sex" value="m">男</label><label><input type="radio" name="sex" value="f">女</label></div>
+  <p class="hint">性別用來排本命飛星（命卦）</p>
   <button class="btn main" type="submit">算出我的流年卡</button>
   <div class="err" id="err"></div>
 </form>
 
 <section id="result" hidden>
   <div class="hero">
-    <div class="k">你的日柱</div>
-    <div class="g" id="rPillar"></div>
+    <div class="k">你的四柱</div>
+    <div class="pillars" id="rPillar"></div>
     <div class="t" id="rTitle"></div>
     <div class="tags" id="rTags"></div>
   </div>
@@ -115,10 +141,25 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
   </div>
 
   <div class="card">
+    <h2>職場・人脈</h2>
+    <p class="cap" id="rYueCap"></p>
+    <p class="lead" id="rYueTag"></p>
+    <p class="txt" id="rYueS"></p>
+    <p class="txt" id="rYueQ" style="margin:0;color:var(--mute)"></p>
+  </div>
+
+  <div class="card">
     <h2>感情・家庭</h2>
     <p class="cap" id="rZhiCap"></p>
     <p class="lead" id="rZhiTag"></p>
     <p class="txt" id="rZhiS" style="margin:0"></p>
+  </div>
+
+  <div class="card" id="rShiCard">
+    <h2>子女・部屬</h2>
+    <p class="cap" id="rShiCap"></p>
+    <p class="lead" id="rShiTag"></p>
+    <p class="txt" id="rShiS" style="margin:0"></p>
   </div>
 
   <div class="card">
@@ -126,6 +167,14 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
     <p class="cap" id="rSxCap"></p>
     <p class="txt" id="rSxS" style="margin:0"></p>
     <div class="ts" id="rTs" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2>本命飛星</h2>
+    <p class="cap">依出生年（立春為界）與性別</p>
+    <p class="lead" id="rMingT"></p>
+    <p class="txt" id="rMingS"></p>
+    <div class="dd" id="rMingD"></div>
   </div>
 
   <div class="card">
@@ -219,6 +268,56 @@ const SXD={
  狗:{s:["土氣同旺，穩中求進","留意人際小口角"]},
  豬:{s:["未土剋亥水，壓力感較重","凡事以穩為先"],ts:"屬豬：未土剋水，受太歲影響"}
 };
+// 月令（出生月支）：職場・人脈，與流年未土
+const YUE={
+ 寅:{r:"寅木剋未土",s:["工作上你有主導權","適合開疆闢土"]},
+ 卯:{r:"卯未半合",s:["同事合作順暢","團隊有向心力"]},
+ 辰:{r:"辰未土氣比和",s:["職場穩定","升遷要靠實績"]},
+ 巳:{r:"巳火生未土",s:["為公司付出多","記得爭取回報"]},
+ 午:{r:"午未六合",s:["長官賞識","貴人就在職場"]},
+ 未:{r:"未未伏吟",s:["老問題容易重演","舊專案要收尾"]},
+ 申:{r:"未土生申金",s:["有人提拔","適合轉調或進修"]},
+ 酉:{r:"未土生酉金",s:["人脈帶來機會","多參加聚會交流"]},
+ 戌:{r:"戌未相刑",s:["職場易有口舌","文件流程要謹慎"]},
+ 亥:{r:"亥未半合",s:["新的合作出現","條件要先談清楚"]},
+ 子:{r:"子未相害",s:["同事間易生誤會","訊息多確認一次"]},
+ 丑:{r:"丑未相沖",s:["職務調動機率高","換跑道宜審慎評估"]}
+};
+// 時柱（時支）：子女・部屬，與流年未土
+const SHI={
+ 子:{r:"子未相害",s:["晚輩易有小誤會","當下說清楚就好"]},
+ 丑:{r:"丑未相沖",s:["子女或部屬有變動","升學、轉職要提早準備"]},
+ 寅:{r:"寅木剋未土",s:["帶人由你主導","學著放手，讓人成長"]},
+ 卯:{r:"卯未半合",s:["子女貼心","部屬得力"]},
+ 辰:{r:"辰未土氣比和",s:["帶人穩定","溝通要再柔軟一點"]},
+ 巳:{r:"巳火生未土",s:["為晚輩付出多","量力而為"]},
+ 午:{r:"午未六合",s:["子女有喜事","部屬齊心"]},
+ 未:{r:"未未伏吟",s:["舊問題容易重演","規矩一次立好"]},
+ 申:{r:"未土生申金",s:["晚輩帶來好消息","適合培養接班人"]},
+ 酉:{r:"未土生酉金",s:["晚輩助力大","適合交棒、帶新人"]},
+ 戌:{r:"戌未相刑",s:["管教易起衝突","先聽再說"]},
+ 亥:{r:"亥未半合",s:["有新成員加入","磨合需要耐心"]}
+};
+const HR_MID=[0.5,2,4,6,8,10,12,14,16,18,20,22,23.5];
+const ZWX={子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
+const SEASON={寅:"孟春",卯:"仲春",辰:"季春",巳:"孟夏",午:"仲夏",未:"季夏",申:"孟秋",酉:"仲秋",戌:"季秋",亥:"孟冬",子:"仲冬",丑:"季冬"};
+const SHENG={木:"火",火:"土",土:"金",金:"水",水:"木"};
+// 本命飛星（命卦）
+const GUA={1:["坎","一白水星","東四命"],2:["坤","二黑土星","西四命"],3:["震","三碧木星","東四命"],4:["巽","四綠木星","東四命"],
+ 6:["乾","六白金星","西四命"],7:["兌","七赤金星","西四命"],8:["艮","八白土星","西四命"],9:["離","九紫火星","東四命"]};
+const JI={1:["東南","南"],2:["東北","西北"],3:["南","東南"],4:["北","東"],6:["西","西南"],7:["西北","東北"],8:["西南","西"],9:["東","北"]}; // [生氣, 延年]
+const Y27={北:5,南:4,東:7,西:2,東北:3,西北:1,東南:8,西南:6,中:9};
+const POS27={5:"北",4:"南",7:"東",2:"西",3:"東北",1:"西北",8:"東南",6:"西南",9:"中宮"};
+const PAL={北:["坎宮主事業與智慧","工作會出現新流向"],西南:["坤宮主家庭與母親","把重心放回家裡"],東:["震宮主行動與開創","適合啟動新計畫"],
+ 東南:["巽宮主文書與遠方","合約、出差、遠行多"],中宮:["本命星入中宮","掌權之年，壓力也大"],西北:["乾宮主貴人與長官","多親近主管與長輩"],
+ 西:["兌宮主口才與享樂","社交多，留意花費"],東北:["艮宮主轉變與累積","適合置產、存錢"],南:["離宮主名聲與曝光","今年你會被看見"]};
+const STAR={1:"一白",2:"二黑",3:"三碧",4:"四綠",5:"五黃",6:"六白",7:"七赤",8:"八白",9:"九紫"};
+const STARNOTE={1:"吉上加吉，宜催旺",4:"吉上加吉，宜催旺",6:"吉上加吉，宜催旺",8:"吉上加吉，宜催旺",9:"吉上加吉，宜催旺",
+ 2:"病符干擾，先放葫蘆",3:"是非干擾，放紅色物品",5:"五黃干擾，先放安忍水",7:"破軍退氣，保持安靜整潔"};
+function benMing(y,sex){let n=sex==="m"?(11-(y%9))%9:(y%9+4)%9;if(n===0)n=9;return n}
+// 太陽黃經區間求月支（以節為界），0=寅
+function jdOf(y,m,d,h){return Date.UTC(y,m-1,d,h-8)/86400000+2440587.5}
+function monthIdx(lam){return Math.floor((((lam-315)%360)+360)%360/30)}
 const lines=a=>a.map(x=>'<span class="ln">'+x+'</span>').join("");
 
 // 推薦碼：?r= 或 #r=
@@ -241,13 +340,37 @@ const $=id=>document.getElementById(id);
 $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  const v=$("bd").value;if(!v){$("err").textContent="請先選擇出生日期";return}
  let[y,m,d]=v.split("-").map(Number);if(y<1920||y>2026){$("err").textContent="請輸入 1920–2026 年之間的生日";return}
- let dt=new Date(Date.UTC(y,m-1,d));if($("late").checked)dt=new Date(dt.getTime()+86400000);
+ const hv=$("hr").value,hk=hv===""?null:Number(hv);
+ let dt=new Date(Date.UTC(y,m-1,d));if(hk===12)dt=new Date(dt.getTime()+86400000);
  const i=dayIdx(dt.getUTCFullYear(),dt.getUTCMonth()+1,dt.getUTCDate()),gan=G[i%10],zhi=Z[i%12],wx=WX[gan];
- const lc=lichunDay(y),yy=(m<2||(m===2&&d<lc))?y-1:y,zi=((yy-4)%12+12)%12,sx=SX[zi],edge=(m===2&&Math.abs(d-lc)<=1);
+ // 以出生時刻的太陽黃經判斷年（立春）與月（節）；不知時辰則取當日結束並標示交界
+ const lA=sunLon(jdOf(y,m,d,hk===null?24:HR_MID[hk])),l0=sunLon(jdOf(y,m,d,0)),l1=sunLon(jdOf(y,m,d,24));
+ const yy=(m<=2&&lA<315&&lA>=240)?y-1:y,zi=((yy-4)%12+12)%12,sx=SX[zi];
+ const mi=monthIdx(lA),medge=hk===null&&monthIdx(l0)!==monthIdx(l1),edge=medge&&m===2;
  const A=GAN[gan],B=ZHI[zhi],S=SXD[sx];
- $("rPillar").textContent=gan+zhi;
+ const sex=(document.querySelector('input[name=sex]:checked')||{}).value;
+ if(!sex){$("err").textContent="請選擇性別";return}
+ // 年柱、月柱
+ const ygi=((yy-4)%10+10)%10,ygan=G[ygi],yzhi=Z[zi];
+  const mz=Z[(mi+2)%12],mg=G[((ygi%5)*2+2+mi)%10];
+ const Yd=YUE[mz],mwx=ZWX[mz],strong=(mwx===wx||SHENG[mwx]===wx);
+ // 本命飛星
+ const bm=benMing(yy,sex),gua=bm===5?(sex==="m"?2:8):bm,GU=GUA[gua],jd=JI[gua],at=POS27[bm];
+ const hz=hk===null?null:Z[hk%12],hg=hk===null?null:G[((i%10)%5*2+(hk%12))%10];
+ const col=(lb,gz,c)=>'<div class="'+(c||"")+'"><small>'+lb+'</small><b>'+gz[0]+'</b><b>'+gz[1]+'</b></div>';
+ $("rPillar").innerHTML=col("時柱",hz?hg+hz:"？？",hz?"":"na")+col("日柱",gan+zhi,"me")+col("月柱",mg+mz)+col("年柱",ygan+yzhi);
+ const sc=$("rShiCard");
+ if(hz){sc.hidden=false;$("rShiCap").textContent="看時支「"+hz+"」與流年未土";$("rShiTag").textContent=SHI[hz].r;$("rShiS").innerHTML=lines(SHI[hz].s)}else sc.hidden=true;
  $("rTitle").textContent=gan+wx+"日主｜"+A.t;
- $("rTags").innerHTML='<span class="tag">日干 '+gan+wx+'</span><span class="tag">日支 '+zhi+'</span><span class="tag">屬'+sx+'</span>';
+ $("rTags").innerHTML='<span class="tag">屬'+sx+'</span><span class="tag">'+GU[0]+'卦・'+GU[2]+'</span>'+(hz?'':'<span class="tag">時辰未填</span>');
+ $("rYueCap").textContent="看月令「"+mz+"」與流年未土"+(medge?"（生日逢節氣交界）":"");
+ $("rYueTag").textContent=Yd.r;
+ $("rYueS").innerHTML=lines(Yd.s);
+ $("rYueQ").innerHTML=lines(["生於"+SEASON[mz]+mz+"月，日主"+(strong?"得令":"失令"),strong?"底氣足，可主動出擊":"宜借力使力，善用貴人"]);
+ $("rMingT").textContent=GU[0]+"卦・"+GU[1]+"｜"+GU[2];
+ $("rMingS").innerHTML=lines(["2027 本命星飛入"+at].concat(PAL[at]));
+ const gs=Y27[jd[0]],ys=Y27[jd[1]];
+ $("rMingD").innerHTML='<b class="y">生氣</b><span>'+lines([jd[0]+"方・今年飛入"+STAR[gs],STARNOTE[gs]])+'</span><b class="y">延年</b><span>'+lines([jd[1]+"方・今年飛入"+STAR[ys],STARNOTE[ys]])+'</span>';
  $("rGanCap").textContent="看日干「"+gan+"」與流年丁火";
  $("rGanP").textContent=A.p;
  $("rGanS").innerHTML=lines(A.s);
@@ -255,7 +378,7 @@ $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  $("rZhiCap").textContent="看日支「"+zhi+"」（配偶宮）與流年未土";
  $("rZhiTag").textContent=B.r;
  $("rZhiS").innerHTML=lines(B.s);
- $("rSxCap").textContent="屬"+sx+"・以立春為界"+(edge?"（生日近立春，以交節時刻為準）":"");
+ $("rSxCap").textContent="屬"+sx+"・以立春為界"+(edge?"（近立春，以交節時刻為準）":"");
  $("rSxS").innerHTML=lines(S.s);
  const ts=$("rTs");
  if(S.ts){ts.hidden=false;ts.innerHTML='<b class="ln">太歲提醒</b>'+lines([S.ts,"宜至宮廟安太歲"])}else ts.hidden=true;
