@@ -52,3 +52,9 @@
 - 舊 `zhenjiu` QR 不再使用；新版 QR 只用 `/zj`。不可為停用舊 QR 而改寫一般原版入口。
 - 修改前 `git pull`、備份 index.html、使用 `zj-mode` 分支；手機驗收與原版回歸全部通過，才能合併 main 並部署。
 - 五關任務完成與已兌換獎勵頁，海報上方須明示完整132關與剩餘未通關數，提供繼續挑戰及全關卡列表。領獎後首頁、開場及續玩進入完整遊戲，結算下一關沿用原版流程；不能再把玩家導回五關獎勵形成循環。兌獎碼與已兌換狀態保留，活動浮動按鈕隨時可回看。
+
+## 講座投票（2026-11-15）
+- 觀眾網址：`https://xunfeng-game.vercel.app/vote`（固定，QR 圖檔 `vote-qr.svg`）；主持網址：`/vote/host#k=VOTE_KEY`。
+- 檔案：`vote.html`（觀眾＋主持同頁）、`vote-data.js`（五題與場景圖）、`api/vote.js`（Vercel Function）。原遊戲 index.html 未改。
+- 需 Vercel 環境變數：Upstash Redis（`KV_REST_API_URL`、`KV_REST_API_TOKEN`，由 Vercel Storage 連結自動產生）＋ `VOTE_KEY`。資料 12 小時自動過期，只供當場顯示。
+- 觀眾輪詢走 CDN `s-maxage=1` 快取，避免 30 支手機打爆資料庫額度。網路不通時主持頁有「改用舉手模式」。

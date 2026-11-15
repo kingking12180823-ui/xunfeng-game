@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>陽宅辨煞｜講座互動</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#181410;--panel:#241c15;--line:#6e5332;--gold:#E3B75C;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;
+--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC","Kaiti TC","DFKai-SB",serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);word-break:keep-all}
+main{max-width:1500px;margin:auto;padding:clamp(14px,2.6vw,40px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.brand{font-family:var(--display);color:var(--gold);font-size:clamp(20px,2.2vw,32px);font-weight:700;letter-spacing:.06em}
+.seal{display:inline-grid;place-items:center;width:1.5em;height:1.5em;background:var(--red);color:#fff3d6;border-radius:4px;margin-right:.4em;font-size:.85em}
+h1{font-family:var(--display);font-size:clamp(28px,4.2vw,64px);line-height:1.18;margin:.35em 0 .2em}
+.lead{font-size:clamp(20px,2.3vw,34px);line-height:1.45;margin:0 0 14px;color:var(--ink)}
+.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(14px,2vw,28px);align-items:start}
+#scene{background:#2a211a;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+#scene svg{display:block;width:100%;height:auto;max-height:56vh}
+.plate rect{fill:#fff7e7;stroke:#6f5c48}.plate text{fill:#20170f;text-anchor:middle;dominant-baseline:middle;font-size:12px;font-weight:800}
+.tag{fill:#594c37;font-size:22px;font-weight:700}
+#choices{display:grid;gap:12px}
+.opt{position:relative;display:block;width:100%;text-align:left;font:inherit;font-size:clamp(22px,2.3vw,34px);font-weight:700;line-height:1.3;
+padding:.6em .8em;border-radius:12px;border:2px solid var(--line);background:#33261b;color:var(--ink);overflow:hidden}
+button.opt{cursor:pointer}
+.opt .L{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--gold);color:#231607;margin-right:.45em;font-size:.85em}
+.opt.sel{border-color:var(--gold);background:#4a3520;box-shadow:0 0 0 3px rgba(227,183,92,.35)}
+.opt.ok{border-color:#ffd991;background:#7a231b}
+.opt.ok .L{background:#fff3d6}
+.opt .n{float:right;font-size:.8em;color:var(--gold)}
+.opt .bar{position:absolute;left:0;bottom:0;height:8px;background:var(--gold);transition:width .8s ease}
+.opt.ok .bar{background:#ffd991}
+#answer{font-size:clamp(19px,1.9vw,28px);line-height:1.55;margin:14px 0 0;padding:12px 14px;border-left:6px solid var(--red);background:#20180f}
+.status{font-size:clamp(18px,1.8vw,26px);color:var(--gold);min-height:1.5em}
+footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.btn{font:inherit;font-weight:700;font-size:clamp(18px,1.8vw,26px);padding:.55em 1em;border-radius:10px;border:1px solid var(--gold);background:var(--gold);color:#21150c;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.lobby{display:grid;grid-template-columns:auto 1fr;gap:clamp(18px,3vw,48px);align-items:center;margin-top:20px}
+#qr{width:min(42vh,380px);background:#fff;border-radius:14px;padding:14px}
+.big{font-size:clamp(26px,3vw,46px);line-height:1.5;font-family:var(--display)}
+.big b{color:var(--gold)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:10px}
+.sum div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.sum b{display:block;font-size:clamp(18px,1.6vw,24px)}
+.sum .pct{display:block;margin:.15em 0;font-family:var(--display);font-size:clamp(40px,4vw,64px);color:var(--gold);line-height:1.1}
+.sum .low .pct{color:#ff8f7a}
+.sum span:last-child{display:block;color:var(--mute);font-size:clamp(15px,1.3vw,19px)}
+.lead,#answer,.opt,h1,.big{word-break:normal;line-break:strict;overflow-wrap:anywhere}
+.wait{text-align:center;padding:12vh 0 6vh}
+.wait .big{font-size:clamp(26px,7vw,46px)}
+.cta{display:inline-block;margin-top:18px;text-decoration:none}
+[hidden]{display:none!important}
+body.phone main{max-width:680px}
+body.phone .grid{grid-template-columns:1fr}
+body.phone h1{font-size:clamp(26px,7vw,40px)}
+body.phone .lead{font-size:clamp(20px,5.4vw,28px)}
+body.phone .opt{font-size:clamp(22px,6vw,30px);padding:.75em .8em}
+@media(max-width:800px){.grid,.lobby{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header><span class="brand"><span class="seal">巽</span>陽宅辨煞｜講座互動</span><span id="tools"></span></header>
+
+<section id="vLobbyHost" hidden>
+  <h1>拿出手機，掃一下就能作答</h1>
+  <div class="lobby">
+    <img id="qr" src="/vote-qr.svg" alt="掃描加入講座互動">
+    <div class="big">
+      <p>用 <b>LINE</b> 或相機掃描左邊的 QR Code</p>
+      <p>不用換 Wi‑Fi、不用登入、<b>不記名</b></p>
+      <p style="color:var(--mute);font-size:.7em">xunfeng-game.vercel.app/vote</p>
+    </div>
+  </div>
+</section>
+
+<section id="vWait" class="wait" hidden>
+  <p class="big" id="waitText">已加入！<br>請看投影，等老師出題</p>
+</section>
+
+<section id="vQ" hidden>
+  <h1 id="title"></h1>
+  <p class="lead" id="prompt"></p>
+  <div class="grid">
+    <div id="scene"></div>
+    <section><div id="choices"></div><p id="answer" hidden></p></section>
+  </div>
+</section>
+
+<section id="vSum" hidden>
+  <h1>全場答題結果</h1>
+  <p class="lead">今天在場朋友的答題分布；答對率低的題目，等一下會一題一題講清楚。</p>
+  <div class="sum" id="sum"></div>
+</section>
+
+<section id="vEnd" class="wait" hidden>
+  <p class="big">謝謝您的參與！<br>答案的道理，老師接著會講。</p>
+  <a class="btn cta" href="/?utm_source=lecture&utm_medium=vote">去玩「陽宅辨煞」132 關</a>
+</section>
+
+<footer>
+  <span class="status" id="status" aria-live="polite"></span>
+  <span>
+    <button class="btn ghost" id="manual" hidden>改用舉手模式</button>
+    <button class="btn" id="action" hidden></button>
+  </span>
+</footer>
+</main>
+
+<script src="/vote-data.js"></script>
+<script>
+(() => {
+const Q = window.VOTE_QUESTIONS;
+const L = ["A", "B", "C"];
+const el = id => document.getElementById(id);
+const isHost = /\/host\/?$/.test(location.pathname) || new URLSearchParams(location.search).has("host");
+const hostKey = (location.hash.match(/k=([^&]+)/) || [])[1] || "";
+document.body.classList.toggle("phone", !isHost);
+
+let state = null, busy = false, last = "", manual = null, failures = 0;
+
+// ---------- 觀眾身分（匿名亂數） ----------
+let token = "";
+try { token = localStorage.getItem("xv-token") || ""; } catch {}
+if (!/^[a-f0-9]{32}$/.test(token)) {
+  token = Array.from(crypto.getRandomValues(new Uint8Array(16)), n => n.toString(16).padStart(2, "0")).join("");
+  try { localStorage.setItem("xv-token", token); } catch {}
+}
+const selKey = s => "xv-sel:" + s.sid + ":" + s.index;
+const getSel = s => { try { const v = localStorage.getItem(selKey(s)); return v === null ? null : +v; } catch { return null; } };
+const setSel = (s, c) => { try { localStorage.setItem(selKey(s), String(c)); } catch {} };
+
+function show(id) {
+  for (const v of ["vLobbyHost", "vWait", "vQ", "vSum", "vEnd"]) el(v).hidden = v !== id;
+}
+
+function options(q, s, mode) {
+  // mode: "vote" | "reveal" | "plain"
+  const counts = s.counts, total = counts ? counts.reduce((a, b) => a + b, 0) : 0;
+  const sel = !isHost && s.sid ? getSel(s) : null;
+  el("choices").replaceChildren(...q.options.map((text, i) => {
+    const b = document.createElement(mode === "vote" ? "button" : "div");
+    b.className = "opt";
+    b.innerHTML = '<span class="L">' + L[i] + '</span>';
+    b.append(text);
+    if (sel === i) b.classList.add("sel");
+    if (mode === "vote") b.onclick = () => vote(i);
+    if (mode === "reveal") {
+      if (i === q.correct) b.classList.add("ok");
+      if (counts) {
+        const pct = total ? Math.round(100 * counts[i] / total) : 0;
+        const n = document.createElement("span");
+        n.className = "n";
+        n.textContent = counts[i] + " 人｜" + pct + "%";
+        b.prepend(n);
+        const bar = document.createElement("i");
+        bar.className = "bar";
+        bar.style.width = "0";
+        b.append(bar);
+        requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = pct + "%"; }));
+      }
+    }
+    return b;
+  }));
+}
+
+function render(s) {
+  const q = Q[s.index];
+  const sig = JSON.stringify([s.phase, s.sid, s.index, s.counts, s.all, !isHost && s.sid ? getSel(s) : null]);
+  if (isHost && s.phase === "open") el("status").textContent = "已收到 " + (s.received || 0) + " 份作答｜按空白鍵公布答案";
+  if (sig === last) return;
+  last = sig;
+
+  if (s.phase === "lobby") {
+    show(isHost ? "vLobbyHost" : "vWait");
+    el("status").textContent = isHost ? "等大家掃碼後，按「開始第一題」" : "";
+  } else if (s.phase === "summary") {
+    if (isHost) {
+      show("vSum");
+      el("sum").replaceChildren(...s.all.map((c, i) => {
+        const t = (c || []).reduce((a, b) => a + b, 0);
+        const pct = t ? Math.round(100 * c[Q[i].correct] / t) : 0;
+        const d = document.createElement("div");
+        if (t && pct < 60) d.className = "low";
+        d.innerHTML = "<b>第 " + (i + 1) + " 題｜" + Q[i].title + "</b><span class=pct>" + (t ? pct + "%" : "—") +
+          "</span><span>答對（共 " + t + " 人作答）</span>";
+        return d;
+      }));
+      el("status").textContent = "紅色數字＝答對率不到六成，講到對應頁時可以回顧";
+    } else {
+      show("vEnd");
+      el("status").textContent = "";
+    }
+  } else {
+    show("vQ");
+    el("title").textContent = "第 " + (s.index + 1) + "／" + Q.length + " 題　" + q.title;
+    el("prompt").textContent = q.prompt;
+    el("scene").innerHTML = q.scene;
+    if (s.phase === "open") {
+      options(q, s, isHost ? "plain" : "vote");
+      el("answer").hidden = true;
+      if (!isHost) {
+        const sel = getSel(s);
+        el("status").textContent = sel === null ? "請點一個答案" : "已送出 " + L[sel] + "　截止前可以改選";
+      }
+    } else {
+      options(q, s, "reveal");
+      el("answer").hidden = false;
+      el("answer").textContent = "答案 " + L[q.correct] + "。" + q.answer;
+      el("status").textContent = isHost ? "" : "本題已揭曉，請看投影";
+    }
+  }
+  if (isHost) {
+    el("action").hidden = false;
+    el("action").textContent = {
+      lobby: "開始第一題", open: "公布答案",
+      revealed: s.index + 1 >= Q.length ? "公布全場結果" : "下一題",
+      summary: "重新開始",
+    }[s.phase];
+  }
+}
+
+// ---------- 連線 ----------
+const headers = () => isHost ? { "x-vote-key": hostKey } : {};
+
+async function refresh() {
+  if (busy || manual) return;
+  if (!isHost && document.hidden) return;
+  busy = true;
+  try {
+    const r = await fetch("/api/vote" + (isHost ? "?host=1" : ""), { headers: headers(), cache: "no-store" });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || "連線失敗");
+    failures = 0;
+    state = j;
+    render(state);
+    el("manual").hidden = true;
+  } catch (e) {
+    failures += 1;
+    el("status").textContent = (e.message || "連線中斷") + "，正在重新連線…";
+    if (isHost && failures >= 2) el("manual").hidden = false;
+  } finally { busy = false; }
+}
+
+async function vote(choice) {
+  if (!state || state.phase !== "open") return;
+  setSel(state, choice);
+  last = "";
+  render(state);
+  try {
+    const r = await fetch("/api/vote", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "vote", sid: state.sid, index: state.index, choice, token }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error);
+  } catch (e) {
+    el("status").textContent = (e && e.message) || "送出失敗，請再點一次";
+  }
+}
+
+async function hostAct() {
+  if (manual) return manualNext();
+  if (!state || busy) return;
+  const action = { lobby: "start", open: "reveal", revealed: "next", summary: "reset" }[state.phase];
+  if (action === "reset" && !confirm("確定要清空結果、重新開始？")) return;
+  busy = true;
+  el("action").disabled = true;
+  try {
+    const r = await fetch("/api/vote", {
+      method: "POST", headers: { "Content-Type": "application/json", ...headers() },
+      body: JSON.stringify({ action }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error);
+    state = j;
+    render(state);
+  } catch (e) {
+    el("status").textContent = (e && e.message) || "操作失敗，請再按一次";
+  } finally { busy = false; el("action").disabled = false; }
+}
+
+// ---------- 舉手模式（網路不通時，投影端單機跑） ----------
+function manualStart() {
+  manual = { sid: "", index: 0, phase: "open" };
+  el("manual").hidden = true;
+  last = "";
+  render(manual);
+  el("status").textContent = "舉手模式：請大家舉手比 A、B、C";
+}
+function manualNext() {
+  if (manual.phase === "open") manual.phase = "revealed";
+  else if (manual.index + 1 < Q.length) { manual.index += 1; manual.phase = "open"; }
+  else manual = { sid: "", index: 0, phase: "open" };
+  last = "";
+  render(manual);
+  if (manual.phase === "open") el("status").textContent = "舉手模式：請大家舉手比 A、B、C";
+  el("action").textContent = manual.phase === "open" ? "公布答案" : manual.index + 1 >= Q.length ? "從頭再來" : "下一題";
+}
+
+if (isHost) {
+  el("action").onclick = hostAct;
+  el("manual").onclick = manualStart;
+  if (!hostKey) { el("status").textContent = "主持網址缺少密鑰（#k=…），目前只能用舉手模式"; el("manual").hidden = false; }
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space" && !e.repeat) { e.preventDefault(); hostAct(); }
+  });
+  const fs = document.createElement("button");
+  fs.className = "btn ghost"; fs.textContent = "全螢幕";
+  fs.onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {});
+  el("tools").append(fs);
+}
+show(isHost ? "vLobbyHost" : "vWait");
+if (!isHost || hostKey) { refresh(); setInterval(refresh, isHost ? 1500 : 2000); }
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+})();
+</script>
+</body>
+</html>
