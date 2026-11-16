@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/qian",
+      "destination": "/qian.html"
+    },
+    {
       "source": "/2027",
       "destination": "/2027.html"
     },

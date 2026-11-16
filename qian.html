@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>巽風三百八十四籤｜丁未年一年一籤</title>
+<meta name="description" content="六十四卦、三百八十四爻，巽風專屬籤詩。靜心、搖籤、擲筊，丁未年一年只求一次。">
+<meta property="og:title" content="巽風三百八十四籤｜丁未年一年一籤">
+<meta property="og:description" content="靜心、搖籤、擲筊，求一支屬於你的丁未籤。">
+<meta property="og:image" content="https://xunfeng-game.vercel.app/assets/r_wuxing.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/qian-data.js"></script>
+<style>
+:root{--bg:#120e0b;--panel:#1e1712;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;--red2:#d23b2f;--paper:#f4ead2;--paperInk:#2a1a0c;
+--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC","Kaiti TC","DFKai-SB",serif;--fs:clamp(15px,4.3vw,17px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);word-break:keep-all;line-height:1.65;-webkit-text-size-adjust:100%}
+body{background:radial-gradient(120% 70% at 50% 0%,#2e1a0e 0%,var(--bg) 62%) fixed;min-height:100vh}
+main{max-width:480px;margin:auto;padding:16px 14px calc(28px + env(safe-area-inset-bottom,0px));min-height:100vh;display:flex;flex-direction:column}
+.ln{display:block;white-space:nowrap}
+header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.seal{display:inline-grid;place-items:center;width:30px;height:30px;background:var(--red);color:#fff3d6;border-radius:5px;font-family:var(--display);font-weight:700}
+.brand{font-family:var(--display);color:var(--gold);font-size:18px;font-weight:700;letter-spacing:.06em}
+.step{display:none;flex:1;flex-direction:column;align-items:center;text-align:center;padding-top:22px}
+.step.on{display:flex;animation:fade .6s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2);margin:8px 0 6px;line-height:1.25}
+.say{font-size:var(--fs);color:var(--ink);margin:6px 0}
+.mute{color:var(--mute);font-size:14px}
+.btn{display:block;width:100%;text-align:center;font:inherit;font-size:18px;font-weight:700;padding:14px 10px;border-radius:12px;border:0;cursor:pointer;text-decoration:none;margin-top:12px;line-height:1.35;user-select:none;-webkit-user-select:none}
+.btn small{display:block;font-size:13px;font-weight:500;opacity:.85;margin-top:2px}
+.btn.main{background:linear-gradient(180deg,var(--red2),var(--red));color:#fff3d6}
+.btn.gold{background:var(--gold);color:#231607}
+.btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.btn.line{background:#06C755;color:#fff}
+.spacer{flex:1}
+/* 靜心 */
+.ring{position:relative;width:200px;height:200px;margin:26px auto 10px;border-radius:50%;display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring .core{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#4a2a14,#1a110a);border:1px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:22px;color:var(--gold2);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(227,183,92,.15)}50%{box-shadow:0 0 40px 12px rgba(227,183,92,.35)}}
+/* 籤筒 */
+.tube{position:relative;width:150px;height:230px;margin:30px auto 6px;transform-origin:50% 90%}
+.tube .body{position:absolute;bottom:0;left:15px;width:120px;height:170px;background:linear-gradient(90deg,#5a1610,#a8261d 45%,#5a1610);border-radius:10px 10px 18px 18px;border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--gold2);writing-mode:vertical-rl;letter-spacing:.2em}
+.tube .stick{position:absolute;bottom:150px;width:9px;height:80px;background:linear-gradient(#e9d2a0,#b98d4e);border-radius:3px}
+.tube.shake{animation:shake .32s ease-in-out infinite}
+@keyframes shake{0%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}100%{transform:rotate(-9deg)}}
+.tube .out{position:absolute;bottom:170px;left:68px;width:12px;height:110px;background:linear-gradient(#f3dca8,#c39a58);border-radius:3px;opacity:0;transform:translateY(40px)}
+.tube.drop .out{animation:out .9s ease forwards}
+@keyframes out{to{opacity:1;transform:translateY(-36px) rotate(14deg)}}
+.meter{width:200px;height:8px;border-radius:99px;background:#2a2018;border:1px solid var(--line);margin:8px auto;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red2),var(--gold));transition:width .15s}
+/* 筊杯 */
+.bwei{display:flex;gap:26px;justify-content:center;margin:36px 0 10px;height:120px;align-items:center}
+.bwei b{width:70px;height:112px;border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:radial-gradient(circle at 40% 35%,#d8432f,#7a140e);border:2px solid #4a0c08;box-shadow:inset -6px -8px 0 rgba(0,0,0,.25);transition:transform .2s}
+.bwei b.flat{background:radial-gradient(circle at 40% 35%,#e8c88e,#a8763e);border-color:#6b4520;box-shadow:inset 6px 8px 0 rgba(0,0,0,.18)}
+.bwei.toss b:first-child{animation:toss1 1.1s ease}
+.bwei.toss b:last-child{animation:toss2 1.1s ease}
+@keyframes toss1{0%{transform:translateY(0) rotate(0)}40%{transform:translateY(-140px) rotate(400deg)}100%{transform:translateY(0) rotate(720deg)}}
+@keyframes toss2{0%{transform:translateY(0) rotate(0)}45%{transform:translateY(-170px) rotate(-460deg)}100%{transform:translateY(0) rotate(-720deg)}}
+.verdict{font-family:var(--display);font-size:28px;color:var(--gold2);min-height:44px;margin:6px 0 0}
+/* 籤紙 */
+.paper{width:100%;background:var(--paper);color:var(--paperInk);border-radius:6px;padding:22px 18px 18px;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.5);transform-origin:top;animation:unroll 1.2s ease}
+@keyframes unroll{from{transform:scaleY(.05);opacity:.2}to{transform:none;opacity:1}}
+.paper::before,.paper::after{content:"";position:absolute;left:-6px;right:-6px;height:12px;background:linear-gradient(#7a140e,#4a0c08);border-radius:6px}
+.paper::before{top:-8px}.paper::after{bottom:-8px}
+.no{font-family:var(--display);font-size:15px;color:#7a140e;letter-spacing:.1em}
+.gua{font-family:var(--display);font-size:clamp(34px,10vw,42px);font-weight:700;margin:4px 0 2px;color:#1c1006}
+.lv{display:inline-block;font-family:var(--display);font-size:18px;padding:2px 14px;border:2px solid #7a140e;color:#7a140e;border-radius:4px;margin:4px 0 10px}
+.poem{font-family:var(--display);font-size:clamp(21px,6.2vw,25px);line-height:1.8;margin:6px 0 10px}
+.yao{border-top:1px dashed #b89a68;padding-top:10px;margin-top:6px;font-size:var(--fs)}
+.yao b{font-family:var(--display);color:#7a140e;font-size:18px}
+.stamp{position:absolute;right:14px;bottom:18px;width:58px;height:58px;border:3px solid rgba(179,38,30,.85);color:rgba(179,38,30,.9);font-family:var(--display);font-weight:700;font-size:18px;line-height:1.05;display:grid;place-items:center;transform:rotate(-12deg);border-radius:6px;opacity:0;animation:stamp .5s ease 1.3s forwards}
+@keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2)}to{opacity:1;transform:rotate(-12deg) scale(1)}}
+.sign{font-size:12px;color:#6b5434;text-align:left;margin-top:12px;padding-right:70px}
+.sealed{width:100%;margin-top:22px;padding:14px;border:1px solid var(--gold);border-radius:12px;background:var(--panel)}
+.sealed .t{font-family:var(--display);color:var(--gold);font-size:20px}
+.cd{font-family:var(--display);font-size:26px;color:var(--gold2);margin:4px 0}
+</style>
+</head>
+<body>
+<main>
+<header><span class="seal">巽</span><span class="brand">巽風三百八十四籤</span></header>
+
+<!-- 0 封閉／入口 -->
+<section class="step" id="s0">
+  <h1>丁未年<br>一年一籤</h1>
+  <p class="say"><span class="ln">六十四卦，三百八十四爻</span><span class="ln">每一支籤，都是一爻天機</span></p>
+  <p class="mute" id="gateMsg"></p>
+  <div class="spacer"></div>
+  <button class="btn main" id="go0">誠心求籤</button>
+  <p class="mute" style="margin-top:10px"><span class="ln">求籤前請準備好一件想問的事</span><span class="ln">一年只能求一次，求過即鎖定</span></p>
+</section>
+
+<!-- 1 靜心 -->
+<section class="step" id="s1">
+  <h1>靜心</h1>
+  <p class="say"><span class="ln">心中默念姓名、生日</span><span class="ln">與你想問的事</span></p>
+  <div class="ring" id="ring">
+    <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="none" stroke="#3a2a18" stroke-width="6"/><circle id="arc" cx="100" cy="100" r="92" fill="none" stroke="#E3B75C" stroke-width="6" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578"/></svg>
+    <div class="core">按住</div>
+  </div>
+  <p class="mute"><span class="ln">按住圓圈，深呼吸三次</span></p>
+</section>
+
+<!-- 2 搖籤 -->
+<section class="step" id="s2">
+  <h1>搖籤</h1>
+  <p class="say" id="shakeTip"><span class="ln">雙手持手機，上下搖動</span><span class="ln">或連續點擊籤筒</span></p>
+  <div class="tube" id="tube">
+    <i class="stick" style="left:40px"></i><i class="stick" style="left:56px;height:92px"></i><i class="stick" style="left:72px;height:86px"></i><i class="stick" style="left:88px;height:96px"></i><i class="stick" style="left:104px"></i>
+    <i class="out"></i>
+    <div class="body">巽風</div>
+  </div>
+  <div class="meter"><i id="meter"></i></div>
+</section>
+
+<!-- 3 擲筊 -->
+<section class="step" id="s3">
+  <h1>擲筊請示</h1>
+  <p class="say"><span class="ln">籤已出筒，請神明確認</span><span class="ln">擲得聖筊，此籤即屬於你</span></p>
+  <div class="bwei" id="bwei"><b></b><b></b></div>
+  <p class="verdict" id="verdict"></p>
+  <p class="mute" id="verdictSub"></p>
+  <div class="spacer"></div>
+  <button class="btn main" id="toss">擲筊</button>
+</section>
+
+<!-- 4 開籤 -->
+<section class="step" id="s4">
+  <div class="paper" id="paper">
+    <div class="no" id="pNo"></div>
+    <div class="gua" id="pGua"></div>
+    <div class="lv" id="pLv"></div>
+    <div class="poem" id="pPoem"></div>
+    <div class="yao" id="pYao"></div>
+    <div class="sign" id="pSign"></div>
+    <div class="stamp">巽風<br>堪輿</div>
+  </div>
+  <div class="sealed">
+    <div class="t">完整解曰・立春開封</div>
+    <p class="say" style="margin:4px 0"><span class="ln">事業、財運、感情、家宅、出行</span><span class="ln">天機未到，暫且封存</span></p>
+    <div class="cd" id="cd"></div>
+  </div>
+  <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
+  <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
+  <a class="btn line" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE，立春提醒你開封</a>
+  <p class="mute" style="margin-top:10px">想保存？直接截圖這張籤紙即可</p>
+</section>
+</main>
+
+<script>
+(function(){
+const YEAR="2027",KEY="xunfeng-qian-"+YEAR,OPEN=new Date("2027-02-04T00:00:00+08:00");
+const POS=["初爻","二爻","三爻","四爻","五爻","上爻"],T={J:"吉",P:"平",X:"凶"};
+const qs=new URLSearchParams(location.search);
+let REF="";
+try{const q=qs.get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
+ if(q){REF=decodeURIComponent(q);localStorage.setItem("xunfeng-ref",REF)}else REF=localStorage.getItem("xunfeng-ref")||""}catch(e){}
+const withRef=u=>REF?u+(u.indexOf("?")>-1?"&":"?")+"ref="+encodeURIComponent(REF):u;
+document.getElementById("lkTianji").href=withRef(document.getElementById("lkTianji").href);
+const preview=qs.get("preview")==="1";
+const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
+const $=id=>document.getElementById(id);
+function show(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));$("s"+n).classList.add("on");window.scrollTo(0,0)}
+const lines=a=>a.map(x=>'<span class="ln">'+x+'</span>').join("");
+
+// 音效（不需外部檔案）
+let ac;function tick(f,d,v){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(v||.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+(d||.08));o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+(d||.08))}catch(e){}}
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+
+// 已求過：直接顯示
+let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+if(saved&&!preview){render(saved,false);show(4)}else{
+ const canNow=preview||REF==="q1121"||Date.now()>=OPEN.getTime();
+ if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
+ else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}
+ show(0)}
+$("go0").addEventListener("click",()=>{if($("go0").onclick)return;tick(660,.3,.1);show(1)});
+
+// 1 靜心：按住 6 秒
+(function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
+ const step=()=>{const p=Math.min(1,(Date.now()-t0)/DUR);arc.style.strokeDashoffset=578*(1-p);core.textContent=p<1/3?"吸氣":p<2/3?"吐氣":"心定";
+  if(p>=1){done=true;tick(880,.6,.12);buzz(60);setTimeout(()=>show(2),500);return}raf=requestAnimationFrame(step)};
+ const start=e=>{e.preventDefault();if(done)return;t0=Date.now();tick(440,.2,.08);raf=requestAnimationFrame(step)};
+ const stop=()=>{if(done)return;cancelAnimationFrame(raf);arc.style.strokeDashoffset=578;core.textContent="按住"};
+ ring.addEventListener("pointerdown",start);ring.addEventListener("pointerup",stop);ring.addEventListener("pointerleave",stop);ring.addEventListener("pointercancel",stop);})();
+
+// 2 搖籤：搖動或連點，累積到 100%
+let energy=0,drawn=null,motionOn=false;
+function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");tick(300+Math.random()*500,.05,.12);
+ clearTimeout(addEnergy.t);addEnergy.t=setTimeout(()=>$("tube").classList.remove("shake"),350);
+ if(energy>=100){drawn=pick();$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);tick(520,.4,.15);setTimeout(()=>{show(3)},1300)}}
+function pick(){const r=new Uint32Array(2);(crypto||window.msCrypto).getRandomValues(r);const q=pool[r[0]%pool.length],y=r[1]%6;return{n:q.n,y}}
+$("tube").addEventListener("pointerdown",()=>{enableMotion();addEnergy(9)});
+function enableMotion(){if(motionOn)return;motionOn=true;
+ const go=()=>window.addEventListener("devicemotion",e=>{const a=e.accelerationIncludingGravity||e.acceleration;if(!a)return;const m=Math.abs(a.x||0)+Math.abs(a.y||0)+Math.abs(a.z||0);if(m>28)addEnergy(4)});
+ try{if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function"){DeviceMotionEvent.requestPermission().then(s=>{if(s==="granted")go()}).catch(()=>{})}else go()}catch(e){}}
+document.addEventListener("click",function once(){if($("s2").classList.contains("on")){enableMotion();document.removeEventListener("click",once)}});
+
+// 3 擲筊：聖筊 50%、笑筊 25%、陰筊 25%
+let tossing=false,tries=0;
+$("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;const bw=$("bwei"),bs=bw.querySelectorAll("b");$("verdict").textContent="";$("verdictSub").textContent="";
+ bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");tick(200,.15,.15);
+ const r=new Uint32Array(1);crypto.getRandomValues(r);const k=r[0]%4; // 0,1 聖 2 笑 3 陰
+ setTimeout(()=>{tick(160,.12,.2);setTimeout(()=>tick(140,.1,.18),120);
+  const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
+  if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
+   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:Date.now(),tries};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
+  else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"，請再誠心搖籤";
+   setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("tube").classList.remove("drop");tossing=false;show(2)},2000);return}
+  },1100)});
+
+// 4 開籤
+function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q){show(0);return}
+ const tier=q.x[rec.y],no=(q.n-1)*6+rec.y+1,d=new Date(rec.t);
+ $("pNo").textContent="巽風三百八十四籤・第"+no+"籤";
+ $("pGua").textContent=q.g+"卦・"+POS[rec.y];
+ $("pLv").textContent=q.lv+"・"+T[tier]+"爻";
+ $("pPoem").innerHTML=lines(q.p);
+ $("pYao").innerHTML='<b>'+POS[rec.y]+"斷曰</b>"+lines(q[tier]);
+ $("pSign").innerHTML=lines([(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"]);
+ cd();setInterval(cd,1000);
+ try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
+function cd(){const s=Math.max(0,OPEN.getTime()-Date.now());if(!s){$("cd").textContent="今日開封";return}
+ const D=Math.floor(s/864e5),H=Math.floor(s%864e5/36e5),M=Math.floor(s%36e5/6e4);$("cd").textContent="還有 "+D+" 天 "+H+" 時 "+M+" 分"}
+})();
+</script>
+</body>
+</html>
