@@ -235,15 +235,16 @@ const preview=qs.get("preview")==="1";
 const NOW=()=>preview&&qs.get("at")?new Date(qs.get("at")+"T12:00:00+08:00").getTime():Date.now();
 const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
 const $=id=>document.getElementById(id);
-function show(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));$("s"+n).classList.add("on");window.scrollTo(0,0)}
+function show(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));$("s"+n).classList.add("on");window.scrollTo(0,0);if(n===4||n===0)amb(false)}
 const lines=a=>a.map(x=>'<span class="ln">'+x+'</span>').join("");
 
 // 音效（/snd/ 內 Pixabay 免版權音效）
 let ac,MUTE=false;try{MUTE=localStorage.getItem("xunfeng-mute")==="1"}catch(e){}
-const SB={},SL={};function sctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();["qing","shake","drop","bwei1","bwei2"].forEach(n=>fetch("/snd/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,d=>SB[n]=d)).catch(()=>{}))}if(ac.state==="suspended")ac.resume();return ac}
+const SB={},SL={};function sctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();["amb","shake","drop","bwei1","bwei2"].forEach(n=>fetch("/snd/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,d=>SB[n]=d)).catch(()=>{}))}if(ac.state==="suspended")ac.resume();return ac}
 function snd(n,v,rate,gap){try{const c=sctx();if(MUTE||!SB[n])return;const t=Date.now();if(gap&&SL[n]&&t-SL[n]<gap)return;SL[n]=t;const s=c.createBufferSource(),g=c.createGain();s.buffer=SB[n];s.playbackRate.value=rate||1;g.gain.value=v==null?1:v;s.connect(g);g.connect(c.destination);s.start()}catch(e){}}
 function tick(){}
-window._xs={snd,sb:SB,get m(){return MUTE},set m(v){MUTE=v}};
+let AS=null,AG=null;function amb(on){try{const c=sctx();if(on){if(AS||MUTE)return;if(!SB.amb){setTimeout(()=>amb(true),300);return}AS=c.createBufferSource();AG=c.createGain();AS.buffer=SB.amb;AS.loop=true;AS.loopStart=.026;AS.loopEnd=8.026;AG.gain.setValueAtTime(0,c.currentTime);AG.gain.linearRampToValueAtTime(.35,c.currentTime+3);AS.connect(AG);AG.connect(c.destination);AS.start(0,.026)}else if(AS){const s=AS,g=AG;AS=AG=null;g.gain.cancelScheduledValues(c.currentTime);g.gain.setValueAtTime(g.gain.value,c.currentTime);g.gain.linearRampToValueAtTime(0,c.currentTime+2);setTimeout(()=>{try{s.stop()}catch(e){}},2100)}}catch(e){}}
+window._xs={snd,amb,sb:SB,get m(){return MUTE},set m(v){MUTE=v;amb(!v&&!!document.querySelector("#s5.on,#s1.on,#s2.on,#s3.on"))}};
 document.addEventListener("pointerdown",()=>{try{sctx()}catch(e){}},{once:true});
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
@@ -254,9 +255,9 @@ if(saved&&!preview){render(saved,false);show(4)}else{
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}
  show(0)}
-$("go0").addEventListener("click",()=>{if($("go0").onclick)return;snd("qing",.7);show(5)});
+$("go0").addEventListener("click",()=>{if($("go0").onclick)return;amb(true);show(5)});
 // 上香：三炷依序點燃
-(function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;snd("qing",.35+n*.15,1+(n-1)*.06);buzz(30);
+(function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;buzz(30);
  $("xiangTip").textContent=["","一敬天","一敬天、二敬地","三炷清香已上，請稟告神明"][n];if(n===3)setTimeout(()=>{$("bing").hidden=false},500)}))})();
 // 不拿香者：點一盞心燈（不分宗教）
 document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{if($("bing").hidden===false)return;
@@ -264,16 +265,16 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
  $("xiangBox").hidden=L;$("lampBox").hidden=!L;$("s5h").textContent=L?"點燈祈願":"上香稟告";
  $("s5say").innerHTML=lines(L?["點亮一盞心燈","向你所敬信的，靜心致意"]:["依序點燃三炷清香","一敬天、二敬地、三敬神明"]);
  $("xiangTip").textContent=L?"輕點燭芯":"輕點每一炷香"}));
-$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");snd("qing",.8);buzz(30);
+$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5,LAMP=false;
 try{const P=XF.getProfile();if(P.name)$("nm").value=P.name}catch(e){}
-$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;snd("qing",.8);show(1)});
+$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;show(1)});
 
 // 1 靜心：按住 6 秒
 (function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
  const step=()=>{const p=Math.min(1,(Date.now()-t0)/DUR);arc.style.strokeDashoffset=578*(1-p);core.textContent=p<1/3?"吸氣":p<2/3?"吐氣":"心定";
-  if(p>=1){done=true;snd("qing",1);buzz(60);setTimeout(()=>show(2),500);return}raf=requestAnimationFrame(step)};
+  if(p>=1){done=true;buzz(60);setTimeout(()=>show(2),500);return}raf=requestAnimationFrame(step)};
  const start=e=>{e.preventDefault();if(done)return;t0=Date.now();sctx();raf=requestAnimationFrame(step)};
  const stop=()=>{if(done)return;cancelAnimationFrame(raf);arc.style.strokeDashoffset=578;core.textContent="按住"};
  ring.addEventListener("pointerdown",start);ring.addEventListener("pointerup",stop);ring.addEventListener("pointerleave",stop);ring.addEventListener("pointercancel",stop);})();
@@ -330,6 +331,6 @@ function cd(){const s=Math.max(0,OPEN.getTime()-NOW());if(!s){$("cd").textConten
 })();
 </script>
 <button id="mute" aria-label="音效開關" style="position:fixed;top:10px;right:10px;z-index:50;width:38px;height:38px;border-radius:50%;border:1px solid rgba(201,168,76,.5);background:rgba(10,8,6,.7);color:#c9a84c;font-size:17px">🔔</button>
-<script>(function(){const b=document.getElementById("mute");const X=window._xs;if(!X)return;const u=()=>{b.textContent=X.m?"🔕":"🔔"};u();b.addEventListener("click",()=>{X.m=!X.m;try{localStorage.setItem("xunfeng-mute",X.m?"1":"0")}catch(e){}u();if(!X.m)X.snd("qing",.5)})})();</script>
+<script>(function(){const b=document.getElementById("mute");const X=window._xs;if(!X)return;const u=()=>{b.textContent=X.m?"🔕":"🔔"};u();b.addEventListener("click",()=>{X.m=!X.m;try{localStorage.setItem("xunfeng-mute",X.m?"1":"0")}catch(e){}u();})})();</script>
 </body>
 </html>
