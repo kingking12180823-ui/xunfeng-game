@@ -72,6 +72,17 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 .xiang .smoke{position:absolute;top:-70px;width:30px;height:70px;opacity:0;background:radial-gradient(ellipse at 50% 100%,rgba(230,220,200,.45),transparent 70%);filter:blur(3px)}
 .xiang.lit .smoke{animation:smoke 3s ease-in-out infinite}
 @keyframes smoke{0%{opacity:0;transform:translateY(10px) scaleX(.6)}40%{opacity:.8}100%{opacity:0;transform:translateY(-40px) scaleX(1.4) rotate(8deg)}}
+.mode{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.mode button{font:inherit;font-size:15px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer}
+.mode button.on{border-color:var(--gold);color:var(--gold2);background:#2a1d10}
+.lampbox{display:flex;justify-content:center;margin:40px 0 6px;height:150px;align-items:flex-end}
+.lamp{position:relative;width:70px;height:120px;cursor:pointer}
+.lamp i{position:absolute;bottom:0;left:15px;width:40px;height:80px;border-radius:6px;background:linear-gradient(90deg,#d8cdb4,#fbf3e2 45%,#c9b993);border:1px solid #e3b75c}
+.lamp b{position:absolute;bottom:80px;left:33px;width:3px;height:10px;background:#333}
+.lamp em{position:absolute;bottom:88px;left:24px;width:22px;height:34px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff6c8,#ffb347 45%,#ff6a1a 75%,transparent 76%);opacity:0;transform-origin:50% 100%}
+.lamp.lit em{opacity:1;animation:flick 1.2s ease-in-out infinite}
+.lamp.lit::after{content:"";position:absolute;bottom:60px;left:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,190,90,.35),transparent 65%);pointer-events:none}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.08,1.15) rotate(2deg)}}
 .burner{width:170px;height:34px;margin:-8px auto 0;background:linear-gradient(#c8a45d,#7a5a24);border-radius:4px 4px 30px 30px;border:1px solid #e3b75c}
 .form{width:100%;text-align:left;margin-top:12px}
 .form label{display:block;color:var(--gold);font-size:15px;margin:10px 0 4px}
@@ -119,10 +130,12 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 
 <!-- 0.5 上香稟告 -->
 <section class="step" id="s5">
-  <h1>上香稟告</h1>
-  <p class="say"><span class="ln">依序點燃三炷清香</span><span class="ln">一敬天、二敬地、三敬神明</span></p>
-  <div class="altar"><div class="xiang" data-i="0"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="1"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="2"><span class="smoke"></span><em></em><i></i></div></div>
-  <div class="burner"></div>
+  <h1 id="s5h">上香稟告</h1>
+  <div class="mode"><button class="on" data-m="x">上香</button><button data-m="l">點一盞心燈</button></div>
+  <p class="say" id="s5say"><span class="ln">依序點燃三炷清香</span><span class="ln">一敬天、二敬地、三敬神明</span></p>
+  <div id="xiangBox"><div class="altar"><div class="xiang" data-i="0"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="1"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="2"><span class="smoke"></span><em></em><i></i></div></div>
+  <div class="burner"></div></div>
+  <div id="lampBox" hidden><div class="lampbox"><div class="lamp" id="lamp"><i></i><b></b><em></em></div></div></div>
   <p class="mute" id="xiangTip">輕點每一炷香</p>
   <div class="form" id="bing" hidden>
     <label for="nm">稟告姓名（可不填，只存在你的手機）</label>
@@ -226,6 +239,14 @@ $("go0").addEventListener("click",()=>{if($("go0").onclick)return;tick(660,.3,.1
 // 上香：三炷依序點燃
 (function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;tick(520+n*110,.5,.1);buzz(30);
  $("xiangTip").textContent=["","一敬天","一敬天、二敬地","三炷清香已上，請稟告神明"][n];if(n===3)setTimeout(()=>{$("bing").hidden=false},500)}))})();
+// 不拿香者：點一盞心燈（不分宗教）
+document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{if($("bing").hidden===false)return;
+ document.querySelectorAll(".mode button").forEach(x=>x.classList.toggle("on",x===b));const L=b.dataset.m==="l";
+ $("xiangBox").hidden=L;$("lampBox").hidden=!L;$("s5h").textContent=L?"點燈祈願":"上香稟告";
+ $("s5say").innerHTML=lines(L?["點亮一盞心燈","向你所敬信的，靜心致意"]:["依序點燃三炷清香","一敬天、二敬地、三敬神明"]);
+ $("xiangTip").textContent=L?"輕點燭芯":"輕點每一炷香"}));
+$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;l.classList.add("lit");tick(700,.6,.1);buzz(30);
+ $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5;
 $("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
 
