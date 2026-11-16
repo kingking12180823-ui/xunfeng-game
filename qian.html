@@ -58,10 +58,10 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 .bwei{display:flex;gap:26px;justify-content:center;margin:36px 0 10px;height:120px;align-items:center}
 .bwei b{width:70px;height:112px;border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:radial-gradient(circle at 40% 35%,#d8432f,#7a140e);border:2px solid #4a0c08;box-shadow:inset -6px -8px 0 rgba(0,0,0,.25);transition:transform .2s}
 .bwei b.flat{background:radial-gradient(circle at 40% 35%,#e8c88e,#a8763e);border-color:#6b4520;box-shadow:inset 6px 8px 0 rgba(0,0,0,.18)}
-.bwei.toss b:first-child{animation:toss1 1.1s ease}
-.bwei.toss b:last-child{animation:toss2 1.1s ease}
-@keyframes toss1{0%{transform:translateY(0) rotate(0)}40%{transform:translateY(-140px) rotate(400deg)}100%{transform:translateY(0) rotate(720deg)}}
-@keyframes toss2{0%{transform:translateY(0) rotate(0)}45%{transform:translateY(-170px) rotate(-460deg)}100%{transform:translateY(0) rotate(-720deg)}}
+.bwei.toss b:first-child{animation:toss1 1.1s linear}
+.bwei.toss b:last-child{animation:toss2 1.1s linear}
+@keyframes toss1{0%{transform:translateY(0) rotate(0);animation-timing-function:cubic-bezier(.2,.6,.4,1)}35%{transform:translateY(-140px) rotate(400deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}70%{transform:translateY(0) rotate(690deg);animation-timing-function:ease-out}80%{transform:translateY(-14px) rotate(705deg);animation-timing-function:ease-in}90%{transform:translateY(0) rotate(716deg)}100%{transform:translateY(0) rotate(720deg)}}
+@keyframes toss2{0%{transform:translateY(0) rotate(0);animation-timing-function:cubic-bezier(.2,.6,.4,1)}38%{transform:translateY(-170px) rotate(-460deg);animation-timing-function:cubic-bezier(.6,0,.9,.4)}74%{transform:translateY(0) rotate(-695deg);animation-timing-function:ease-out}83%{transform:translateY(-10px) rotate(-708deg);animation-timing-function:ease-in}92%{transform:translateY(0) rotate(-717deg)}100%{transform:translateY(0) rotate(-720deg)}}
 .verdict{font-family:var(--display);font-size:28px;color:var(--gold2);min-height:44px;margin:6px 0 0}
 /* 上香 */
 .altar{display:flex;justify-content:center;gap:26px;margin:26px 0 6px;height:190px;align-items:flex-end}
@@ -296,7 +296,7 @@ let tossing=false,tries=0;
 $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;const bw=$("bwei"),bs=bw.querySelectorAll("b");$("verdict").textContent="";$("verdictSub").textContent="";
  bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");
  const r=new Uint32Array(1);crypto.getRandomValues(r);const k=r[0]%4; // 0,1 聖 2 笑 3 陰
- setTimeout(()=>{snd("bwei"+(1+Math.floor(Math.random()*3)),1);
+ setTimeout(()=>snd("bwei"+(1+Math.floor(Math.random()*3)),1),770);setTimeout(()=>{
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
    setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
