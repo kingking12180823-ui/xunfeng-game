@@ -30,9 +30,9 @@
   <p>吳建忠（風羿老師）電子名片</p>
 </header>
 <div class="rail">
-  <img src="nc_1.jpg" alt="吳建忠 主名片">
-  <img src="nc_2.jpg" alt="吳建忠 形象照">
-  <img src="nc_3.jpg" alt="吳建忠 形象照">
+  <img src="nc_1.jpg?v=2" alt="吳建忠 主名片">
+  <img src="nc_2.jpg?v=2" alt="吳建忠 形象照">
+  <img src="nc_3.jpg?v=2" alt="吳建忠 形象照">
 </div>
 <div class="dots">← 左右滑動 →</div>
 <div class="act">
@@ -64,7 +64,7 @@ const footer = (rows) => ({
 });
 const pair = (a, b) => ({ type: 'box', layout: 'horizontal', spacing: 'sm', contents: [a, b] });
 const hero = (img, uri) => ({
-  type: 'image', url: BASE + img, size: 'full', aspectRatio: '2:3', aspectMode: 'cover',
+  type: 'image', url: BASE + img + '?v=2', size: 'full', aspectRatio: '2:3', aspectMode: 'cover',
   action: { type: 'uri', uri }
 });
 const bubble = (img, rows) => ({
