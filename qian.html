@@ -119,6 +119,10 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 .sealed{width:100%;margin-top:22px;padding:14px;border:1px solid var(--gold);border-radius:12px;background:var(--panel)}
 .sealed .t{font-family:var(--display);color:var(--gold);font-size:20px}
 .cd{font-family:var(--display);font-size:26px;color:var(--gold2);margin:4px 0}
+.qbanner{margin:6px 0 10px;line-height:0}.qbanner img{width:100%;height:auto;border-radius:12px;display:block;border:1px solid rgba(201,168,76,.35)}
+#shotBox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
+#shotBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px}
+#shotBox p{color:#f3d28a;margin:0;font-size:16px;text-align:center}#shotBox .row{display:flex;gap:10px}#shotBox .btn{min-width:120px;margin:0}
 </style>
 </head>
 <body>
@@ -127,7 +131,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 
 <!-- 0 封閉／入口 -->
 <section class="step" id="s0">
-  <h1>丁未年<br>一年一籤</h1>
+  <h1 class="qbanner"><img src="/img/qian-banner.webp" width="1000" height="370" alt="巽風三百八十四籤｜丁未年・一年一籤"></h1>
   <p class="say"><span class="ln">六十四卦，三百八十四爻</span><span class="ln">每一支籤，都是一爻天機</span></p>
   <p class="mute" id="gateMsg"></p>
   <div id="pwBox" hidden style="margin:14px auto 0;max-width:260px"><input id="pw" placeholder="請輸入講座口令" autocomplete="off" style="width:100%;padding:11px;border-radius:10px;border:1px solid rgba(201,168,76,.5);background:rgba(0,0,0,.35);color:#f3e7c4;font-size:16px;text-align:center"><p class="mute" id="pwErr" style="color:#ffb4a8;min-height:1.2em;margin-top:6px"></p></div>
@@ -216,10 +220,12 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
   <a class="btn gold" id="lkFace" href="https://www.xunfeng.tw/member-ai/face" target="_blank" rel="noopener">巽風面相系統<small>一張正面照，讀懂你的面相</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
+  <button class="btn gold" type="button" id="shot">存成籤紙圖片<small>可存相簿、分享到 LINE／FB</small></button>
   <a class="btn line" id="lkSave" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">傳到 LINE 給風羿老師保存<small>換手機也找得到・立春開封時通知你</small></a>
   <button class="btn ghost" id="lkCopy" type="button">複製我的籤連結<small id="copyMsg">任何手機打開都能還原這支籤</small></button>
 </section>
 </main>
+<div id="shotBox" hidden><img id="shotImg" alt="我的丁未籤"><p>長按圖片即可儲存或分享</p><div class="row"><button class="btn gold" type="button" id="shotShare">分享圖片</button><button class="btn ghost" type="button" id="shotClose">關閉</button></div></div>
 
 <script>
 (function(){
@@ -324,7 +330,7 @@ function setSave(rec,q){try{const no=(q.n-1)*6+rec.y+1,u=recURL(rec);
  $("lkSave").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent(txt);
  $("lkCopy").onclick=async()=>{let ok=false;try{await navigator.clipboard.writeText(u);ok=true}catch(e){}if(!ok){try{const t=document.createElement("textarea");t.value=u;document.body.appendChild(t);t.select();ok=document.execCommand("copy");t.remove()}catch(e){}}$("copyMsg").textContent=ok?"已複製！貼到 LINE 記事本或傳給自己保存":u}}catch(e){}}
 function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q){show(0);return}
- setSave(rec,q);
+ setSave(rec,q);window._QR=[rec,q];
  const tier=q.x[rec.y],no=(q.n-1)*6+rec.y+1,d=new Date(rec.t);
  $("pNo").textContent="巽風三百八十四籤・第"+no+"籤";
  $("pGua").textContent=(q.full||q.g)+"・"+yaoName(q,rec.y);
@@ -345,6 +351,41 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
   $("lkSave").innerHTML="傳到 LINE 給風羿老師保存<small>老師可依此籤為你詳解</small>"}
  else{$("sealTxt").innerHTML=lines(["事業、財運、感情、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
+
+const TIERMAP=T;
+// ===== 籤紙分享圖（底圖：Canva 設計 /img/qianbg.webp；載入失敗則以程式繪製宣紙）=====
+const CN=n=>{const d="零一二三四五六七八九";if(n<10)return d[n];if(n<20)return "十"+(n%10?d[n%10]:"");if(n<100)return d[Math.floor(n/10)]+"十"+(n%10?d[n%10]:"");const h=Math.floor(n/100),r=n%100;return d[h]+"百"+(r===0?"":r<10?"零"+d[r]:r<20?"一十"+(r%10?d[r%10]:""):CN(r))};
+async function makeShot(){const[rec,q]=window._QR||[];if(!q)throw 0;
+ const W=1080,H=1920,cv=document.createElement("canvas");cv.width=W;cv.height=H;const g=cv.getContext("2d");
+ const load=src=>new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>ok(i);i.onerror=no;i.src=src});
+ try{g.drawImage(await load("/img/qianbg.webp"),0,0,W,H)}catch(e){
+  g.fillStyle="#0d0a07";g.fillRect(0,0,W,H);g.strokeStyle="#c9a24c";g.lineWidth=6;g.strokeRect(40,40,W-80,H-80);
+  const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,"#f3e6c6");gr.addColorStop(1,"#e8d4a6");g.fillStyle=gr;g.fillRect(112,114,856,1692);
+  g.strokeStyle="#b21d13";g.lineWidth=5;g.strokeRect(130,132,820,1656);g.lineWidth=2;g.strokeRect(142,144,796,1632);
+  g.fillStyle="#1e1508";g.font='bold 80px "Noto Serif TC","Noto Serif CJK TC",serif';g.textAlign="center";g.fillText("巽風三百八十四籤",540,280);
+  g.fillStyle="#b21d13";g.fillRect(150,312,780,4);g.fillStyle="#1e1508";g.font='bold 34px "Noto Serif TC","Noto Serif CJK TC",serif';g.fillText("巽風堪輿研究中心",510,1712)}
+ try{await document.fonts.ready}catch(e){}
+ const F='"Noto Serif TC","Noto Serif CJK TC","Songti TC","PMingLiU",serif',INK="#1e1508",RED="#b21d13",MUTE="#6b5532";
+ const T=(t,x,y,sz,c,al,wt,mw)=>{let s=sz;g.font=(wt||"normal")+" "+s+"px "+F;if(mw)while(g.measureText(t).width>mw&&s>14){s--;g.font=(wt||"normal")+" "+s+"px "+F}g.fillStyle=c;g.textAlign=al||"center";g.textBaseline="alphabetic";g.fillText(t,x,y)};
+ const no=(q.n-1)*6+rec.y+1,yn=yaoName(q,rec.y),tier=q.x[rec.y];
+ T("第"+CN(no)+"籤",540,425,62,RED,"center","bold");
+ T((q.full||q.g)+"・"+yn,540,495,44,INK,"center","bold",760);
+ const lv=q.lv+"・"+TIERMAP[tier]+"爻";g.font="bold 32px "+F;const lw=g.measureText(lv).width+44;g.strokeStyle=RED;g.lineWidth=3;g.strokeRect(540-lw/2,520,lw,52);T(lv,540,558,32,RED,"center","bold");
+ // 籤詩：直書，由右至左
+ const P=q.p,cs=118,x0=540+cs*(P.length-1)/2,cy=650,step=72;
+ P.forEach((ln,i)=>{const x=x0-i*cs;[...ln].forEach((ch,k)=>T(ch,x,cy+k*step,60,INK,"center","bold"))});
+ const yb=cy+6*step+40;g.fillStyle="rgba(178,29,19,.55)";g.fillRect(200,yb,680,2);
+ T(yn+"斷曰",540,yb+62,36,RED,"center","bold");
+ const Y=(q.Y?q.Y[rec.y]:q[tier])||[];Y.forEach((l,i)=>T(l,540,yb+118+i*54,36,INK,"center","normal",700));
+ const sign=$("pSign").innerText.split("\n").map(x=>x.trim()).filter(Boolean);
+ const sy=yb+118+Y.length*54+40;T(sign.slice(0,2).join("　　"),540,sy,30,MUTE,"center","normal",700);T(sign.slice(2).join("　"),540,sy+46,28,MUTE,"center","normal",700);
+ try{const qr=await load("https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data="+encodeURIComponent("https://xunfeng-game.vercel.app/qian"));g.drawImage(qr,190,1478,112,112)}catch(e){}
+ T("掃碼求你的",320,1522,26,INK,"left");T("丁未一年一籤",320,1564,28,RED,"left","bold");
+ return cv.toDataURL("image/jpeg",0.9)}
+$("shot").addEventListener("click",async()=>{const b=$("shot"),o=b.innerHTML;b.innerHTML="製作中…";try{const d=await makeShot();$("shotImg").src=d;$("shotBox").hidden=false;window._shot=d}catch(e){alert("圖片製作失敗，請改用截圖")}b.innerHTML=o});
+$("shotClose").addEventListener("click",()=>$("shotBox").hidden=true);
+$("shotShare").addEventListener("click",async()=>{try{const bl=await (await fetch(window._shot)).blob();const f=new File([bl],"巽風丁未籤.jpg",{type:"image/jpeg"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"我的丁未籤"});return}}catch(e){}
+ const a=document.createElement("a");a.href=window._shot;a.download="巽風丁未籤.jpg";document.body.appendChild(a);a.click();a.remove()});
 function cd(){const s=Math.max(0,OPEN.getTime()-NOW());if(!s){$("cd").textContent="今日開封";return}
  const D=Math.floor(s/864e5),H=Math.floor(s%864e5/36e5),M=Math.floor(s%36e5/6e4);$("cd").textContent="還有 "+D+" 天 "+H+" 時 "+M+" 分"}
 })();
