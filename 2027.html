@@ -85,13 +85,17 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 .small-link{display:block;text-align:center;margin-top:12px;color:var(--mute);font-size:14px}
 .foot{text-align:center;color:var(--mute);font-size:13px;margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
 .foot b{color:var(--gold)}
+.banner{margin:14px 0 6px;line-height:0}.banner img{width:100%;height:auto;border-radius:12px;display:block;border:1px solid var(--line)}
+#shotBox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
+#shotBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px;box-shadow:0 0 0 1px var(--line)}
+#shotBox p{color:var(--gold2);margin:0;font-size:16px;text-align:center}#shotBox .row{display:flex;gap:10px}#shotBox button{min-width:120px}
 </style>
 </head>
 <body>
 <main>
 <header><span class="seal">巽</span><span class="brand">巽風堪輿研究中心</span></header>
 
-<h1>2027 丁未流年卡</h1>
+<h1 class="banner"><img src="/img/banner.webp" width="1000" height="370" alt="2027 丁未流年卡｜火生土・熱度落地"></h1>
 <p class="sub">輸入生日，30 秒看懂你的丁未年</p>
 <div class="quote">
   <span class="ln">2026 丙午：火＋火，熱度擴散</span>
@@ -215,8 +219,8 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
     <a class="btn ghost" id="lkGame" href="/">玩陽宅辨煞<small style="color:var(--mute)">看看你家有沒有煞</small></a>
     <a class="btn ghost" id="lkQian" href="/qian" style="border-color:var(--red2);color:#ffb4a8">求一支丁未籤<small style="color:var(--mute)">巽風三百八十四籤・一年一籤</small></a>
     <a class="btn line" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE 官方帳號</a>
+    <button class="btn gold" type="button" id="shot">存成流年卡圖片<small>可存相簿、分享到 LINE／FB</small></button>
     <button class="btn ghost" type="button" id="share">把流年卡傳給家人</button>
-    <p class="save">想保存？直接截圖這一頁即可</p>
     <a class="small-link" id="lkCourse" href="https://www.xunfeng.tw/courses" target="_blank" rel="noopener">12/13 掌訣課程報名 →</a>
     <a class="small-link" href="#" id="again">重新輸入生日</a>
   </div>
@@ -224,6 +228,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 
 <div class="foot"><b>巽風堪輿研究中心</b>｜風羿老師<br>陰陽宅現場堪驗 2,200+ 案例</div>
 </main>
+<div id="shotBox" hidden><img id="shotImg" alt="我的 2027 丁未流年卡"><p>長按圖片即可儲存或分享</p><div class="row"><button class="btn gold" type="button" id="shotShare">分享圖片</button><button class="btn ghost" type="button" id="shotClose">關閉</button></div></div>
 
 <script>
 (function(){
@@ -314,7 +319,7 @@ const JI={1:["東南","南"],2:["東北","西北"],3:["南","東南"],4:["北","
 const Y27={北:5,南:4,東:7,西:2,東北:3,西北:1,東南:8,西南:6,中:9};
 const POS27={5:"北",4:"南",7:"東",2:"西",3:"東北",1:"西北",8:"東南",6:"西南",9:"中宮"};
 const PAL={北:["坎宮主事業與智慧","工作會出現新流向"],西南:["坤宮主家庭與母親","把重心放回家裡"],東:["震宮主行動與開創","適合啟動新計畫"],
- 東南:["巽宮主文書與遠方","合約、出差、遠行多"],中宮:["本命星入中宮","掌權之年，壓力也大"],西北:["乾宮主貴人與長官","多親近主管與長輩"],
+ 東南:["巽宮主文書與遠方","合約、出差、遠行多"],中宮:["坐鎮中宮主全局","掌權之年，壓力也大"],西北:["乾宮主貴人與長官","多親近主管與長輩"],
  西:["兌宮主口才與享樂","社交多，留意花費"],東北:["艮宮主轉變與累積","適合置產、存錢"],南:["離宮主名聲與曝光","今年你會被看見"]};
 const STAR={1:"一白",2:"二黑",3:"三碧",4:"四綠",5:"五黃",6:"六白",7:"七赤",8:"八白",9:"九紫"};
 const STARNOTE={1:"吉上加吉，宜催旺",4:"吉上加吉，宜催旺",6:"吉上加吉，宜催旺",8:"吉上加吉，宜催旺",9:"吉上加吉，宜催旺",
@@ -401,6 +406,39 @@ window.addEventListener("load",()=>{try{const r=JSON.parse(localStorage.getItem(
  const N=["初","二","三","四","五","上"],v=q.l[r.y]==="1"?"九":"六",yn=r.y===0?"初"+v:r.y===5?"上"+v:v+N[r.y];
  const a=$("lkQian");a.innerHTML="我的丁未籤：第"+((q.n-1)*6+r.y+1)+"籤<small style=\"color:var(--mute)\">"+q.full+"・"+yn+"｜"+q.lv+"</small>"}catch(e){}});
 $("again").addEventListener("click",e=>{e.preventDefault();$("result").hidden=true;window.scrollTo({top:0,behavior:"smooth"})});
+
+// ===== 分享圖卡（底圖：Canva 設計 /img/sharebg.webp）=====
+async function makeShot(){
+ const W=1080,H=1920,cv=document.createElement("canvas");cv.width=W;cv.height=H;const g=cv.getContext("2d");
+ const load=src=>new Promise((ok,no)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>ok(i);i.onerror=no;i.src=src});
+ const bg=await load("/img/sharebg.webp");g.drawImage(bg,0,0,W,H);
+ try{await document.fonts.ready}catch(e){}
+ const SERIF='"Noto Serif TC","Noto Serif CJK TC","Songti TC","PMingLiU",serif';
+ const T=(t,x,y,size,color,align,weight,maxW)=>{g.font=(weight||"normal")+" "+size+"px "+SERIF;let s=size;if(maxW){while(g.measureText(t).width>maxW&&s>14){s-=1;g.font=(weight||"normal")+" "+s+"px "+SERIF}}g.fillStyle=color;g.textAlign=align||"left";g.textBaseline="alphabetic";g.fillText(t,x,y)};
+ const GOLD="#E3B75C",GOLD2="#f3d28a",INK="#F6EEDD",MUTE="#B9A88C",RED="#d23b2f";
+ // 四柱
+ T("你的四柱",540,470,30,MUTE,"center");
+ const cols=[...document.querySelectorAll("#rPillar > *")];const xs=[330,470,610,750],cw=120;
+ cols.forEach((c,i)=>{const txt=c.innerText.replace(/\s+/g,"");const lab=txt.slice(0,2),gz=txt.slice(2);const x=xs[i];
+  if(c.classList.contains("me")){g.strokeStyle=GOLD;g.lineWidth=3;g.strokeRect(x-cw/2,490,cw,300)}
+  else{g.strokeStyle="rgba(227,183,92,.35)";g.lineWidth=1.5;g.strokeRect(x-cw/2,490,cw,300)}
+  T(lab,x,535,24,MUTE,"center");T(gz[0]||"？",x,640,84,c.classList.contains("me")?GOLD2:INK,"center","bold");T(gz[1]||"？",x,750,84,c.classList.contains("me")?GOLD2:INK,"center","bold")});
+ T($("rTitle").innerText,540,860,46,GOLD2,"center","bold",620);
+ T([...document.querySelectorAll("#rTags > *")].map(e=>e.innerText).join("・"),540,915,28,MUTE,"center","normal",620);
+ g.strokeStyle="rgba(227,183,92,.45)";g.lineWidth=1.5;g.beginPath();g.moveTo(250,950);g.lineTo(830,950);g.stroke();
+ const first=id=>{const e=$(id);return e?(e.innerText.split("\n").find(x=>x.trim())||"").trim():""};
+ const rows=[["事業",first("rGanP")],["職場",first("rYueTag")],["感情",first("rZhiTag")],["生肖",first("rSxS")],["飛星",first("rMingT")],["開運",[...document.querySelectorAll("#rColors .chip")].map(e=>e.innerText.trim()).join("、")]].filter(r=>r[1]);
+ let y=1015;rows.forEach(([k,v])=>{g.fillStyle=RED;g.fillRect(250,y-34,8,40);T(k,272,y,32,GOLD,"left","bold");T(v,372,y,34,INK,"left","normal",460);y+=74});
+ // QR
+ try{const qr=await load("https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data="+encodeURIComponent("https://xunfeng-game.vercel.app/2027"));g.drawImage(qr,722,1436,118,118)}catch(e){}
+ T("掃碼算出你的",250,1478,28,GOLD,"left");T("2027 丁未流年卡",250,1520,30,GOLD2,"left","bold");
+ return cv.toDataURL("image/jpeg",0.9);
+}
+$("shot").addEventListener("click",async()=>{const b=$("shot"),o=b.innerHTML;b.innerHTML="製作中…";try{const d=await makeShot();$("shotImg").src=d;$("shotBox").hidden=false;window._shot=d}catch(e){alert("圖片製作失敗，請改用截圖")}b.innerHTML=o});
+$("shotClose").addEventListener("click",()=>$("shotBox").hidden=true);
+$("shotShare").addEventListener("click",async()=>{try{const bl=await (await fetch(window._shot)).blob();const f=new File([bl],"2027丁未流年卡.jpg",{type:"image/jpeg"});
+ if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"我的 2027 丁未流年卡"});return}}catch(e){}
+ const a=document.createElement("a");a.href=window._shot;a.download="2027丁未流年卡.jpg";document.body.appendChild(a);a.click();a.remove()});
 $("share").addEventListener("click",()=>{
  const c=window._card||{};const url="https://xunfeng-game.vercel.app/2027"+(REF?"#r="+encodeURIComponent(REF):"");
  const txt="我的 2027 丁未年是「"+(c.gan||"")+(c.zhi||"")+"日柱｜"+(c.t||"")+"」，你的呢？輸入生日 30 秒就知道 👉 "+url;
