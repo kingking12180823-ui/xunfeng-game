@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>吳建忠（風羿老師）電子名片｜巽風堪輿研究中心</title>
+<meta property="og:title" content="吳建忠（風羿老師）電子名片｜巽風堪輿研究中心">
+<meta property="og:description" content="格局先看懂，決定少走錯。陰陽宅堪驗・企業場域・年度企業顧問">
+<meta property="og:image" content="https://xunfeng-game.vercel.app/card/nc_1.jpg">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b0b0b;color:#ede3c8;font-family:"Noto Serif TC","PingFang TC","Microsoft JhengHei",serif;min-height:100vh}
+  header{padding:22px 18px 6px;text-align:center}
+  header h1{margin:0;color:#E2BC5C;font-size:20px;letter-spacing:2px}
+  header p{margin:6px 0 0;color:#a99c7c;font-size:13px}
+  .rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:16px 18px;-webkit-overflow-scrolling:touch}
+  .rail img{flex:none;width:78%;max-width:340px;border-radius:12px;border:1px solid #3a3020;scroll-snap-align:center}
+  .dots{text-align:center;color:#5a4a2a;font-size:12px;margin-top:-4px}
+  .act{padding:14px 18px 28px;display:grid;gap:10px;max-width:440px;margin:0 auto}
+  button,a.b{display:block;width:100%;border:0;border-radius:10px;padding:14px 0;font-size:16px;font-family:inherit;text-align:center;text-decoration:none;cursor:pointer}
+  .pri{background:#C0392B;color:#fff;font-weight:700}
+  .sec{background:transparent;border:1px solid #E2BC5C !important;color:#E2BC5C}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  #msg{text-align:center;font-size:13px;color:#a99c7c;min-height:18px}
+</style>
+</head>
+<body>
+<header>
+  <h1>巽風堪輿研究中心</h1>
+  <p>吳建忠（風羿老師）電子名片</p>
+</header>
+<div class="rail">
+  <img src="nc_1.jpg" alt="吳建忠 主名片">
+  <img src="nc_2.jpg" alt="吳建忠 形象照">
+  <img src="nc_3.jpg" alt="吳建忠 形象照">
+</div>
+<div class="dots">← 左右滑動 →</div>
+<div class="act">
+  <button class="pri" id="share">分享這張名片給 LINE 好友</button>
+  <div id="msg"></div>
+  <a class="b sec" href="https://lin.ee/QPJ7XDY">加 LINE 諮詢</a>
+  <div class="row">
+    <a class="b sec" href="tel:0980199156">撥打電話</a>
+    <a class="b sec" href="https://www.xunfeng.tw/">巽風官網</a>
+  </div>
+  <div class="row">
+    <a class="b sec" href="https://xunfeng-game.vercel.app/">風水小遊戲</a>
+    <a class="b sec" href="https://xunfeng-audio.kingking12180823.workers.dev">有聲大藏經</a>
+  </div>
+</div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+const LIFF_ID = '2012646329-SCVuTuOy';
+const BASE = 'https://xunfeng-game.vercel.app/card/';
+const SHARE_URL = 'https://liff.line.me/' + LIFF_ID;
+
+const btn = (label, uri, color) => ({
+  type: 'button', style: 'primary', height: 'sm', color: color || '#2A2418',
+  action: { type: 'uri', label, uri }
+});
+const footer = (rows) => ({
+  type: 'box', layout: 'vertical', spacing: 'sm', paddingAll: '12px',
+  backgroundColor: '#0B0B0B', contents: rows
+});
+const pair = (a, b) => ({ type: 'box', layout: 'horizontal', spacing: 'sm', contents: [a, b] });
+const hero = (img, uri) => ({
+  type: 'image', url: BASE + img, size: 'full', aspectRatio: '2:3', aspectMode: 'cover',
+  action: { type: 'uri', uri }
+});
+const bubble = (img, rows) => ({
+  type: 'bubble', size: 'mega',
+  hero: hero(img, SHARE_URL),
+  footer: footer(rows),
+  styles: { footer: { backgroundColor: '#0B0B0B' } }
+});
+
+const LINE_OA = 'https://lin.ee/QPJ7XDY';
+const flex = {
+  type: 'flex',
+  altText: '吳建忠（風羿老師）的電子名片｜巽風堪輿研究中心',
+  contents: {
+    type: 'carousel',
+    contents: [
+      bubble('nc_1.jpg', [
+        btn('加 LINE 諮詢', LINE_OA, '#C0392B'),
+        pair(btn('撥打電話', 'tel:0980199156'), btn('巽風官網', 'https://www.xunfeng.tw/')),
+        btn('分享這張名片', SHARE_URL, '#5A4A2A')
+      ]),
+      bubble('nc_2.jpg', [
+        btn('加 LINE 諮詢', LINE_OA, '#C0392B'),
+        pair(btn('風水小遊戲', 'https://xunfeng-game.vercel.app/'), btn('有聲大藏經', 'https://xunfeng-audio.kingking12180823.workers.dev'))
+      ]),
+      bubble('nc_3.jpg', [
+        btn('加 LINE 諮詢', LINE_OA, '#C0392B'),
+        btn('分享這張名片', SHARE_URL, '#5A4A2A')
+      ])
+    ]
+  }
+};
+
+const msg = (t) => { document.getElementById('msg').textContent = t; };
+
+async function share() {
+  if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+  if (!liff.isApiAvailable('shareTargetPicker')) {
+    msg('請在 LINE 裡開啟這個頁面，才能分享名片。');
+    return;
+  }
+  try {
+    const res = await liff.shareTargetPicker([flex], { isMultiple: true });
+    if (res) msg('已送出，謝謝您的分享！');
+  } catch (e) {
+    msg('分享沒有完成：' + (e.message || e));
+  }
+}
+
+document.getElementById('share').addEventListener('click', share);
+
+liff.init({ liffId: LIFF_ID }).then(() => {
+  if (liff.isLoggedIn() &&new URLSearchParams(location.search).get('auto') === '1') share();
+}).catch((e) => msg('名片載入中發生問題：' + (e.message || e)));
+</script>
+</body>
+</html>
