@@ -153,7 +153,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
     <label for="nm">稟告姓名（可不填，只存在你的手機）</label>
     <input id="nm" maxlength="8" placeholder="例如：王小明">
     <label for="ask">今年最想問的事</label>
-    <select id="ask"><option value="0">事業</option><option value="1">財運</option><option value="2">感情</option><option value="3">家宅</option><option value="4">出行</option><option value="5">整體運勢</option></select>
+    <select id="ask"><option value="0">事業</option><option value="1">財運</option><option value="2">感情</option><option value="6">健康</option><option value="3">家宅</option><option value="4">出行</option><option value="5">整體運勢</option></select>
     <button class="btn main" id="go5">稟告完畢</button>
   </div>
 </section>
@@ -231,7 +231,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 <script>
 (function(){
 const YEAR="2027",KEY="xunfeng-qian-"+YEAR,OPEN=new Date("2027-02-04T00:00:00+08:00"),KG=new Date("2026-12-16T00:00:00+08:00");
-const ASK=["事業","財運","感情","家宅","出行","聖意"],ASKNAME=["事業","財運","感情","家宅","出行","整體運勢"];
+const ASK=["事業","財運","感情","家宅","出行","聖意","健康"],ASKNAME=["事業","財運","感情","家宅","出行","整體運勢","健康"],ASKORD=[0,1,2,6,3,4,5];
 const NUM=["初","二","三","四","五","上"],T={J:"吉",P:"平",X:"凶"};
 const yaoName=(q,i)=>{const v=q.l&&q.l[i]==="1"?"九":"六";return i===0?"初"+v:i===5?"上"+v:v+NUM[i]};
 const qs=new URLSearchParams(location.search);
@@ -348,9 +348,9 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
   $("lkHua").href=withRef("https://www.xunfeng.tw/booking")+(REF?"&":"?")+"src=qian&no="+no;
   try{window.va&&window.va("event",{name:"qian_xiong",data:{no}})}catch(e){}}
  if(NOW()>=OPEN.getTime()&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
-  $("jieDl").innerHTML=ASK.map((k,i)=>'<dt>'+k+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
+  $("jieDl").innerHTML=ASKORD.filter(i=>q.S[i]).map(i=>'<dt>'+ASK[i]+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
   $("lkSave").innerHTML="傳到 LINE 給風羿老師保存<small>老師可依此籤為你詳解</small>"}
- else{$("sealTxt").innerHTML=lines(["事業、財運、感情、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
+ else{$("sealTxt").innerHTML=lines(["事業、財運、感情、健康、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
 
 const TIERMAP=T;
