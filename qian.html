@@ -254,9 +254,9 @@ const SALT="xf2027";function ck(x){let h=2166136261;for(const c of SALT+x){h^=c.
 function encRec(r){const j=JSON.stringify([r.n,r.y,r.t,r.ask==null?5:r.ask,r.lamp?1:0,r.ed==="lecture"?1:0,r.who||""]);const b=btoa(unescape(encodeURIComponent(j))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");return b+"."+ck(b)}
 function decRec(k){try{const[b,c]=k.split(".");if(ck(b)!==c)return null;const a=JSON.parse(decodeURIComponent(escape(atob(b.replace(/-/g,"+").replace(/_/g,"/")))));if(!(a[0]>=1&&a[0]<=64&&a[1]>=0&&a[1]<=5))return null;return{n:a[0],y:a[1],t:a[2],ask:a[3],lamp:!!a[4],ed:a[5]?"lecture":"open",who:a[6]||"",tries:1}}catch(e){return null}}
 const recURL=r=>location.origin+"/qian#k="+encRec(r);
-let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
-{const km=location.hash.match(/k=([A-Za-z0-9_-]+\.[a-z0-9]+)/);const lr=km&&decRec(km[1]);if(lr){if(!saved&&!preview){try{localStorage.setItem(KEY,JSON.stringify(lr))}catch(e){}}saved=lr}}
-if(saved&&!preview){render(saved,false);show(4)}else{
+let LINKED=false,saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+{const km=location.hash.match(/k=([A-Za-z0-9_-]+\.[a-z0-9]+)/);const lr=km&&decRec(km[1]);if(lr){LINKED=true;if(!saved&&!preview){try{localStorage.setItem(KEY,JSON.stringify(lr))}catch(e){}}saved=lr}}
+if(saved&&(!preview||LINKED)){render(saved,false);show(4)}else{
  const LECT={q1121:{h:"df19688d172b887d7334ed4eee39aaabc9b316d2593b643d28b499973efc73d7",a:"2026-11-16T00:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"a5827b080f4857f024e8d59fa326cfadbaf622ae3477960cbf33c0407f546320",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
  let UNL="";try{UNL=localStorage.getItem("xunfeng-qian-unlock")||""}catch(e){}
  const L=LECT[REF],inWin=L&&NOW()>=new Date(L.a).getTime()&&NOW()<=new Date(L.b).getTime();
