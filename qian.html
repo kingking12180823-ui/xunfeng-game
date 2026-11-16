@@ -62,6 +62,28 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 @keyframes toss1{0%{transform:translateY(0) rotate(0)}40%{transform:translateY(-140px) rotate(400deg)}100%{transform:translateY(0) rotate(720deg)}}
 @keyframes toss2{0%{transform:translateY(0) rotate(0)}45%{transform:translateY(-170px) rotate(-460deg)}100%{transform:translateY(0) rotate(-720deg)}}
 .verdict{font-family:var(--display);font-size:28px;color:var(--gold2);min-height:44px;margin:6px 0 0}
+/* 上香 */
+.altar{display:flex;justify-content:center;gap:26px;margin:26px 0 6px;height:190px;align-items:flex-end}
+.xiang{position:relative;width:34px;height:180px;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.xiang i{display:block;width:5px;height:150px;background:linear-gradient(#7a3a1c,#4a2210 70%,#c23 70%,#c23)}
+.xiang em{position:absolute;top:-4px;width:9px;height:9px;border-radius:50%;background:#ffb347;opacity:0;box-shadow:0 0 12px 4px #ff7a1a}
+.xiang.lit em{opacity:1;animation:ember 1.6s ease-in-out infinite}
+@keyframes ember{50%{box-shadow:0 0 18px 7px #ff9a3a}}
+.xiang .smoke{position:absolute;top:-70px;width:30px;height:70px;opacity:0;background:radial-gradient(ellipse at 50% 100%,rgba(230,220,200,.45),transparent 70%);filter:blur(3px)}
+.xiang.lit .smoke{animation:smoke 3s ease-in-out infinite}
+@keyframes smoke{0%{opacity:0;transform:translateY(10px) scaleX(.6)}40%{opacity:.8}100%{opacity:0;transform:translateY(-40px) scaleX(1.4) rotate(8deg)}}
+.burner{width:170px;height:34px;margin:-8px auto 0;background:linear-gradient(#c8a45d,#7a5a24);border-radius:4px 4px 30px 30px;border:1px solid #e3b75c}
+.form{width:100%;text-align:left;margin-top:12px}
+.form label{display:block;color:var(--gold);font-size:15px;margin:10px 0 4px}
+.form input,.form select{width:100%;font:inherit;font-size:17px;padding:11px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);color-scheme:dark}
+.ed{position:absolute;left:12px;top:14px;width:46px;height:46px;border:2px solid rgba(179,38,30,.8);color:rgba(179,38,30,.85);font-family:var(--display);font-weight:700;font-size:12px;line-height:1.1;display:grid;place-items:center;border-radius:50%;transform:rotate(8deg)}
+.ed[hidden]{display:none}
+.jie{width:100%;margin-top:18px;background:var(--paper);color:var(--paperInk);border-radius:6px;padding:14px 16px}
+.jie .t{font-family:var(--display);color:#7a140e;font-size:20px;text-align:center;margin-bottom:6px}
+.jie dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:var(--fs);text-align:left}
+.jie dt{font-family:var(--display);color:#7a140e;font-weight:700}
+.jie dd{margin:0}
+.jie .me{background:#f0d9a8;border-radius:4px;padding:0 4px}
 /* 籤紙 */
 .paper{width:100%;background:var(--paper);color:var(--paperInk);border-radius:6px;padding:22px 18px 18px;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.5);transform-origin:top;animation:unroll 1.2s ease}
 @keyframes unroll{from{transform:scaleY(.05);opacity:.2}to{transform:none;opacity:1}}
@@ -93,6 +115,22 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   <div class="spacer"></div>
   <button class="btn main" id="go0">誠心求籤</button>
   <p class="mute" style="margin-top:10px"><span class="ln">求籤前請準備好一件想問的事</span><span class="ln">一年只能求一次，求過即鎖定</span></p>
+</section>
+
+<!-- 0.5 上香稟告 -->
+<section class="step" id="s5">
+  <h1>上香稟告</h1>
+  <p class="say"><span class="ln">依序點燃三炷清香</span><span class="ln">一敬天、二敬地、三敬神明</span></p>
+  <div class="altar"><div class="xiang" data-i="0"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="1"><span class="smoke"></span><em></em><i></i></div><div class="xiang" data-i="2"><span class="smoke"></span><em></em><i></i></div></div>
+  <div class="burner"></div>
+  <p class="mute" id="xiangTip">輕點每一炷香</p>
+  <div class="form" id="bing" hidden>
+    <label for="nm">稟告姓名（可不填，只存在你的手機）</label>
+    <input id="nm" maxlength="8" placeholder="例如：王小明">
+    <label for="ask">今年最想問的事</label>
+    <select id="ask"><option value="0">事業</option><option value="1">財運</option><option value="2">感情</option><option value="3">家宅</option><option value="4">出行</option><option value="5">整體運勢</option></select>
+    <button class="btn main" id="go5">稟告完畢</button>
+  </div>
 </section>
 
 <!-- 1 靜心 -->
@@ -139,22 +177,25 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
     <div class="yao" id="pYao"></div>
     <div class="sign" id="pSign"></div>
     <div class="stamp">巽風<br>堪輿</div>
+    <div class="ed" id="pEd" hidden></div>
   </div>
-  <div class="sealed">
+  <div class="sealed" id="sealed">
     <div class="t">完整解曰・立春開封</div>
-    <p class="say" style="margin:4px 0"><span class="ln">事業、財運、感情、家宅、出行</span><span class="ln">天機未到，暫且封存</span></p>
+    <p class="say" style="margin:4px 0" id="sealTxt"></p>
     <div class="cd" id="cd"></div>
   </div>
+  <div class="jie" id="jie" hidden><div class="t">解　曰</div><dl id="jieDl"></dl></div>
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
-  <a class="btn line" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE，立春提醒你開封</a>
+  <a class="btn line" id="lkLine" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE，立春提醒你開封</a>
   <p class="mute" style="margin-top:10px">想保存？直接截圖這張籤紙即可</p>
 </section>
 </main>
 
 <script>
 (function(){
-const YEAR="2027",KEY="xunfeng-qian-"+YEAR,OPEN=new Date("2027-02-04T00:00:00+08:00");
+const YEAR="2027",KEY="xunfeng-qian-"+YEAR,OPEN=new Date("2027-02-04T00:00:00+08:00"),KG=new Date("2026-12-16T00:00:00+08:00");
+const ASK=["事業","財運","感情","家宅","出行","聖意"],ASKNAME=["事業","財運","感情","家宅","出行","整體運勢"];
 const NUM=["初","二","三","四","五","上"],T={J:"吉",P:"平",X:"凶"};
 const yaoName=(q,i)=>{const v=q.l&&q.l[i]==="1"?"九":"六";return i===0?"初"+v:i===5?"上"+v:v+NUM[i]};
 const qs=new URLSearchParams(location.search);
@@ -164,6 +205,7 @@ try{const q=qs.get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
 const withRef=u=>REF?u+(u.indexOf("?")>-1?"&":"?")+"ref="+encodeURIComponent(REF):u;
 document.getElementById("lkTianji").href=withRef(document.getElementById("lkTianji").href);
 const preview=qs.get("preview")==="1";
+const NOW=()=>preview&&qs.get("at")?new Date(qs.get("at")+"T12:00:00+08:00").getTime():Date.now();
 const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
 const $=id=>document.getElementById(id);
 function show(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));$("s"+n).classList.add("on");window.scrollTo(0,0)}
@@ -176,11 +218,16 @@ const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 // 已求過：直接顯示
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 if(saved&&!preview){render(saved,false);show(4)}else{
- const canNow=preview||REF==="q1121"||Date.now()>=OPEN.getTime();
+ const canNow=preview||REF==="q1121"||NOW()>=OPEN.getTime();
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}
  show(0)}
-$("go0").addEventListener("click",()=>{if($("go0").onclick)return;tick(660,.3,.1);show(1)});
+$("go0").addEventListener("click",()=>{if($("go0").onclick)return;tick(660,.3,.1);show(5)});
+// 上香：三炷依序點燃
+(function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;tick(520+n*110,.5,.1);buzz(30);
+ $("xiangTip").textContent=["","一敬天","一敬天、二敬地","三炷清香已上，請稟告神明"][n];if(n===3)setTimeout(()=>{$("bing").hidden=false},500)}))})();
+let WHO="",ASKI=5;
+$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
 
 // 1 靜心：按住 6 秒
 (function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
@@ -210,7 +257,7 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
  setTimeout(()=>{tick(160,.12,.2);setTimeout(()=>tick(140,.1,.18),120);
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
-   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:Date.now(),tries};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
+   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
   else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"，請再誠心搖籤";
    setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("tube").classList.remove("drop");tossing=false;show(2)},2000);return}
   },1100)});
@@ -223,10 +270,17 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
  $("pLv").textContent=q.lv+"・"+T[tier]+"爻";
  $("pPoem").innerHTML=lines(q.p);
  $("pYao").innerHTML='<b>'+yaoName(q,rec.y)+"斷曰</b>"+lines(q.Y?q.Y[rec.y]:q[tier]);
- $("pSign").innerHTML=lines([(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"]);
- cd();setInterval(cd,1000);
+ $("pSign").innerHTML=lines([(rec.who?"求籤人　"+rec.who:"")||"","所問　"+ASKNAME[rec.ask==null?5:rec.ask],(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"].filter(Boolean));
+ // 版本印記：講座限定（立春前求得）／天赦開光（老師完成開光後）
+ const ed=$("pEd");const kg=window.QIAN_KAIGUANG&&NOW()>=KG.getTime();
+ if(rec.ed==="lecture"){ed.hidden=false;ed.innerHTML=kg?"天赦<br>開光":"講座<br>限定"}else if(kg){ed.hidden=false;ed.innerHTML="天赦<br>開光"}
+ const ai=rec.ask==null?5:rec.ask;
+ if(NOW()>=OPEN.getTime()&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
+  $("jieDl").innerHTML=ASK.map((k,i)=>'<dt>'+k+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
+  $("lkLine").innerHTML="加入 LINE，接收巽風開運提醒"}
+ else{$("sealTxt").innerHTML=lines(["事業、財運、感情、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
-function cd(){const s=Math.max(0,OPEN.getTime()-Date.now());if(!s){$("cd").textContent="今日開封";return}
+function cd(){const s=Math.max(0,OPEN.getTime()-NOW());if(!s){$("cd").textContent="今日開封";return}
  const D=Math.floor(s/864e5),H=Math.floor(s%864e5/36e5),M=Math.floor(s%36e5/6e4);$("cd").textContent="還有 "+D+" 天 "+H+" 時 "+M+" 分"}
 })();
 </script>
