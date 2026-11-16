@@ -252,7 +252,7 @@ const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 // 已求過：直接顯示
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 if(saved&&!preview){render(saved,false);show(4)}else{
- const LECT={q1121:{h:"34a8a66f1799ed17d015e4f36cc3e393228260b551ac2cfad672179d1d30ee28",a:"2026-11-21T17:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"43ee8a61face77d701edc1684c05165f413f0678d163543885ce9f005f467aa7",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
+ const LECT={q1121:{h:"34a8a66f1799ed17d015e4f36cc3e393228260b551ac2cfad672179d1d30ee28",a:"2026-11-16T00:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"43ee8a61face77d701edc1684c05165f413f0678d163543885ce9f005f467aa7",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
  let UNL="";try{UNL=localStorage.getItem("xunfeng-qian-unlock")||""}catch(e){}
  const L=LECT[REF],inWin=L&&NOW()>=new Date(L.a).getTime()&&NOW()<=new Date(L.b).getTime();
  const canNow=preview||!!UNL||NOW()>=OPEN.getTime();
