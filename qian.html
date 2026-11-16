@@ -238,8 +238,13 @@ const $=id=>document.getElementById(id);
 function show(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("on"));$("s"+n).classList.add("on");window.scrollTo(0,0)}
 const lines=a=>a.map(x=>'<span class="ln">'+x+'</span>').join("");
 
-// 音效（不需外部檔案）
-let ac;function tick(f,d,v){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(v||.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+(d||.08));o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+(d||.08))}catch(e){}}
+// 音效（/snd/ 內 Pixabay 免版權音效）
+let ac,MUTE=false;try{MUTE=localStorage.getItem("xunfeng-mute")==="1"}catch(e){}
+const SB={},SL={};function sctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();["qing","shake","drop","bwei1","bwei2"].forEach(n=>fetch("/snd/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,d=>SB[n]=d)).catch(()=>{}))}if(ac.state==="suspended")ac.resume();return ac}
+function snd(n,v,rate,gap){try{const c=sctx();if(MUTE||!SB[n])return;const t=Date.now();if(gap&&SL[n]&&t-SL[n]<gap)return;SL[n]=t;const s=c.createBufferSource(),g=c.createGain();s.buffer=SB[n];s.playbackRate.value=rate||1;g.gain.value=v==null?1:v;s.connect(g);g.connect(c.destination);s.start()}catch(e){}}
+function tick(){}
+window._xs={snd,sb:SB,get m(){return MUTE},set m(v){MUTE=v}};
+document.addEventListener("pointerdown",()=>{try{sctx()}catch(e){}},{once:true});
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
 // 已求過：直接顯示
@@ -249,9 +254,9 @@ if(saved&&!preview){render(saved,false);show(4)}else{
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}
  show(0)}
-$("go0").addEventListener("click",()=>{if($("go0").onclick)return;tick(660,.3,.1);show(5)});
+$("go0").addEventListener("click",()=>{if($("go0").onclick)return;snd("qing",.7);show(5)});
 // 上香：三炷依序點燃
-(function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;tick(520+n*110,.5,.1);buzz(30);
+(function(){let n=0;document.querySelectorAll(".xiang").forEach(x=>x.addEventListener("click",()=>{if(x.classList.contains("lit")||+x.dataset.i!==n)return;x.classList.add("lit");n++;snd("qing",.35+n*.15,1+(n-1)*.06);buzz(30);
  $("xiangTip").textContent=["","一敬天","一敬天、二敬地","三炷清香已上，請稟告神明"][n];if(n===3)setTimeout(()=>{$("bing").hidden=false},500)}))})();
 // 不拿香者：點一盞心燈（不分宗教）
 document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{if($("bing").hidden===false)return;
@@ -259,25 +264,25 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
  $("xiangBox").hidden=L;$("lampBox").hidden=!L;$("s5h").textContent=L?"點燈祈願":"上香稟告";
  $("s5say").innerHTML=lines(L?["點亮一盞心燈","向你所敬信的，靜心致意"]:["依序點燃三炷清香","一敬天、二敬地、三敬神明"]);
  $("xiangTip").textContent=L?"輕點燭芯":"輕點每一炷香"}));
-$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");tick(700,.6,.1);buzz(30);
+$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");snd("qing",.8);buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5,LAMP=false;
 try{const P=XF.getProfile();if(P.name)$("nm").value=P.name}catch(e){}
-$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
+$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;snd("qing",.8);show(1)});
 
 // 1 靜心：按住 6 秒
 (function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
  const step=()=>{const p=Math.min(1,(Date.now()-t0)/DUR);arc.style.strokeDashoffset=578*(1-p);core.textContent=p<1/3?"吸氣":p<2/3?"吐氣":"心定";
-  if(p>=1){done=true;tick(880,.6,.12);buzz(60);setTimeout(()=>show(2),500);return}raf=requestAnimationFrame(step)};
- const start=e=>{e.preventDefault();if(done)return;t0=Date.now();tick(440,.2,.08);raf=requestAnimationFrame(step)};
+  if(p>=1){done=true;snd("qing",1);buzz(60);setTimeout(()=>show(2),500);return}raf=requestAnimationFrame(step)};
+ const start=e=>{e.preventDefault();if(done)return;t0=Date.now();sctx();raf=requestAnimationFrame(step)};
  const stop=()=>{if(done)return;cancelAnimationFrame(raf);arc.style.strokeDashoffset=578;core.textContent="按住"};
  ring.addEventListener("pointerdown",start);ring.addEventListener("pointerup",stop);ring.addEventListener("pointerleave",stop);ring.addEventListener("pointercancel",stop);})();
 
 // 2 搖籤：搖動或連點，累積到 100%
 let energy=0,drawn=null,motionOn=false;
-function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");tick(300+Math.random()*500,.05,.12);
+function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");snd("shake",.9,.9+Math.random()*.25,420);
  clearTimeout(addEnergy.t);addEnergy.t=setTimeout(()=>$("tube").classList.remove("shake"),350);
- if(energy>=100){drawn=pick();$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);tick(520,.4,.15);setTimeout(()=>{show(3)},1300)}}
+ if(energy>=100){drawn=pick();$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);snd("drop",1);setTimeout(()=>{show(3)},1300)}}
 function pick(){const r=new Uint32Array(2);(crypto||window.msCrypto).getRandomValues(r);const q=pool[r[0]%pool.length],y=r[1]%6;return{n:q.n,y}}
 $("tube").addEventListener("pointerdown",()=>{enableMotion();addEnergy(9)});
 function enableMotion(){if(motionOn)return;motionOn=true;
@@ -288,9 +293,9 @@ document.addEventListener("click",function once(){if($("s2").classList.contains(
 // 3 擲筊：聖筊 50%、笑筊 25%、陰筊 25%
 let tossing=false,tries=0;
 $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;const bw=$("bwei"),bs=bw.querySelectorAll("b");$("verdict").textContent="";$("verdictSub").textContent="";
- bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");tick(200,.15,.15);
+ bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");
  const r=new Uint32Array(1);crypto.getRandomValues(r);const k=r[0]%4; // 0,1 聖 2 笑 3 陰
- setTimeout(()=>{tick(160,.12,.2);setTimeout(()=>tick(140,.1,.18),120);
+ setTimeout(()=>{snd("bwei1",1);setTimeout(()=>snd("bwei2",.8),140);
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
    setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
@@ -324,5 +329,7 @@ function cd(){const s=Math.max(0,OPEN.getTime()-NOW());if(!s){$("cd").textConten
  const D=Math.floor(s/864e5),H=Math.floor(s%864e5/36e5),M=Math.floor(s%36e5/6e4);$("cd").textContent="還有 "+D+" 天 "+H+" 時 "+M+" 分"}
 })();
 </script>
+<button id="mute" aria-label="音效開關" style="position:fixed;top:10px;right:10px;z-index:50;width:38px;height:38px;border-radius:50%;border:1px solid rgba(201,168,76,.5);background:rgba(10,8,6,.7);color:#c9a84c;font-size:17px">🔔</button>
+<script>(function(){const b=document.getElementById("mute");const X=window._xs;if(!X)return;const u=()=>{b.textContent=X.m?"🔕":"🔔"};u();b.addEventListener("click",()=>{X.m=!X.m;try{localStorage.setItem("xunfeng-mute",X.m?"1":"0")}catch(e){}u();if(!X.m)X.snd("qing",.5)})})();</script>
 </body>
 </html>
