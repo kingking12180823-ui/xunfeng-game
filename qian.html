@@ -215,8 +215,8 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   <div class="jie" id="jie" hidden><div class="t">解　曰</div><dl id="jieDl"></dl></div>
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
-  <a class="btn line" id="lkLine" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">加入 LINE，立春提醒你開封</a>
-  <p class="mute" style="margin-top:10px">想保存？直接截圖這張籤紙即可</p>
+  <a class="btn line" id="lkSave" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">傳到 LINE 給風羿老師保存<small>換手機也找得到・立春開封時通知你</small></a>
+  <button class="btn ghost" id="lkCopy" type="button">複製我的籤連結<small id="copyMsg">任何手機打開都能還原這支籤</small></button>
 </section>
 </main>
 
@@ -250,7 +250,12 @@ document.addEventListener("pointerdown",()=>{try{sctx()}catch(e){}},{once:true})
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
 // 已求過：直接顯示
+const SALT="xf2027";function ck(x){let h=2166136261;for(const c of SALT+x){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h.toString(36).slice(-4)}
+function encRec(r){const j=JSON.stringify([r.n,r.y,r.t,r.ask==null?5:r.ask,r.lamp?1:0,r.ed==="lecture"?1:0,r.who||""]);const b=btoa(unescape(encodeURIComponent(j))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");return b+"."+ck(b)}
+function decRec(k){try{const[b,c]=k.split(".");if(ck(b)!==c)return null;const a=JSON.parse(decodeURIComponent(escape(atob(b.replace(/-/g,"+").replace(/_/g,"/")))));if(!(a[0]>=1&&a[0]<=64&&a[1]>=0&&a[1]<=5))return null;return{n:a[0],y:a[1],t:a[2],ask:a[3],lamp:!!a[4],ed:a[5]?"lecture":"open",who:a[6]||"",tries:1}}catch(e){return null}}
+const recURL=r=>location.origin+"/qian#k="+encRec(r);
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+{const km=location.hash.match(/k=([A-Za-z0-9_-]+\.[a-z0-9]+)/);const lr=km&&decRec(km[1]);if(lr){if(!saved&&!preview){try{localStorage.setItem(KEY,JSON.stringify(lr))}catch(e){}}saved=lr}}
 if(saved&&!preview){render(saved,false);show(4)}else{
  const LECT={q1121:{h:"df19688d172b887d7334ed4eee39aaabc9b316d2593b643d28b499973efc73d7",a:"2026-11-16T00:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"a5827b080f4857f024e8d59fa326cfadbaf622ae3477960cbf33c0407f546320",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
  let UNL="";try{UNL=localStorage.getItem("xunfeng-qian-unlock")||""}catch(e){}
@@ -313,7 +318,12 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
   },1100)});
 
 // 4 開籤
+function setSave(rec,q){try{const no=(q.n-1)*6+rec.y+1,u=recURL(rec);
+ const txt="我在巽風求得丁未籤\n第"+no+"籤　"+(q.full||q.g)+"・"+yaoName(q,rec.y)+"（"+q.lv+"）\n所問："+ASKNAME[rec.ask==null?5:rec.ask]+"\n我的籤："+u;
+ $("lkSave").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent(txt);
+ $("lkCopy").onclick=async()=>{let ok=false;try{await navigator.clipboard.writeText(u);ok=true}catch(e){}if(!ok){try{const t=document.createElement("textarea");t.value=u;document.body.appendChild(t);t.select();ok=document.execCommand("copy");t.remove()}catch(e){}}$("copyMsg").textContent=ok?"已複製！貼到 LINE 記事本或傳給自己保存":u}}catch(e){}}
 function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q){show(0);return}
+ setSave(rec,q);
  const tier=q.x[rec.y],no=(q.n-1)*6+rec.y+1,d=new Date(rec.t);
  $("pNo").textContent="巽風三百八十四籤・第"+no+"籤";
  $("pGua").textContent=(q.full||q.g)+"・"+yaoName(q,rec.y);
@@ -331,7 +341,7 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
   try{window.va&&window.va("event",{name:"qian_xiong",data:{no}})}catch(e){}}
  if(NOW()>=OPEN.getTime()&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
   $("jieDl").innerHTML=ASK.map((k,i)=>'<dt>'+k+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
-  $("lkLine").innerHTML="加入 LINE，接收巽風開運提醒"}
+  $("lkSave").innerHTML="傳到 LINE 給風羿老師保存<small>老師可依此籤為你詳解</small>"}
  else{$("sealTxt").innerHTML=lines(["事業、財運、感情、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
 function cd(){const s=Math.max(0,OPEN.getTime()-NOW());if(!s){$("cd").textContent="今日開封";return}
