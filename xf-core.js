@@ -8,7 +8,7 @@
     game:   "/",          // 陽宅辨煞
     card:   "/2027",      // 2027 流年卡
     qian:   "/qian",      // 巽風三百八十四籤
-    audio:  "https://audio.xunfeng.tw/", // 大藏經有聲館（預留）
+    audio:  "https://xunfeng-audio.kingking12180823.workers.dev/", // 有聲大藏經（正式網域上線後改 audio.xunfeng.tw）
     tianji: "https://www.xunfeng.tw/member-ai/decision",
     face:   "https://www.xunfeng.tw/member-ai/face",
     booking:"https://www.xunfeng.tw/booking",
