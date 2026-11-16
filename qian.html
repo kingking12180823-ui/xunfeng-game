@@ -240,7 +240,7 @@ const lines=a=>a.map(x=>'<span class="ln">'+x+'</span>').join("");
 
 // 音效（/snd/ 內 Pixabay 免版權音效）
 let ac,MUTE=false;try{MUTE=localStorage.getItem("xunfeng-mute")==="1"}catch(e){}
-const SB={},SL={};function sctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();["amb","shake","drop","bwei1","bwei2"].forEach(n=>fetch("/snd/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,d=>SB[n]=d)).catch(()=>{}))}if(ac.state==="suspended")ac.resume();return ac}
+const SB={},SL={};function sctx(){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();["amb","shake","drop","bwei1","bwei2","bwei3"].forEach(n=>fetch("/snd/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,d=>SB[n]=d)).catch(()=>{}))}if(ac.state==="suspended")ac.resume();return ac}
 function snd(n,v,rate,gap){try{const c=sctx();if(MUTE||!SB[n])return;const t=Date.now();if(gap&&SL[n]&&t-SL[n]<gap)return;SL[n]=t;const s=c.createBufferSource(),g=c.createGain();s.buffer=SB[n];s.playbackRate.value=rate||1;g.gain.value=v==null?1:v;s.connect(g);g.connect(c.destination);s.start()}catch(e){}}
 function tick(){}
 let AS=null,AG=null;function amb(on){try{const c=sctx();if(on){if(AS||MUTE)return;if(!SB.amb){setTimeout(()=>amb(true),300);return}AS=c.createBufferSource();AG=c.createGain();AS.buffer=SB.amb;AS.loop=true;AS.loopStart=.026;AS.loopEnd=20.026;AG.gain.setValueAtTime(0,c.currentTime);AG.gain.linearRampToValueAtTime(.1,c.currentTime+3);AS.connect(AG);AG.connect(c.destination);AS.start(0,.026)}else if(AS){const s=AS,g=AG;AS=AG=null;g.gain.cancelScheduledValues(c.currentTime);g.gain.setValueAtTime(g.gain.value,c.currentTime);g.gain.linearRampToValueAtTime(0,c.currentTime+2);setTimeout(()=>{try{s.stop()}catch(e){}},2100)}}catch(e){}}
@@ -296,7 +296,7 @@ let tossing=false,tries=0;
 $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;const bw=$("bwei"),bs=bw.querySelectorAll("b");$("verdict").textContent="";$("verdictSub").textContent="";
  bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");
  const r=new Uint32Array(1);crypto.getRandomValues(r);const k=r[0]%4; // 0,1 聖 2 笑 3 陰
- setTimeout(()=>{snd("bwei1",1);setTimeout(()=>snd("bwei2",.8),140);
+ setTimeout(()=>{snd("bwei"+(1+Math.floor(Math.random()*3)),1);
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
    setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
