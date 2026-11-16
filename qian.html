@@ -89,6 +89,12 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 .form input,.form select{width:100%;font:inherit;font-size:17px;padding:11px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);color-scheme:dark}
 .ed{position:absolute;left:12px;top:14px;width:46px;height:46px;border:2px solid rgba(179,38,30,.8);color:rgba(179,38,30,.85);font-family:var(--display);font-weight:700;font-size:12px;line-height:1.1;display:grid;place-items:center;border-radius:50%;transform:rotate(8deg)}
 .ed[hidden]{display:none}
+.hua{width:100%;margin-top:18px;padding:14px 16px;border-radius:12px;background:#3a1410;border:1px solid var(--red2);text-align:left}
+.hua[hidden]{display:none}
+.hua .t{font-family:var(--display);font-size:20px;color:#ffcf9a;text-align:center;margin-bottom:6px}
+.hua ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.hua li{font-size:var(--fs)}.hua li b{color:var(--gold2);font-family:var(--display);margin-right:6px}
+.hua .fee{font-size:13px;color:var(--mute);margin:8px 0 0;text-align:center}
 .jie{width:100%;margin-top:18px;background:var(--paper);color:var(--paperInk);border-radius:6px;padding:14px 16px}
 .jie .t{font-family:var(--display);color:#7a140e;font-size:20px;text-align:center;margin-bottom:6px}
 .jie dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:var(--fs);text-align:left}
@@ -197,6 +203,13 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
     <p class="say" style="margin:4px 0" id="sealTxt"></p>
     <div class="cd" id="cd"></div>
   </div>
+  <div class="hua" id="hua" hidden>
+    <div class="t">化解之道</div>
+    <p class="say" style="margin:0;text-align:center" id="huaTxt"></p>
+    <ul><li><b>制煞化解</b>針對這一爻的阻礙，專案處理</li><li><b>收驚安神</b>心神不寧、諸事不順時</li><li><b>擇日改運</b>依通書擇吉日吉時行事</li></ul>
+    <a class="btn main" id="lkHua" href="https://www.xunfeng.tw/booking" target="_blank" rel="noopener">預約風羿老師化解<small>專業服務・依項目收費</small></a>
+    <p class="fee">籤為提醒，不必驚慌；趨吉避凶，事在人為</p>
+  </div>
   <div class="jie" id="jie" hidden><div class="t">解　曰</div><dl id="jieDl"></dl></div>
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
@@ -245,9 +258,9 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
  $("xiangBox").hidden=L;$("lampBox").hidden=!L;$("s5h").textContent=L?"點燈祈願":"上香稟告";
  $("s5say").innerHTML=lines(L?["點亮一盞心燈","向你所敬信的，靜心致意"]:["依序點燃三炷清香","一敬天、二敬地、三敬神明"]);
  $("xiangTip").textContent=L?"輕點燭芯":"輕點每一炷香"}));
-$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;l.classList.add("lit");tick(700,.6,.1);buzz(30);
+$("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");tick(700,.6,.1);buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
-let WHO="",ASKI=5;
+let WHO="",ASKI=5,LAMP=false;
 $("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
 
 // 1 靜心：按住 6 秒
@@ -278,7 +291,7 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
  setTimeout(()=>{tick(160,.12,.2);setTimeout(()=>tick(140,.1,.18),120);
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
-   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
+   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
   else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"，請再誠心搖籤";
    setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("tube").classList.remove("drop");tossing=false;show(2)},2000);return}
   },1100)});
@@ -291,11 +304,15 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
  $("pLv").textContent=q.lv+"・"+T[tier]+"爻";
  $("pPoem").innerHTML=lines(q.p);
  $("pYao").innerHTML='<b>'+yaoName(q,rec.y)+"斷曰</b>"+lines(q.Y?q.Y[rec.y]:q[tier]);
- $("pSign").innerHTML=lines([(rec.who?"求籤人　"+rec.who:"")||"","所問　"+ASKNAME[rec.ask==null?5:rec.ask],(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"].filter(Boolean));
+ $("pSign").innerHTML=lines(["求籤人　"+(rec.who||(rec.lamp?"有緣人":"善信")),"所問　"+ASKNAME[rec.ask==null?5:rec.ask],(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"].filter(Boolean));
  // 版本印記：講座限定（立春前求得）／天赦開光（老師完成開光後）
  const ed=$("pEd");const kg=window.QIAN_KAIGUANG&&NOW()>=KG.getTime();
  if(rec.ed==="lecture"){ed.hidden=false;ed.innerHTML=kg?"天赦<br>開光":"講座<br>限定"}else if(kg){ed.hidden=false;ed.innerHTML="天赦<br>開光"}
  const ai=rec.ask==null?5:rec.ask;
+ if(tier==="X"||q.lv==="下"){const h=$("hua");h.hidden=false;
+  $("huaTxt").innerHTML=lines(tier==="X"?["這一爻提醒你：此步要謹慎","風羿老師可為你專案化解"]:["此卦大勢較弱，宜多加留意","風羿老師可為你專案化解"]);
+  $("lkHua").href=withRef("https://www.xunfeng.tw/booking")+(REF?"&":"?")+"src=qian&no="+no;
+  try{window.va&&window.va("event",{name:"qian_xiong",data:{no}})}catch(e){}}
  if(NOW()>=OPEN.getTime()&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
   $("jieDl").innerHTML=ASK.map((k,i)=>'<dt>'+k+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
   $("lkLine").innerHTML="加入 LINE，接收巽風開運提醒"}
