@@ -214,6 +214,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   </div>
   <div class="jie" id="jie" hidden><div class="t">解　曰</div><dl id="jieDl"></dl></div>
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
+  <a class="btn gold" id="lkFace" href="https://www.xunfeng.tw/member-ai/face" target="_blank" rel="noopener">巽風面相系統<small>一張正面照，讀懂你的面相</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
   <a class="btn line" id="lkSave" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">傳到 LINE 給風羿老師保存<small>換手機也找得到・立春開封時通知你</small></a>
   <button class="btn ghost" id="lkCopy" type="button">複製我的籤連結<small id="copyMsg">任何手機打開都能還原這支籤</small></button>
@@ -231,7 +232,7 @@ let REF="";
 try{const q=qs.get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
  if(q){REF=decodeURIComponent(q);localStorage.setItem("xunfeng-ref",REF)}else REF=localStorage.getItem("xunfeng-ref")||""}catch(e){}
 const withRef=u=>REF?u+(u.indexOf("?")>-1?"&":"?")+"ref="+encodeURIComponent(REF):u;
-document.getElementById("lkTianji").href=withRef(document.getElementById("lkTianji").href);
+document.getElementById("lkTianji").href=withRef(document.getElementById("lkTianji").href);document.getElementById("lkFace").href=withRef(document.getElementById("lkFace").href);
 const preview=qs.get("preview")==="1";
 const NOW=()=>preview&&qs.get("at")?new Date(qs.get("at")+"T12:00:00+08:00").getTime():Date.now();
 const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
