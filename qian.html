@@ -130,6 +130,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   <h1>丁未年<br>一年一籤</h1>
   <p class="say"><span class="ln">六十四卦，三百八十四爻</span><span class="ln">每一支籤，都是一爻天機</span></p>
   <p class="mute" id="gateMsg"></p>
+  <div id="pwBox" hidden style="margin:14px auto 0;max-width:260px"><input id="pw" placeholder="請輸入講座口令" autocomplete="off" style="width:100%;padding:11px;border-radius:10px;border:1px solid rgba(201,168,76,.5);background:rgba(0,0,0,.35);color:#f3e7c4;font-size:16px;text-align:center"><p class="mute" id="pwErr" style="color:#ffb4a8;min-height:1.2em;margin-top:6px"></p></div>
   <div class="spacer"></div>
   <button class="btn main" id="go0">誠心求籤</button>
   <p class="mute" style="margin-top:10px"><span class="ln">求籤前請準備好一件想問的事</span><span class="ln">一年只能求一次，求過即鎖定</span></p>
@@ -251,8 +252,15 @@ const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 // 已求過：直接顯示
 let saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 if(saved&&!preview){render(saved,false);show(4)}else{
- const canNow=preview||REF==="q1121"||NOW()>=OPEN.getTime();
+ const LECT={q1121:{h:"34a8a66f1799ed17d015e4f36cc3e393228260b551ac2cfad672179d1d30ee28",a:"2026-11-21T17:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"43ee8a61face77d701edc1684c05165f413f0678d163543885ce9f005f467aa7",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
+ let UNL="";try{UNL=localStorage.getItem("xunfeng-qian-unlock")||""}catch(e){}
+ const L=LECT[REF],inWin=L&&NOW()>=new Date(L.a).getTime()&&NOW()<=new Date(L.b).getTime();
+ const canNow=preview||!!UNL||NOW()>=OPEN.getTime();
+ const needPw=!canNow&&inWin;
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
+ else if(needPw){$("gateMsg").innerHTML=lines(["講座學員限定・提前求籤","請輸入老師現場公布的口令"]);$("pwBox").hidden=false;$("go0").textContent="驗證口令";
+  $("go0").onclick=async()=>{const v=($("pw").value||"").replace(/\s/g,"");let x="";try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
+   if(x===L.h){try{localStorage.setItem("xunfeng-qian-unlock",REF)}catch(e){}$("pwBox").hidden=true;$("gateMsg").innerHTML=lines(["口令正確，歡迎求籤"]);$("go0").textContent="誠心求籤";$("go0").onclick=null}else $("pwErr").textContent="口令不正確"}}
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}
  show(0)}
 $("go0").addEventListener("click",()=>{if($("go0").onclick)return;amb(true);show(5)});
