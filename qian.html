@@ -155,7 +155,8 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 <script>
 (function(){
 const YEAR="2027",KEY="xunfeng-qian-"+YEAR,OPEN=new Date("2027-02-04T00:00:00+08:00");
-const POS=["初爻","二爻","三爻","四爻","五爻","上爻"],T={J:"吉",P:"平",X:"凶"};
+const NUM=["初","二","三","四","五","上"],T={J:"吉",P:"平",X:"凶"};
+const yaoName=(q,i)=>{const v=q.l&&q.l[i]==="1"?"九":"六";return i===0?"初"+v:i===5?"上"+v:v+NUM[i]};
 const qs=new URLSearchParams(location.search);
 let REF="";
 try{const q=qs.get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
@@ -218,10 +219,10 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
 function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q){show(0);return}
  const tier=q.x[rec.y],no=(q.n-1)*6+rec.y+1,d=new Date(rec.t);
  $("pNo").textContent="巽風三百八十四籤・第"+no+"籤";
- $("pGua").textContent=q.g+"卦・"+POS[rec.y];
+ $("pGua").textContent=(q.full||q.g)+"・"+yaoName(q,rec.y);
  $("pLv").textContent=q.lv+"・"+T[tier]+"爻";
  $("pPoem").innerHTML=lines(q.p);
- $("pYao").innerHTML='<b>'+POS[rec.y]+"斷曰</b>"+lines(q[tier]);
+ $("pYao").innerHTML='<b>'+yaoName(q,rec.y)+"斷曰</b>"+lines(q.Y?q.Y[rec.y]:q[tier]);
  $("pSign").innerHTML=lines([(rec.t<OPEN.getTime()?"丙午年":"丁未年")+(d.getMonth()+1)+"月"+d.getDate()+"日","於巽風堪輿研究中心求得"]);
  cd();setInterval(cd,1000);
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}
