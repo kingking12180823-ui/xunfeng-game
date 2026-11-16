@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="/qian-data.js"></script>
+<script src="/xf-core.js"></script>
 <style>
 :root{--bg:#120e0b;--panel:#1e1712;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;--red2:#d23b2f;--paper:#f4ead2;--paperInk:#2a1a0c;
 --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC","Kaiti TC","DFKai-SB",serif;--fs:clamp(15px,4.3vw,17px)}
@@ -261,7 +262,8 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
 $("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");tick(700,.6,.1);buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5,LAMP=false;
-$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
+try{const P=XF.getProfile();if(P.name)$("nm").value=P.name}catch(e){}
+$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;tick(660,.4,.1);show(1)});
 
 // 1 靜心：按住 6 秒
 (function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
