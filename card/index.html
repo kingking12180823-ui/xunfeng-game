@@ -115,8 +115,18 @@ async function share() {
 }
 
 document.getElementById('share').addEventListener('click', share);
+/* 外開連結：LIFF 沒準備好或外開失敗時，一律直接照一般連結開，絕不讓按鈕沒反應 */
 document.querySelectorAll('a.ext').forEach((a) => a.addEventListener('click', (e) => {
-  if (window.liff && liff.isInClient && liff.isInClient()) { e.preventDefault(); liff.openWindow({ url: a.href, external: true }); }
+  let inLine = false;
+  try { inLine = !!(window.liff && liff.isInClient && liff.isInClient()); } catch (_) {}
+  if (!inLine) return;
+  e.preventDefault();
+  const fallback = () => { location.href = a.href; };
+  const t = setTimeout(fallback, 1500);
+  Promise.resolve(liff.ready).then(() => {
+    liff.openWindow({ url: a.href, external: true });
+    clearTimeout(t);
+  }).catch(() => { clearTimeout(t); fallback(); });
 }));
 
 liff.init({ liffId: LIFF_ID }).then(() => {
