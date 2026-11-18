@@ -2342,6 +2342,7 @@ function lpWood(){const T=THREE,c=document.createElement("canvas");c.width=c.hei
 
 function lp3d(id){
  if(window.__IN_LINE)return;
+ try{if(matchMedia("(pointer:coarse)").matches)return}catch(e){} /* 手機觸控裝置不跑 3D 羅盤：兩組 WebGL 會讓中低階手機卡死，改用 2D 羅盤 */
  const box=document.getElementById(id);if(!box)return;
  let gl;try{const t=document.createElement("canvas");gl=t.getContext("webgl")||t.getContext("experimental-webgl")}catch(e){}if(!gl)return;
  const fontsReady=Promise.race([document.fonts?document.fonts.load('700 40px "LXGW WenKai TC"'):Promise.resolve(),new Promise(r=>setTimeout(r,2500))]);
