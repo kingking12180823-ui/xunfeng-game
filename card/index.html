@@ -44,7 +44,7 @@
     <a class="b sec" href="https://www.xunfeng.tw/">巽風官網</a>
   </div>
   <div class="row">
-    <a class="b sec" href="https://xunfeng-game.vercel.app/?openExternalBrowser=1">風水小遊戲</a>
+    <a class="b sec ext" href="https://xunfeng-game.vercel.app/?openExternalBrowser=1">風水小遊戲</a>
     <a class="b sec" href="https://xunfeng-audio.kingking12180823.workers.dev">有聲大藏經</a>
   </div>
 </div>
@@ -115,6 +115,9 @@ async function share() {
 }
 
 document.getElementById('share').addEventListener('click', share);
+document.querySelectorAll('a.ext').forEach((a) => a.addEventListener('click', (e) => {
+  if (window.liff && liff.isInClient && liff.isInClient()) { e.preventDefault(); liff.openWindow({ url: a.href, external: true }); }
+}));
 
 liff.init({ liffId: LIFF_ID }).then(() => {
   if (liff.isLoggedIn() &&new URLSearchParams(location.search).get('auto') === '1') share();
