@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>流月細批｜巽風堪輿研究中心</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<script src="/xf-core.js"></script>
+<style>
+:root{--bg:#120e0b;--panel:#1e1712;--panel2:#2a2018;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;--red2:#d23b2f;
+--body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC",serif;--fs:clamp(15px,4.3vw,17px)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);word-break:keep-all;line-height:1.7}
+body{background:radial-gradient(120% 60% at 50% 0%,#2b1a10 0%,var(--bg) 60%) fixed}
+main{max-width:480px;margin:auto;padding:16px 14px 32px}.ln{display:block;white-space:nowrap}
+header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.seal{display:inline-grid;place-items:center;width:30px;height:30px;background:var(--red);color:#fff3d6;border-radius:5px;font-family:var(--display);font-weight:700}
+.brand{font-family:var(--display);color:var(--gold);font-size:18px;font-weight:700}
+h1{font-family:var(--display);font-size:clamp(26px,8vw,32px);color:var(--gold2);margin:20px 0 6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;font-size:var(--fs)}
+h2{font-family:var(--display);font-size:20px;color:var(--gold);margin:0 0 6px}
+ol{margin:0;padding-left:1.3em}li{margin:4px 0}
+.price{font-family:var(--display);font-size:30px;color:var(--gold2)}.price small{font-size:15px;color:var(--mute);font-family:var(--body)}
+.btn{display:block;width:100%;text-align:center;font:inherit;font-size:18px;font-weight:700;padding:13px 10px;border-radius:12px;text-decoration:none;margin-top:12px}
+.btn small{display:block;font-size:13px;font-weight:500;opacity:.85}
+.btn.line{background:#06C755;color:#fff}.back{display:block;text-align:center;margin-top:14px;color:var(--mute);font-size:14px}
+.mute{color:var(--mute);font-size:14px}
+</style>
+</head>
+<body><main>
+<header><span class="seal">巽</span><span class="brand">巽風堪輿研究中心</span></header>
+<h1>丁未年・流月細批</h1>
+<p class="mute">風羿老師親自推算　科學八字為主，子平、盲派為輔</p>
+
+<div class="card">
+  <h2>流年卡和細批差在哪</h2>
+  <p style="margin:0"><span class="ln">流年卡：一整年的粗批</span><span class="ln">細批：十二個月、上下半月逐段推</span></p>
+</div>
+
+<div class="card">
+  <h2>細批內容</h2>
+  <ol>
+    <li>本命五行力量、強弱與喜忌</li>
+    <li>大運走勢與交脫時間</li>
+    <li>十二個月上下半月：哪些五行受傷、哪些得利</li>
+    <li>每月提醒：工作、財務、人際、健康保養</li>
+    <li>全年運勢曲線圖與開運建議</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>進行方式</h2>
+  <ol>
+    <li>LINE 傳生日、時辰、性別給老師</li>
+    <li>老師作業 5～7 個工作天</li>
+    <li>約時間線上解盤，並附書面命盤</li>
+  </ol>
+  <p class="price">3,600 <small>元／一年</small></p>
+  <a class="btn line" id="go" href="https://line.me/R/oaMessage/@mhb5020o/" target="_blank" rel="noopener">LINE 預約流月細批<small>生日資料會自動帶入訊息</small></a>
+</div>
+
+<p class="mute" style="text-align:center">陰陽宅現場堪驗 2,200+ 案例｜風羿老師</p>
+<a class="back" href="/2027">← 回到我的流年卡</a>
+</main>
+<script>
+(function(){let P={};try{P=XF.getProfile()||{}}catch(e){}
+ const HRN=["早子時","丑時","寅時","卯時","辰時","巳時","午時","未時","申時","酉時","戌時","亥時","晚子時"];
+ let t="我想預約丁未年流月細批";
+ if(P.birth)t+="\n生日："+P.birth+"\n時辰："+(P.hour===""||P.hour==null?"不知道":P.hour+"（"+HRN[+P.hour]+"）")+"\n性別："+(P.sex==="f"?"女":"男");
+ document.getElementById("go").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent(t);
+ try{window.va&&window.va("event",{name:"xipi-view"})}catch(e){}})();
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body></html>

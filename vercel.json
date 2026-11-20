@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/xipi",
+      "destination": "/xipi.html"
+    },
+    {
       "source": "/qian",
       "destination": "/qian.html"
     },

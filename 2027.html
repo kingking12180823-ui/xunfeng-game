@@ -160,10 +160,9 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 
   <div class="card">
     <h2>十二個月運勢</h2>
-    <p class="cap">紅＝最需注意　金＝機會最好　框＝無年氣進入的重點月</p>
+    <p class="cap">紅＝最需注意　金＝機會最好　框＝重點月</p>
     <div class="mbar" id="rBar"></div>
     <p class="txt" id="rBarS" style="margin:10px 0 0"></p>
-    <a class="btn main" id="lkXipi" href="#" target="_blank" rel="noopener">預約流月細批（3,600 元）<small>各月吉凶與宜忌細節，風羿老師親批</small></a>
   </div>
 
   <div class="card">
@@ -194,6 +193,11 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
     <p class="txt" id="rStr" style="margin:0"></p>
   </div>
   <div id="rSecs"></div>
+  <div class="card">
+    <h2>每個月怎麼走</h2>
+    <p class="txt" style="margin:0"><span class="ln">流年卡是一整年的粗批</span><span class="ln">各月上下半月的吉凶與宜忌</span><span class="ln">屬於風羿老師的流月細批</span></p>
+    <a class="small-link" href="/xipi" style="color:var(--gold)">了解流月細批 →</a>
+  </div>
   <div class="card">
     <h2>本命飛星</h2>
     <p class="cap">依出生年（立春為界）與性別</p>
@@ -376,7 +380,6 @@ $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  window._bar={warn:R.warn.map(i=>R.months[i].gz[1]+"月").join("、"),best:R.months[R.best].gz[1]+"月"};
  const HRN=["早子時","丑時","寅時","卯時","辰時","巳時","午時","未時","申時","酉時","戌時","亥時","晚子時"];
  const who="生日："+v+"\n時辰："+(hk===null?"不知道":hk+"（"+HRN[hk]+"）")+"\n性別："+(sex==="m"?"男":"女");
- $("lkXipi").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("我想預約流月細批（3,600 元）\n"+who);
  $("lkUnlock").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("流年卡解鎖\n"+who);
  const ORD=["事業","財運","感情","健康","家宅"];
  $("rTeaser").innerHTML='<li><b>喜忌</b><span>'+(XJ.strong?"日主偏強":"日主偏弱")+'・喜用與忌神</span></li>'+ORD.map(k=>'<li><b>'+k+'</b><span>'+o.sec[k].t+'</span></li>').join("");
