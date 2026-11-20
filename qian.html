@@ -356,7 +356,8 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
   $("huaTxt").innerHTML=lines(tier==="X"?["這一爻提醒你：此步要謹慎","風羿老師可為你專案化解"]:["此卦大勢較弱，宜多加留意","風羿老師可為你專案化解"]);
   $("lkHua").href=withRef("https://www.xunfeng.tw/booking")+(REF?"&":"?")+"src=qian&no="+no;
   try{window.va&&window.va("event",{name:"qian_xiong",data:{no}})}catch(e){}}
- if(NOW()>=OPEN.getTime()&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
+ // 講座學員（立春前抽的籤）抽完即可看完整解曰；其他人立春開籤，抽到就看得到
+ if((NOW()>=OPEN.getTime()||rec.ed==="lecture")&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
   $("jieDl").innerHTML=ASKORD.filter(i=>q.S[i]).map(i=>'<dt>'+ASK[i]+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
   $("lkSave").innerHTML="傳到 LINE 給風羿老師保存<small>老師可依此籤為你詳解</small>"}
  else{$("sealTxt").innerHTML=lines(["事業、財運、感情、健康、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
