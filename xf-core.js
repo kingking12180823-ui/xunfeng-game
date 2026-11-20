@@ -29,13 +29,14 @@
     if (extra) p.push(extra);
     return p.length ? u + (u.indexOf("?") > -1 ? "&" : "?") + p.join("&") : u;
   };
-  // 使用者基本資料：{birth:"1980-01-01", hour:"5"|"" , sex:"m"|"f", name:""}
-  XF.getProfile = function () { try { return JSON.parse(ls(XF.KEYS.profile) || "{}"); } catch (e) { return {}; } };
+  // 使用者基本資料只存在「這一次瀏覽」（sessionStorage，關掉分頁就清除），不長期留在裝置上，
+  // 換人用同一支手機、或同一台電腦，都不會看到上一個人的生日。
+  try { localStorage.removeItem(XF.KEYS.profile); } catch (e) {}
+  XF.getProfile = function () { try { return JSON.parse(sessionStorage.getItem(XF.KEYS.profile) || "{}"); } catch (e) { return {}; } };
   XF.saveProfile = function (patch) {
     var p = XF.getProfile();
     for (var k in patch) if (patch[k] !== undefined && patch[k] !== null) p[k] = patch[k];
-    p.updated = Date.now();
-    ls(XF.KEYS.profile, JSON.stringify(p));
+    try { sessionStorage.setItem(XF.KEYS.profile, JSON.stringify(p)); } catch (e) {}
     return p;
   };
   XF.getQian = function () { try { return JSON.parse(ls(XF.KEYS.qian) || "null"); } catch (e) { return null; } };

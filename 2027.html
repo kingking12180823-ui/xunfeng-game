@@ -118,7 +118,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 
 <form id="f" class="card" autocomplete="off">
   <label for="bd">出生日期（國曆）</label>
-  <input type="date" id="bd" min="1920-01-01" max="2026-12-31" value="1980-01-01" required>
+  <input type="date" id="bd" min="1920-01-01" max="2026-12-31" required>
   <label for="hr" style="margin-top:14px">出生時辰</label>
   <select id="hr">
     <option value="">不知道（不排時柱）</option>
@@ -319,7 +319,7 @@ function lichunDay(y){let jd=Date.UTC(y,1,2,-8)/86400000+2440587.5;
 
 const $=id=>document.getElementById(id);
 // 預留整合：沿用共用資料，輸入過一次就自動帶入
-try{const P=XF.getProfile();if(P.birth)$("bd").value=P.birth;if(P.hour!=null)$("hr").value=P.hour;if(P.sex){const r=document.querySelector('input[name=sex][value='+P.sex+']');if(r)r.checked=true}}catch(e){}
+// 不自動帶入任何人的生日：每次打開都是空白表單（只有本人從 LINE 個人連結進來時才帶入）
 // ===== 完整解讀的鎖：LINE 個人閱讀連結（24 小時）或講座「此刻時柱」口令 =====
 const UKEY="xunfeng-card-unlock",NOW=()=>Date.now();
 function unlocked(){try{const u=JSON.parse(localStorage.getItem(UKEY)||"null");return !!(u&&u.exp>NOW())}catch(e){return false}}
@@ -343,10 +343,9 @@ $("lkUnlock").addEventListener("click",e=>{if(MOBILE)return;e.preventDefault();$
 $("qrClose").addEventListener("click",()=>$("qrBox").hidden=true);
 // LINE 連結：#u=閱讀碼&b=生日&h=時辰&s=性別
 const HS=new URLSearchParams(location.hash.slice(1));
-const autoRun=()=>{if(HS.get("b")){$("bd").value=HS.get("b");if(HS.get("h")!=null)$("hr").value=HS.get("h");const r=document.querySelector('input[name=sex][value='+HS.get("s")+']');if(r)r.checked=true}
- if($("bd").value&&document.querySelector('input[name=sex]:checked'))$("f").requestSubmit()};
+const autoRun=()=>{};
 if(HS.get("u")){fetch("/api/unlock?t="+encodeURIComponent(HS.get("u"))).then(r=>r.json()).then(j=>{
-  if(j.ok){setUnlock(j.exp*1000,"line");try{window.va&&window.va("event",{name:"card-unlock",data:{via:"line"}})}catch(e){}}
+  if(j.ok){setUnlock(j.exp*1000,"line");$("err").textContent="已解鎖完整解讀，請輸入生日";try{window.va&&window.va("event",{name:"card-unlock",data:{via:"line"}})}catch(e){}}
   else $("err").textContent=j.reason==="expired"?"這個閱讀連結已過期，請到 LINE 再傳一次「流年卡解鎖」":"閱讀連結無效";
   try{history.replaceState(null,"",location.pathname+(REF?"#r="+encodeURIComponent(REF):""))}catch(e){}
   autoRun()}).catch(()=>autoRun())}
@@ -386,8 +385,7 @@ $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  $("rBarS").innerHTML=lines(["最需注意："+R.warn.map(mn).join("、"),"機會最好："+mn(R.best)]);
  window._bar={warn:R.warn.map(i=>R.months[i].gz[1]+"月").join("、"),best:R.months[R.best].gz[1]+"月"};
  const HRN=["早子時","丑時","寅時","卯時","辰時","巳時","午時","未時","申時","酉時","戌時","亥時","晚子時"];
- const who="生日："+v+"\n時辰："+(hk===null?"不知道":hk+"（"+HRN[hk]+"）")+"\n性別："+(sex==="m"?"男":"女");
- $("lkUnlock").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("流年卡解鎖\n"+who);
+ $("lkUnlock").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("流年卡解鎖");
  const ORD=["事業","財運","感情","健康","家宅"];
  $("rTeaser").innerHTML='<li><b>喜忌</b><span>'+(XJ.strong?"日主偏強":"日主偏弱")+'・喜用與忌神</span></li>'+ORD.map(k=>'<li><b>'+k+'</b><span>'+o.sec[k].t+'</span></li>').join("");
  $("rStrT").textContent="日主"+(XJ.strong?"偏強":"偏弱")+"｜喜"+XJ.xi.map(e=>XFBazi.WX[e]).join("")+"、忌"+XJ.ji.map(e=>XFBazi.WX[e]).join("");

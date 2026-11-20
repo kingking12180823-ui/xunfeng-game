@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
       const until = new Date(exp * 1000 + 8 * 3600e3);
       const hhmm = `${until.getUTCMonth() + 1}/${until.getUTCDate()} ${String(until.getUTCHours()).padStart(2, "0")}:${String(until.getUTCMinutes()).padStart(2, "0")}`;
       await reply(ev.replyToken,
-        `您的 2027 丁未流年卡完整版閱讀連結（24 小時內有效，至 ${hhmm} 止）：\n${SITE}/2027#u=${token}${parseBirth(t)}\n\n想看各月吉凶與宜忌細節，可預約風羿老師「流月細批」。`);
+        `您的 2027 丁未流年卡完整版閱讀連結（24 小時內有效，至 ${hhmm} 止）：\n${SITE}/2027#u=${token}\n（打開後輸入您的生日即可看完整解讀）\n\n想看各月吉凶與宜忌細節，可預約風羿老師「流月細批」。`);
     }
   }
   res.status(200).send("ok");

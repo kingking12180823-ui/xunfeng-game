@@ -296,7 +296,6 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
 $("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5,LAMP=false;
-try{const P=XF.getProfile();if(P.name)$("nm").value=P.name}catch(e){}
 $("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;show(1)});
 
 // 1 靜心：按住 6 秒
