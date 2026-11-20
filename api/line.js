@@ -7,7 +7,15 @@ const { makeToken } = require("./_token.js");
 const SECRET = (process.env.LINE_CHANNEL_SECRET || "").trim();
 const TOKEN = (process.env.LINE_CHANNEL_ACCESS_TOKEN || "").trim();
 const SITE = "https://xunfeng-game.vercel.app";
-const TEACHER = "09858aa8b13b94c15584a77b31208e4fabc1e4329676e8c583ab57eff1970b35";
+const TEACHERS = ["09858aa8b13b94c15584a77b31208e4fabc1e4329676e8c583ab57eff1970b35"];
+const BIND = "6e9e322ae00d9aced5956c9226d07b9bf5bfe17b2df1655be13875e7392d6a5e";
+const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+async function redis(cmds) {
+  const r = await fetch(REDIS_URL.replace(/\/$/, "") + "/pipeline", { method: "POST", headers: { Authorization: "Bearer " + REDIS_TOKEN, "Content-Type": "application/json" }, body: JSON.stringify(cmds) });
+  if (!r.ok) throw new Error("redis " + r.status);
+  return (await r.json()).map(x => x.result);
+}
 
 function rawBody(req) {
   return new Promise((ok, no) => {
@@ -53,8 +61,15 @@ module.exports = async function handler(req, res) {
     const t = ev.message.text || "";
     const uid = (ev.source && ev.source.userId) || "";
     if (/老師後台|流月詳批/.test(t)) {
-      // 只認風羿老師本人的 LINE（以 userId 的雜湊比對，不在程式裡放原始 ID）
-      if (crypto.createHash("sha256").update(uid).digest("hex") === TEACHER) {
+      // 只認風羿老師本人的 LINE：第一次用「老師後台 綁定密語」綁定，之後直接傳「老師後台」即可
+      const uh = crypto.createHash("sha256").update(uid).digest("hex");
+      const word = t.replace(/老師後台|流月詳批/g, "").replace(/\s/g, "");
+      let ok = TEACHERS.includes(uh);
+      try {
+        if (!ok && word && crypto.createHash("sha256").update("xf-bind:" + word).digest("hex") === BIND) { await redis([["SADD", "xf:teachers", uh]]); ok = true; }
+        if (!ok) { const [m] = await redis([["SISMEMBER", "xf:teachers", uh]]); ok = m === 1; }
+      } catch (e) { console.error("teacher check", e.message); }
+      if (ok) {
         const { token } = makeToken(SECRET, 24 * 30, "teacher");
         await reply(ev.replyToken, `老師專用・流月詳批（30 天內有效，請勿轉傳）：\n${SITE}/teacher#t=${token}`);
       }
