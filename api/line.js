@@ -7,6 +7,7 @@ const { makeToken } = require("./_token.js");
 const SECRET = (process.env.LINE_CHANNEL_SECRET || "").trim();
 const TOKEN = (process.env.LINE_CHANNEL_ACCESS_TOKEN || "").trim();
 const SITE = "https://xunfeng-game.vercel.app";
+const TEACHER = "09858aa8b13b94c15584a77b31208e4fabc1e4329676e8c583ab57eff1970b35";
 
 function rawBody(req) {
   return new Promise((ok, no) => {
@@ -50,6 +51,15 @@ module.exports = async function handler(req, res) {
   for (const ev of data.events || []) {
     if (ev.type !== "message" || !ev.message || ev.message.type !== "text") continue;
     const t = ev.message.text || "";
+    const uid = (ev.source && ev.source.userId) || "";
+    if (/老師後台|流月詳批/.test(t)) {
+      // 只認風羿老師本人的 LINE（以 userId 的雜湊比對，不在程式裡放原始 ID）
+      if (crypto.createHash("sha256").update(uid).digest("hex") === TEACHER) {
+        const { token } = makeToken(SECRET, 24 * 30, "teacher");
+        await reply(ev.replyToken, `老師專用・流月詳批（30 天內有效，請勿轉傳）：\n${SITE}/teacher#t=${token}`);
+      }
+      continue;
+    }
     if (/流年卡/.test(t) && /解鎖|閱讀|看完整/.test(t)) {
       const { token, exp } = makeToken(SECRET, 24);
       const until = new Date(exp * 1000 + 8 * 3600e3);

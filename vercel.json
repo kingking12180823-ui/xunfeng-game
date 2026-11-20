@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/teacher",
+      "destination": "/teacher.html"
+    },
+    {
       "source": "/xipi",
       "destination": "/xipi.html"
     },

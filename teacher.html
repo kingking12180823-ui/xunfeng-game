@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>流月詳批｜老師專用</title>
+<style>
+:root{--bg:#120e0b;--panel:#1e1712;--panel2:#2a2018;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#d23b2f;--ok:#7fc48a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.6;word-break:keep-all}
+main{max-width:980px;margin:auto;padding:14px}
+h1{font-size:22px;color:var(--gold2);margin:4px 0 10px}h2{font-size:18px;color:var(--gold);margin:0 0 8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input,select,button{font:inherit;font-size:16px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#120d09;color:var(--ink)}
+button{background:var(--gold);color:#2a1a08;font-weight:700;border:0;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border:1px solid var(--line);padding:5px 6px;vertical-align:top;text-align:left}
+th{background:var(--panel2);color:var(--gold);white-space:nowrap}
+.mute{color:var(--mute);font-size:13px}.err{color:var(--red)}
+.m{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+.m>.hd{background:var(--panel2);padding:8px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.m>.hd b{color:var(--gold2);font-size:17px}.key{color:var(--red);font-size:13px;margin-left:6px}
+.halves{display:grid;grid-template-columns:1fr 1fr}@media(max-width:720px){.halves{grid-template-columns:1fr}}
+.h{padding:10px 12px;border-top:1px solid var(--line)}.h+.h{border-left:1px solid var(--line)}
+.h .t{color:var(--gold);font-weight:700}.sc{float:right;font-weight:700}
+.h ul{margin:4px 0;padding-left:1.2em}.h li{margin:2px 0}
+.good{color:var(--ok)}.bad{color:#f08a80}
+@media print{body{background:#fff;color:#000}.card,.m,.m>.hd{background:#fff}th{background:#eee;color:#000}form,.noprint{display:none}}
+</style>
+</head>
+<body><main>
+<h1>丁未年・流月詳批（老師專用）</h1>
+<div class="card noprint">
+  <form id="f">
+    <input type="date" id="bd" required>
+    <select id="hh"><option value="">時辰不詳</option></select>
+    <select id="mi"></select>
+    <label><input type="radio" name="s" value="m" required>男</label><label><input type="radio" name="s" value="f">女</label>
+    <button>推算</button>
+    <button type="button" id="pr" style="background:var(--panel2);color:var(--gold)">列印</button>
+  </form>
+  <p class="mute" id="st">時間請輸入出生的鐘錶時（台灣時間）。</p>
+  <p class="err" id="err"></p>
+</div>
+<div id="out"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+for(let h=0;h<24;h++)$("hh").insertAdjacentHTML("beforeend",`<option value="${h}">${String(h).padStart(2,"0")} 時</option>`);
+for(let m=0;m<60;m+=5)$("mi").insertAdjacentHTML("beforeend",`<option value="${m}">${String(m).padStart(2,"0")} 分</option>`);
+const KEY="xunfeng-teacher-token";
+const hp=new URLSearchParams(location.hash.slice(1));
+if(hp.get("t")){try{sessionStorage.setItem(KEY,hp.get("t"))}catch(e){}history.replaceState(null,"",location.pathname)}
+let TOK="";try{TOK=sessionStorage.getItem(KEY)||""}catch(e){}
+if(!TOK){$("f").querySelector("button").disabled=true;$("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結後再開啟。"}
+$("pr").onclick=()=>print();
+$("f").addEventListener("submit",async e=>{e.preventDefault();$("err").textContent="";$("out").innerHTML="";
+ const q=new URLSearchParams({t:TOK,b:$("bd").value,h:$("hh").value,mi:$("mi").value,s:document.querySelector("input[name=s]:checked").value});
+ const j=await fetch("/api/teacher?"+q).then(r=>r.json()).catch(()=>({ok:false,reason:"net"}));
+ if(!j.ok){$("err").textContent=j.reason==="expired"?"專用連結已過期，請在 LINE 再傳一次「老師後台」":j.reason==="invalid"?"連結無效，請在 LINE 再傳一次「老師後台」":"推算失敗："+j.reason;return}
+ render(j.r)});
+function render(r){
+ const P=r.pillars,N=["年柱","月柱","日柱","時柱"];
+ let h=`<div class="card"><h2>本命</h2><table><tr><th></th>${N.map(n=>`<th>${n}</th>`).join("")}</tr>
+ <tr><th>干支</th>${P.map(p=>`<td style="font-size:18px">${p||"—"}</td>`).join("")}</tr>
+ <tr><th>十神</th>${r.tenGods.map(t=>`<td>${t?t.join("／"):"—"}</td>`).join("")}</tr></table>
+ <p style="margin:8px 0 0">國曆 ${r.input.y}/${r.input.m}/${r.input.d} ${r.input.hour==null?"時辰不詳":String(r.input.hour).padStart(2,"0")+":"+String(r.input.minute).padStart(2,"0")}　農曆 ${esc(r.lunar)}　${r.input.sex==="m"?"乾造":"坤造"}</p>
+ <p style="margin:4px 0">五行分數：${r.score.map(x=>`${x.w}（${x.g}）${x.s}`).join("　")}</p>
+ <p style="margin:4px 0">日主${r.strong?"偏強":"偏弱"}　喜：${r.xi.join("、")}　忌：${r.ji.join("、")}${r.special?'　<span class="err">結構特殊，需人工判斷</span>':""}</p></div>`;
+ h+=`<div class="card"><h2>大運</h2><p style="margin:0 0 6px">${esc(r.dayun.text)}（${r.dayun.forward?"順":"逆"}行，起運 ${r.dayun.start}）　丁未年行運：<b>${r.dayun.cur}</b></p>
+ <table><tr>${r.dayun.seq.map(s=>`<th>${s.gz}</th>`).join("")}</tr><tr>${r.dayun.seq.map(s=>`<td>${s.from}–${s.to}<br>${s.age}歲<br>${s.ss}</td>`).join("")}</tr></table></div>`;
+ h+=`<div class="card"><h2>丁未流年（${esc(r.year.ss)}）</h2><p style="margin:0"><b>${esc(r.year.axis)}</b>：${esc(r.year.main)}</p>
+ <p style="margin:4px 0">${esc(r.year.lead)}</p><p style="margin:4px 0">${esc(r.year.xi)} ${esc(r.year.ji)}</p><p class="mute" style="margin:0">${esc(r.year.xie)}</p></div>`;
+ const H=(lab,x)=>`<div class="h"><span class="sc ${x.s>0?"good":x.s<0?"bad":""}">${x.sym}（${x.s}）</span><div class="t">${lab}</div>
+  <div class="mute">外氣：${esc(x.chars)}</div>
+  <div>受傷：${esc(x.hurt)}　得利：${esc(x.gain)}　集氣：${esc(x.jq)}</div>
+  ${x.main?`<div style="margin-top:4px"><b>${esc(x.main)}</b>：${esc(x.mainD)}</div>`:""}
+  <ul>${x.lines.map(l=>`<li class="${/合喜用/.test(l)?"good":"bad"}">${esc(l)}</li>`).join("")}</ul>
+  <div class="mute">作用：${esc(x.notes)}</div></div>`;
+ h+=r.months.map(m=>`<div class="m"><div class="hd"><b>${m.gz}月　${m.from}–${m.to}${m.key?'<span class="key">無年氣・重點月</span>':""}</b><span class="mute">大運 ${m.yun}</span></div>
+  <div class="halves">${H("上半月（天干）",m.S)}${H("下半月（地支）",m.Z)}</div>
+  ${m.zr.length?`<div class="h">${m.zr.map(esc).join("<br>")}</div>`:""}</div>`).join("");
+ h+=`<p class="mute">分數為生抑洩扶換算（-2～+2），僅供老師複核手批參考。</p>`;
+ $("out").innerHTML=h}
+</script>
+</body></html>
