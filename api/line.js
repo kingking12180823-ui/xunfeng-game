@@ -60,16 +60,26 @@ module.exports = async function handler(req, res) {
     if (ev.type !== "message" || !ev.message || ev.message.type !== "text") continue;
     const t = ev.message.text || "";
     const uid = (ev.source && ev.source.userId) || "";
-    if (/老師後台|流月詳批/.test(t)) {
-      // 只認風羿老師本人的 LINE：第一次用「老師後台 綁定密語」綁定，之後直接傳「老師後台」即可
+    if (/老師後台|流月詳批|開講座|關講座/.test(t)) {
+      // 只認風羿老師本人的 LINE：第一次用「老師後台 綁定密語」綁定，之後直接傳指令即可
       const uh = crypto.createHash("sha256").update(uid).digest("hex");
-      const word = t.replace(/老師後台|流月詳批/g, "").replace(/\s/g, "");
+      const word = t.replace(/老師後台|流月詳批|開講座|關講座/g, "").replace(/\s/g, "");
       let ok = TEACHERS.includes(uh);
       try {
         if (!ok && word && crypto.createHash("sha256").update("xf-bind:" + word).digest("hex") === BIND) { await redis([["SADD", "xf:teachers", uh]]); ok = true; }
         if (!ok) { const [m] = await redis([["SISMEMBER", "xf:teachers", uh]]); ok = m === 1; }
       } catch (e) { console.error("teacher check", e.message); }
-      if (ok) {
+      if (!ok) continue;
+      if (/開講座/.test(t)) {
+        const hrs = Math.min(12, Math.max(1, parseInt((t.match(/(\d+)\s*小?時/) || [])[1] || "5", 10)));
+        const until = Date.now() + hrs * 3600e3;
+        await redis([["SET", "xf:lecture", String(until), "PX", String(hrs * 3600e3)]]);
+        const u = new Date(until + 8 * 3600e3);
+        await reply(ev.replyToken, `講座模式已開啟，到 ${u.getUTCHours()}:${String(u.getUTCMinutes()).padStart(2, "0")} 自動關閉。\n這段時間內，流年卡與求籤頁都會出現「講座口令」欄，學員輸入此刻時柱即可解鎖。\n提早結束請傳「關講座」。`);
+      } else if (/關講座/.test(t)) {
+        await redis([["DEL", "xf:lecture"]]);
+        await reply(ev.replyToken, "講座模式已關閉。");
+      } else {
         const { token } = makeToken(SECRET, 24 * 30, "teacher");
         await reply(ev.replyToken, `老師專用・流月詳批（30 天內有效，請勿轉傳）：\n${SITE}/teacher#t=${token}`);
       }
