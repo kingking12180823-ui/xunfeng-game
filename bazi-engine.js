@@ -174,6 +174,6 @@
     return { nat, year: y, axis: rank[0], rank, months, warn: sorted.slice(0, 2).map(m => m.i).sort((a, b) => a - b), best: sorted[11].i, total: judge(nat, y.delta), special };
   }
 
-  const API = { GAN, ZHI, WX, natal, outer, flow, item, applyHe, year2027, groupOf, MONTHS2027, QI2027, KEY_MONTHS };
+  const API = { GAN, ZHI, WX, natal, outer, judge, flow, item, applyHe, year2027, groupOf, MONTHS2027, QI2027, KEY_MONTHS };
   if (typeof module !== "undefined") module.exports = API; else root.XFBazi = API;
 })(typeof window !== "undefined" ? window : globalThis);
