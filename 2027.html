@@ -99,7 +99,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 .gate{border-color:var(--gold)}
 .sec .dd{margin-top:8px}
 #shotBox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
-#shotBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px;box-shadow:0 0 0 1px var(--line)}
+#shotBox[hidden],#qrBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px;box-shadow:0 0 0 1px var(--line)}
 #shotBox p{color:var(--gold2);margin:0;font-size:16px;text-align:center}#shotBox .row{display:flex;gap:10px}#shotBox button{min-width:120px}
 </style>
 </head>
@@ -254,6 +254,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 
 <div class="foot"><b>巽風堪輿研究中心</b>｜風羿老師<br>陰陽宅現場堪驗 2,200+ 案例</div>
 </main>
+<div id="qrBox" hidden style="position:fixed;inset:0;z-index:61;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;text-align:center"><p style="color:var(--gold2);margin:0;font-size:18px"><span class="ln">電腦無法直接開 LINE</span><span class="ln">請用手機掃描這個 QR</span></p><img id="qrImg" alt="LINE QR" width="240" height="240" style="background:#fff;border-radius:10px;padding:8px"><p style="color:var(--mute);margin:0;font-size:15px"><span class="ln">LINE 會自動帶入訊息</span><span class="ln">按「傳送」即可</span></p><button class="btn ghost" type="button" id="qrClose" style="max-width:200px">關閉</button></div>
 <div id="shotBox" hidden><img id="shotImg" alt="我的 2027 丁未流年卡"><p>長按圖片即可儲存或分享</p><div class="row"><button class="btn gold" type="button" id="shotShare">分享圖片</button><button class="btn ghost" type="button" id="shotClose">關閉</button></div></div>
 
 <script>
@@ -334,6 +335,10 @@ $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").repla
  try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
  const t=NOW();if(x===LW.h||[hourPillar(t),hourPillar(t-7200000),hourPillar(t+7200000)].includes(v)){setUnlock(new Date("2028-02-04T00:00:00+08:00").getTime(),REF);applyLock();try{window.va&&window.va("event",{name:"card-unlock",data:{via:REF}})}catch(e){}}
  else $("gateErr").textContent="口令不正確，請看老師投影片上的時柱"});
+// 電腦開不了 line.me 的傳訊連結：改顯示 QR，用手機掃
+const MOBILE=/Android|iPhone|iPad|iPod|Mobile|Line\//i.test(navigator.userAgent);
+$("lkUnlock").addEventListener("click",e=>{if(MOBILE)return;e.preventDefault();$("qrImg").src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=4&data="+encodeURIComponent($("lkUnlock").href);$("qrBox").hidden=false});
+$("qrClose").addEventListener("click",()=>$("qrBox").hidden=true);
 // LINE 連結：#u=閱讀碼&b=生日&h=時辰&s=性別
 const HS=new URLSearchParams(location.hash.slice(1));
 const autoRun=()=>{if(HS.get("b")){$("bd").value=HS.get("b");if(HS.get("h")!=null)$("hr").value=HS.get("h");const r=document.querySelector('input[name=sex][value='+HS.get("s")+']');if(r)r.checked=true}

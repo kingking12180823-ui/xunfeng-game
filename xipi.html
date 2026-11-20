@@ -59,6 +59,7 @@ ol{margin:0;padding-left:1.3em}li{margin:4px 0}
   <a class="btn line" id="go" href="https://line.me/R/oaMessage/@mhb5020o/" target="_blank" rel="noopener">LINE 預約流月細批<small>生日資料會自動帶入訊息</small></a>
 </div>
 
+<div id="qr" hidden class="card" style="text-align:center"><p style="margin:0;color:var(--gold2)">電腦無法直接開 LINE，請用手機掃描</p><img alt="LINE QR" width="220" height="220" style="background:#fff;border-radius:10px;padding:8px;margin:10px auto;display:block"><p class="mute" style="margin:0">LINE 會自動帶入訊息，按「傳送」即可</p></div>
 <p class="mute" style="text-align:center">陰陽宅現場堪驗 2,200+ 案例｜風羿老師</p>
 <a class="back" href="/2027">← 回到我的流年卡</a>
 </main>
@@ -68,6 +69,8 @@ ol{margin:0;padding-left:1.3em}li{margin:4px 0}
  let t="我想預約丁未年流月細批";
  if(P.birth)t+="\n生日："+P.birth+"\n時辰："+(P.hour===""||P.hour==null?"不知道":P.hour+"（"+HRN[+P.hour]+"）")+"\n性別："+(P.sex==="f"?"女":"男");
  document.getElementById("go").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent(t);
+ const go=document.getElementById("go");
+ if(!/Android|iPhone|iPad|iPod|Mobile|Line\//i.test(navigator.userAgent)){go.addEventListener("click",e=>{e.preventDefault();const b=document.getElementById("qr");b.querySelector("img").src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=4&data="+encodeURIComponent(go.href);b.hidden=false})}
  try{window.va&&window.va("event",{name:"xipi-view"})}catch(e){}})();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
