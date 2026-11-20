@@ -170,7 +170,7 @@
       return { i, gz, key: KEY_MONTHS.includes(i), v: judge(nat, o.delta) * (KEY_MONTHS.includes(i) ? 1.3 : 1) };
     });
     const sorted = months.slice().sort((a, b) => a.v - b.v);
-    const special = nat.isolated.length > 1 || nat.clashes.length > 2 || nat.tri.length > 0 || nat.heads.length === 0 || nat.chain.length === 5;
+    const special = nat.isolated.length > 1 || nat.tri.length > 0 || nat.heads.length === 0;
     return { nat, year: y, axis: rank[0], rank, months, warn: sorted.slice(0, 2).map(m => m.i).sort((a, b) => a - b), best: sorted[11].i, total: judge(nat, y.delta), special };
   }
 

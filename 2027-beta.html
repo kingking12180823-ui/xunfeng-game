@@ -1,0 +1,25 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>流年卡斷語試算（老師專用）</title>
+<style>body{margin:0;background:#0d0a07;color:#f3ead7;font-family:"Noto Serif TC",serif;word-break:keep-all}main{max-width:560px;margin:auto;padding:16px}
+h1{color:#e3b75c;font-size:22px}input,select,button{font:inherit;font-size:16px;padding:8px;border-radius:8px;border:1px solid #c9a24c;background:#1a140d;color:#f3ead7}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.row input{width:70px;text-align:center}button{background:#b52b24;border-color:#b52b24}
+.card{border:1px solid rgba(201,162,76,.4);border-radius:12px;padding:12px;margin:12px 0}.card h3{margin:0 0 6px;color:#e3b75c;font-size:17px}
+.mute{color:#b9a88c;font-size:14px}.bar{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;font-size:12px;text-align:center}
+.bar div{padding:6px 0;border-radius:4px;background:#2a2016}.bar .w{background:#7a1d16}.bar .b{background:#8a6a1f}.bar .k{outline:1px solid #e3b75c}
+ul{margin:4px 0 0 18px;padding:0}</style></head><body><main>
+<h1>流年卡斷語試算（老師專用・未公開）</h1>
+<p class="mute">輸入四柱（年、月、日、時；時不詳可空白）與性別，看新引擎的計分與斷語。</p>
+<div class="row"><input id="y" placeholder="年柱"><input id="m" placeholder="月柱"><input id="d" placeholder="日柱"><input id="h" placeholder="時柱"><select id="s"><option value="m">男</option><option value="f">女</option></select><button id="go">試算</button></div>
+<div id="out"></div></main>
+<script src="/bazi-engine.js"></script><script src="/xf-reading.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+$("go").onclick=()=>{try{const P=[$("y").value.trim(),$("m").value.trim(),$("d").value.trim(),$("h").value.trim()||null];
+const o=XFReading.read(P,$("s").value),r=o.r,n=r.nat,W=XFBazi.WX;let h="";
+h+='<div class="card"><h3>今年主軸（公開）</h3>'+o.axisLine+(o.special?'<p class="mute">※ 此盤結構特殊，建議請老師細批</p>':'')+'</div>';
+h+='<div class="card"><h3>本命五行分數</h3>'+W.map((w,e)=>w+" "+n.score[e]).join("　")+'<p class="mute">流年增減：'+W.map((w,e)=>w+(r.year.delta[e]>=0?"+":"")+r.year.delta[e]).join("　")+'</p></div>';
+h+='<div class="card"><h3>強弱與喜忌</h3>'+o.strength.lead+'<br>'+o.strength.xi+o.strength.ji+'<p class="mute">'+o.strength.xie+'</p></div>';
+for(const k of ["事業","財運","感情","健康","家宅"]){const x=o.sec[k];if(!x)continue;h+='<div class="card"><h3>'+k+'｜'+x.t+'</h3>'+x.d+(x.extra?'<br>'+x.extra:'')+'<p class="mute">宜：'+x.y.join("、")+'<br>忌：'+x.j.join("、")+'</p></div>'}
+h+='<div class="card"><h3>流月運勢條</h3><div class="bar">'+r.months.map(m=>'<div class="'+(r.warn.includes(m.i)?"w":m.i===r.best?"b":"")+(m.key?" k":"")+'">'+m.gz[1]+'</div>').join("")+'</div><p class="mute">紅＝最需注意、金＝機會最好、外框＝卯辰巳重點月</p></div>';
+$("out").innerHTML=h}catch(e){$("out").innerHTML='<p>格式錯誤，請輸入如「丙寅」的干支。</p>'}};
+</script></body></html>
