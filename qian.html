@@ -278,7 +278,7 @@ function hourPillars(){const t=NOW();return [hourPillar(t),hourPillar(t-7200000)
  const canNow=preview||!!UNL||NOW()>=OPEN.getTime();
  const needPw=!canNow&&inWin;
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
- else if(needPw){$("gateMsg").innerHTML=lines(["講座學員限定・提前求籤","請輸入老師帶你排出的「此刻時柱」"]);$("pw").placeholder="此刻時柱（兩個字）";$("pwBox").hidden=false;$("go0").textContent="驗證口令";
+ else if(needPw){$("gateMsg").innerHTML=lines(["講座學員限定・提前求籤","請輸入講座口令"]);$("pw").placeholder="講座口令";$("pwBox").hidden=false;$("go0").textContent="驗證口令";
   $("go0").onclick=async()=>{const v=($("pw").value||"").replace(/\s/g,"");let x="";try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
    if(x===L.h||hourPillars().includes(v.replace(/時$/,""))){try{localStorage.setItem("xunfeng-qian-unlock",LK)}catch(e){}$("pwBox").hidden=true;$("gateMsg").innerHTML=lines(["口令正確，歡迎求籤"]);$("go0").textContent="誠心求籤";$("go0").onclick=null}else $("pwErr").textContent="口令不正確"}}
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027"}

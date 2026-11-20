@@ -179,8 +179,8 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
     <ul class="teaser" id="rTeaser"></ul>
     <a class="btn line" id="lkUnlock" href="#" target="_blank" rel="noopener">到 LINE 領取閱讀連結<small>傳出訊息後自動回覆，24 小時內有效</small></a>
     <div id="cpwBox" hidden style="margin-top:12px">
-      <label for="cpw">講座學員：輸入老師帶你排出的「此刻時柱」</label>
-      <input id="cpw" autocomplete="off" placeholder="例如：甲戌" style="width:100%;font:inherit;font-size:18px;padding:11px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);text-align:center">
+      <label for="cpw">講座學員：請輸入講座口令</label>
+      <input id="cpw" autocomplete="off" placeholder="講座口令" style="width:100%;font:inherit;font-size:18px;padding:11px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);text-align:center">
       <button class="btn gold" type="button" id="cpwGo">解鎖</button>
     </div>
     <p class="err" id="gateErr"></p>
@@ -336,7 +336,7 @@ function applyLock(){const ok=unlocked();$("full").hidden=!ok;$("gate").hidden=o
 $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").replace(/\s/g,"").replace(/時$/,"");let x="";
  try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
  const t=NOW();if(x===LW.h||[hourPillar(t),hourPillar(t-7200000),hourPillar(t+7200000)].includes(v)){setUnlock(new Date("2028-02-04T00:00:00+08:00").getTime(),LK);applyLock();try{window.va&&window.va("event",{name:"card-unlock",data:{via:REF}})}catch(e){}}
- else $("gateErr").textContent="口令不正確，請看老師投影片上的時柱"});
+ else $("gateErr").textContent="口令不正確"});
 // 電腦開不了 line.me 的傳訊連結：改顯示 QR，用手機掃
 const MOBILE=/Android|iPhone|iPad|iPod|Mobile|Line\//i.test(navigator.userAgent);
 $("lkUnlock").addEventListener("click",e=>{if(MOBILE)return;e.preventDefault();$("qrImg").src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=4&data="+encodeURIComponent($("lkUnlock").href);$("qrBox").hidden=false});
