@@ -1,5 +1,5 @@
 /* 巽風科學八字引擎 v1
- * 依「流年卡推算規格書 v1」：科學八字（鄭文堡）計分為主，黃教授合化表，司螢－胡進氣表。
+ * 依「流年卡推算規格書 v1」：科學八字（鄭文堡）計分為主，黃教授合化表，老師進氣表；吉凶依生抑洩扶。
  * 計分：陽 2、陰 1；日主跳過；有合先論合（相鄰）；本命合依合化表（含「留」）；外氣合而不化（減半）；
  * 生則累加、剋則相抵；陰橋只傳自身分數（施剋者監視）；同五行母雞帶小雞。
  */
@@ -143,20 +143,40 @@
   const GROUP = ["比劫", "食傷", "財星", "官殺", "印星"];
   const groupOf = (dayGan, e) => GROUP[(e - GAN_WX[dayGan] + 5) % 5];
 
-  // 丁未年進氣（翁良杰修正表）：index 0=寅月…11=丑月
-  const QI2027 = [["丙"], [], [], [], ["丁"], ["丁", "未", "申"], ["丁", "未", "申"], ["丁", "未", "申"], ["丁", "未", "申"], ["丁", "未", "申"], ["丁", "未", "申"], ["丁", "未", "申"]];
+  // 進氣表（老師「八字學／進氣表」為準）：各年干、年支在寅月…丑月進入的外氣
+  const QI_GAN = {
+    甲: "甲癸,甲癸,甲癸,甲癸,甲,,,,甲,甲乙,甲乙,甲乙", 乙: "甲乙,甲乙,甲乙,乙,,,,乙,乙丙,乙丙,乙丙,乙丙",
+    丙: "乙丙,乙丙,丙,,,,丙,丙,丙,丙,丙,丙", 丁: "丙,,,,,丁,丁,丁,丁,丁,丁,丁",
+    戊: ",,,,戊,戊,戊,戊,戊,戊,戊,", 己: ",,,己,己,己,己,己,己,己,,", 庚: ",,庚,庚,庚,庚,庚,庚,庚,,,",
+    辛: ",辛,辛,辛,辛,辛,辛,辛,,,,辛", 壬: "辛壬,辛壬,辛壬,辛壬,辛壬,辛壬,壬,,,,壬,癸壬", 癸: "癸壬,癸壬,癸壬,癸壬,癸壬,癸,,,,癸,甲癸,甲癸"
+  };
+  const QI_ZHI = {
+    子: "子亥,子亥,子亥,子亥,子亥,子亥,,,,,子,子丑", 丑: "子丑,子丑,子丑,子丑,子丑,子丑,,,,,,丑",
+    寅: "丑寅,丑寅,丑寅,丑寅,丑寅,丑寅,寅,,,,,", 卯: ",卯,卯,卯,卯,卯,卯,卯,,,,", 辰: ",,辰,辰,辰,辰,辰,辰,辰,,,",
+    巳: ",,,巳,巳,巳,巳,巳,巳,巳,,", 午: ",,,,午,午,午,午,午,午,午,", 未: ",,,,,未,未申,未申,未申,未申,未申,未申",
+    申: "申,申,申,申,,,申,申酉,申酉,申酉,申酉,申酉", 酉: "申酉,申酉,申酉,申酉,酉,,,酉,酉戌,酉戌,酉戌,酉戌",
+    戌: "酉戌,酉戌,酉戌,酉,酉,,,,戌,戌亥,戌亥,戌亥", 亥: "戌亥,戌亥,戌亥,亥,亥,亥,,,,亥,子亥,子亥"
+  };
+  const qiOf = (yearGZ, mi) => ({ gan: QI_GAN[yearGZ[0]].split(",")[mi].split(""), zhi: QI_ZHI[yearGZ[1]].split(",")[mi].split("") });
+  const QI2027 = Array.from({ length: 12 }, (_, i) => { const q = qiOf("丁未", i); return q.gan.concat(q.zhi); });
   const MONTHS2027 = ["壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥", "壬子", "癸丑"];
-  const KEY_MONTHS = [1, 2, 3]; // 卯辰巳：無年干支進氣，等同流年
+  const KEY_MONTHS = [1, 2, 3, 4]; // 卯辰巳午：無年干支進氣，等同流年
 
+  // 生抑洩扶：日主（比劫＋印）強者喜食傷洩、財耗、官殺抑；弱者喜印生、比劫扶
+  function weights(nat) {
+    const de = GAN_WX[nat.dayGan], s = nat.score;
+    const self = s[de] + s[(de + 4) % 5], other = s.reduce((a, b) => a + b, 0) - self;
+    const strong = self >= other;
+    const W = strong ? { 比劫: -1, 印星: -1, 食傷: 1.2, 財星: 1, 官殺: 0.8 } : { 比劫: 1, 印星: 1.2, 食傷: -1, 財星: -1, 官殺: -1.2 };
+    return { strong, w: [0, 1, 2, 3, 4].map(e => W[groupOf(nat.dayGan, e)]) };
+  }
+  function xiji(nat) {
+    const { strong, w } = weights(nat), es = [0, 1, 2, 3, 4];
+    return { strong, xi: es.filter(e => w[e] > 0).sort((a, b) => w[b] - w[a]), ji: es.filter(e => w[e] < 0).sort((a, b) => w[a] - w[b] || (groupOf(nat.dayGan, a) === "比劫" ? -1 : 1)) };
+  }
   function judge(nat, delta) {
-    // 好壞：本命強項（分數>0）被增強為吉；被削弱為凶；受傷點（分數<0）被補為吉
-    let v = 0;
-    for (let e = 0; e < 5; e++) {
-      const b = nat.score[e];
-      if (b > 0) v += delta[e] * (1 + b / 4);
-      else if (b < 0) v += delta[e] * 0.8;
-    }
-    return v;
+    const { w } = weights(nat);
+    return delta.reduce((v, d, e) => v + d * w[e], 0);
   }
 
   function year2027(pillars) {
@@ -165,7 +185,7 @@
     const dg = nat.dayGan;
     const rank = [0, 1, 2, 3, 4].map(e => ({ e, g: groupOf(dg, e), d: y.delta[e], base: nat.score[e] })).sort((a, b) => Math.abs(b.d) - Math.abs(a.d));
     const months = MONTHS2027.map((gz, i) => {
-      const dyn = [gz[0], gz[1]].concat(QI2027[i].filter(c => c !== gz[0] && c !== gz[1]));
+      const dyn = [gz[0], gz[1]].concat(QI2027[i]);
       const o = outer(nat, dyn);
       return { i, gz, key: KEY_MONTHS.includes(i), v: judge(nat, o.delta) * (KEY_MONTHS.includes(i) ? 1.3 : 1) };
     });
@@ -174,6 +194,6 @@
     return { nat, year: y, axis: rank[0], rank, months, warn: sorted.slice(0, 2).map(m => m.i).sort((a, b) => a - b), best: sorted[11].i, total: judge(nat, y.delta), special };
   }
 
-  const API = { GAN, ZHI, WX, natal, outer, judge, flow, item, applyHe, year2027, groupOf, MONTHS2027, QI2027, KEY_MONTHS };
+  const API = { GAN, ZHI, WX, natal, outer, judge, weights, xiji, qiOf, QI_GAN, QI_ZHI, flow, item, applyHe, year2027, groupOf, MONTHS2027, QI2027, KEY_MONTHS };
   if (typeof module !== "undefined") module.exports = API; else root.XFBazi = API;
 })(typeof window !== "undefined" ? window : globalThis);

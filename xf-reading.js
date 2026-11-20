@@ -68,8 +68,9 @@
     const d = r.year.delta.map((v, e) => ({ e, g: gp(e), v, base: n.score[e] }));
     const up = d.filter(x => x.v > 0.01).sort((a, b) => b.v - a.v);
     const down = d.filter(x => x.v < -0.01).sort((a, b) => a.v - b.v);
-    const good = d.filter(x => x.base > 0 && x.v > 0.01).map(x => x.g);
-    const bad = d.filter(x => x.base > 0 && x.v < -0.01).map(x => x.g);
+    const W = B.weights(n).w;
+    const good = d.filter(x => x.v * W[x.e] > 0.01).sort((a, b) => b.v * W[b.e] - a.v * W[a.e]).map(x => x.g);
+    const bad = d.filter(x => x.v * W[x.e] < -0.01).sort((a, b) => a.v * W[a.e] - b.v * W[b.e]).map(x => x.g);
     // 地支：未與本命的沖合刑害
     const zhiHits = n.bra.map(b => ({ pos: b.pos, ch: b.ch, rel: ZHI_REL[b.ch] })).filter(x => x.rel);
     // 段落
@@ -93,8 +94,8 @@
       r, main, rels, xie, up, down, good, bad, zhiHits, axisLine,
       strength: {
         lead: (up.length ? "今年增強：" + up.slice(0, 2).map(x => x.g).join("、") : "") + (down.length ? (up.length ? "；" : "") + "今年受制：" + down.slice(0, 2).map(x => x.g).join("、") : ""),
-        xi: good.length ? "本命強項「" + good.slice(0, 2).join("、") + "」再得流年之助，順勢而為。" : "",
-        ji: bad.length ? "本命強項「" + d.filter(x => x.base > 0 && x.v < -0.01).sort((a, b) => a.v - b.v).slice(0, 2).map(x => x.g).join("、") + "」被流年削弱，宜守不宜攻。" : "",
+        xi: good.length ? "流年之氣落在「" + good.slice(0, 2).join("、") + "」，合乎生抑洩扶，順勢而為。" : "",
+        ji: bad.length ? "流年引動「" + bad.slice(0, 2).join("、") + "」，偏離平衡，宜守不宜攻。" : "",
         xie: xie.map(x => x.g + "洩於" + x.to + "：" + XIE[x.g]).join("；")
       },
       sec: {
