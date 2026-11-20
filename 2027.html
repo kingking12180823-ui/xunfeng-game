@@ -332,6 +332,8 @@ function hourPillar(t){const d=new Date(t+8*3600000);let y=d.getUTCFullYear(),m=
 const LECT={q1121:{h:"df19688d172b887d7334ed4eee39aaabc9b316d2593b643d28b499973efc73d7",a:"2026-11-16T00:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"a5827b080f4857f024e8d59fa326cfadbaf622ae3477960cbf33c0407f546320",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
 const inW=k=>LECT[k]&&NOW()>=new Date(LECT[k].a).getTime()&&NOW()<=new Date(LECT[k].b).getTime();
 const LK=inW(REF)?REF:Object.keys(LECT).find(inW)||"",LW=LECT[LK],inLect=!!LK;
+// 老師測試用：網址加 ?reset=1 清除這支手機的解鎖紀錄，回到鎖住狀態
+if(/[?&]reset=1/.test(location.search)){try{localStorage.removeItem(UKEY);localStorage.removeItem("xunfeng-qian-unlock")}catch(e){}}
 function applyLock(){const ok=unlocked();$("full").hidden=!ok;$("gate").hidden=ok;$("cpwBox").hidden=!inLect}
 $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").replace(/\s/g,"").replace(/時$/,"");let x="";
  try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
