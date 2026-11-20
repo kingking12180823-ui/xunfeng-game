@@ -99,6 +99,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 .gate{border-color:var(--gold)}
 .sec .dd{margin-top:8px}
 #shotBox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
+#qrBox{position:fixed;inset:0;z-index:61;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;text-align:center}
 #shotBox[hidden],#qrBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px;box-shadow:0 0 0 1px var(--line)}
 #shotBox p{color:var(--gold2);margin:0;font-size:16px;text-align:center}#shotBox .row{display:flex;gap:10px}#shotBox button{min-width:120px}
 </style>
@@ -254,7 +255,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 
 <div class="foot"><b>巽風堪輿研究中心</b>｜風羿老師<br>陰陽宅現場堪驗 2,200+ 案例</div>
 </main>
-<div id="qrBox" hidden style="position:fixed;inset:0;z-index:61;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;text-align:center"><p style="color:var(--gold2);margin:0;font-size:18px"><span class="ln">電腦無法直接開 LINE</span><span class="ln">請用手機掃描這個 QR</span></p><img id="qrImg" alt="LINE QR" width="240" height="240" style="background:#fff;border-radius:10px;padding:8px"><p style="color:var(--mute);margin:0;font-size:15px"><span class="ln">LINE 會自動帶入訊息</span><span class="ln">按「傳送」即可</span></p><button class="btn ghost" type="button" id="qrClose" style="max-width:200px">關閉</button></div>
+<div id="qrBox" hidden><p style="color:var(--gold2);margin:0;font-size:18px"><span class="ln">電腦無法直接開 LINE</span><span class="ln">請用手機掃描這個 QR</span></p><img id="qrImg" alt="LINE QR" width="240" height="240" style="background:#fff;border-radius:10px;padding:8px"><p style="color:var(--mute);margin:0;font-size:15px"><span class="ln">LINE 會自動帶入訊息</span><span class="ln">按「傳送」即可</span></p><button class="btn ghost" type="button" id="qrClose" style="max-width:200px">關閉</button></div>
 <div id="shotBox" hidden><img id="shotImg" alt="我的 2027 丁未流年卡"><p>長按圖片即可儲存或分享</p><div class="row"><button class="btn gold" type="button" id="shotShare">分享圖片</button><button class="btn ghost" type="button" id="shotClose">關閉</button></div></div>
 
 <script>
