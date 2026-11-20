@@ -39,7 +39,7 @@ function parseBirth(t) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "POST") { res.status(200).json({ secretLen: SECRET.length, rawSecretLen: (process.env.LINE_CHANNEL_SECRET || "").length, hex: /^[0-9a-f]{32}$/.test(SECRET), tokenLen: TOKEN.length }); return; }
+  if (req.method !== "POST") { res.status(200).send("ok"); return; }
   const body = await rawBody(req);
   if (!SECRET || !TOKEN) { res.status(200).send("not configured"); return; }
   const sig = crypto.createHmac("sha256", SECRET).update(body).digest("base64");
