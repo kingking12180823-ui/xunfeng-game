@@ -14,6 +14,8 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/qian-data.js"></script>
 <script src="/xf-core.js"></script>
+<script src="/bazi-engine.js"></script>
+<script src="/xf-reading.js"></script>
 <style>
 :root{--bg:#120e0b;--panel:#1e1712;--panel2:#2a2018;--line:#5e4528;--gold:#E3B75C;--gold2:#f3d28a;--ink:#F6EEDD;--mute:#B9A88C;--red:#B3261E;--red2:#d23b2f;
 --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--display:"LXGW WenKai TC","Noto Serif TC","Kaiti TC","DFKai-SB",serif;
@@ -86,6 +88,16 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 .foot{text-align:center;color:var(--mute);font-size:13px;margin-top:20px;border-top:1px solid var(--line);padding-top:12px}
 .foot b{color:var(--gold)}
 .banner{margin:14px 0 6px;line-height:0}.banner img{width:100%;height:auto;border-radius:12px;display:block;border:1px solid var(--line)}
+.mbar{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.mbar div{text-align:center;padding:6px 0 5px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);font-family:var(--display);font-size:20px;color:var(--ink);line-height:1.15}
+.mbar div small{display:block;font-family:var(--body);font-size:11px;color:var(--mute)}
+.mbar .w{background:#5a1712;border-color:var(--red2);color:#ffd2c9}.mbar .b{background:#5a4314;border-color:var(--gold);color:var(--gold2)}
+.mbar .k{box-shadow:inset 0 0 0 2px var(--gold)}
+.teaser{list-style:none;margin:6px 0 4px;padding:0;display:grid;gap:6px}
+.teaser li{font-size:var(--fs);padding:6px 10px;border-radius:8px;background:var(--panel2);border:1px dashed var(--line)}
+.teaser li b{color:var(--gold);margin-right:6px}.teaser li span{filter:blur(4px);user-select:none}
+.gate{border-color:var(--gold)}
+.sec .dd{margin-top:8px}
 #shotBox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
 #shotBox[hidden]{display:none}#shotBox img{max-height:72vh;max-width:100%;border-radius:10px;box-shadow:0 0 0 1px var(--line)}
 #shotBox p{color:var(--gold2);margin:0;font-size:16px;text-align:center}#shotBox .row{display:flex;gap:10px}#shotBox button{min-width:120px}
@@ -139,33 +151,19 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
   </div>
 
   <div class="card">
-    <h2>事業・財運</h2>
-    <p class="cap" id="rGanCap"></p>
-    <p class="lead" id="rGanP"></p>
-    <p class="txt" id="rGanS"></p>
-    <div class="dd"><b class="y">宜</b><span id="rDo"></span><b class="n">忌</b><span id="rDont"></span></div>
+    <h2>今年主軸</h2>
+    <p class="cap">科學八字：本命五行力量＋丁未外氣推算</p>
+    <p class="lead" id="rAxis"></p>
+    <p class="txt" id="rAxisS" style="margin:0"></p>
+    <p class="note" id="rSpecial" hidden>此盤結構特殊，建議請風羿老師親自細批</p>
   </div>
 
   <div class="card">
-    <h2>職場・人脈</h2>
-    <p class="cap" id="rYueCap"></p>
-    <p class="lead" id="rYueTag"></p>
-    <p class="txt" id="rYueS"></p>
-    <p class="txt" id="rYueQ" style="margin:0;color:var(--mute)"></p>
-  </div>
-
-  <div class="card">
-    <h2>感情・家庭</h2>
-    <p class="cap" id="rZhiCap"></p>
-    <p class="lead" id="rZhiTag"></p>
-    <p class="txt" id="rZhiS" style="margin:0"></p>
-  </div>
-
-  <div class="card" id="rShiCard">
-    <h2>子女・部屬</h2>
-    <p class="cap" id="rShiCap"></p>
-    <p class="lead" id="rShiTag"></p>
-    <p class="txt" id="rShiS" style="margin:0"></p>
+    <h2>十二個月運勢</h2>
+    <p class="cap">紅＝最需注意　金＝機會最好　框＝無年氣進入的重點月</p>
+    <div class="mbar" id="rBar"></div>
+    <p class="txt" id="rBarS" style="margin:10px 0 0"></p>
+    <a class="btn main" id="lkXipi" href="#" target="_blank" rel="noopener">預約流月細批（3,600 元）<small>各月吉凶與宜忌細節，風羿老師親批</small></a>
   </div>
 
   <div class="card">
@@ -175,6 +173,27 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
     <div class="ts" id="rTs" hidden></div>
   </div>
 
+  <div class="card gate" id="gate">
+    <h2>完整流年解讀</h2>
+    <p class="cap">強弱喜忌・事業・財運・感情・健康・家宅・本命飛星・開運色</p>
+    <ul class="teaser" id="rTeaser"></ul>
+    <a class="btn line" id="lkUnlock" href="#" target="_blank" rel="noopener">到 LINE 領取閱讀連結<small>傳出訊息後自動回覆，24 小時內有效</small></a>
+    <div id="cpwBox" hidden style="margin-top:12px">
+      <label for="cpw">講座學員：輸入老師帶你排出的「此刻時柱」</label>
+      <input id="cpw" autocomplete="off" placeholder="例如：甲戌" style="width:100%;font:inherit;font-size:18px;padding:11px;border-radius:10px;border:1px solid var(--line);background:#120d09;color:var(--ink);text-align:center">
+      <button class="btn gold" type="button" id="cpwGo">解鎖</button>
+    </div>
+    <p class="err" id="gateErr"></p>
+  </div>
+
+  <div id="full" hidden>
+  <div class="card">
+    <h2>強弱與喜忌</h2>
+    <p class="cap">生抑洩扶：旺者宜洩宜抑，弱者宜生宜扶</p>
+    <p class="lead" id="rStrT"></p>
+    <p class="txt" id="rStr" style="margin:0"></p>
+  </div>
+  <div id="rSecs"></div>
   <div class="card">
     <h2>本命飛星</h2>
     <p class="cap">依出生年（立春為界）與性別</p>
@@ -198,6 +217,8 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
       <li><span class="n">東南旺</span><p><span class="ln">八白財星在東南</span><span class="ln">放紅、黃擺件或旺盛植栽</span></p></li>
     </ul>
     <p class="note"><span class="ln">年飛星像天氣預報，家家相同</span><span class="ln">宅盤是房子的體質，每間不同</span><span class="ln">體質要看，需專業到府堪驗</span></p>
+  </div>
+
   </div>
 
   <div class="card">
@@ -235,35 +256,8 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
 (function(){
 const G="甲乙丙丁戊己庚辛壬癸",Z="子丑寅卯辰巳午未申酉戌亥",SX="鼠牛虎兔龍蛇馬羊猴雞狗豬";
 const WX={甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
-const C={藍:"#2f5fa8",黑:"#111",綠:"#2e8b57",白:"#f4f1ea",金:"#d4a93c"};
-// 日干（十天干）：事業・財運；每行不超過 13 字，手機一行一句
-const GAN={
- 甲:{t:"傷官生財年",p:"參天大樹，靠才華開路",s:["敢說敢做，點子能變現","言語鋒利，易得罪上司"],d:"開創副業、發表作品",n:"當眾頂撞主管",c:["藍","黑"]},
- 乙:{t:"食神生財年",p:"花草藤蘿，柔中帶韌",s:["靠口碑與手藝賺錢","生活品質明顯提升"],d:"教學、手作、美食生意",n:"安逸拖延、錯過時機",c:["藍","黑"]},
- 丙:{t:"劫財傷官年",p:"太陽之火，熱情外放",s:["表達力爆發，舞台感十足","朋友多，分錢的人也多"],d:"演講、行銷、帶團隊",n:"替人作保、衝動花費",c:["白","金"]},
- 丁:{t:"比肩食神年",p:"燭火之光，細膩專注",s:["同氣相助，專業最能發光","適合出書、開課、深耕"],d:"專業輸出、累積作品",n:"過度完美、遲遲不出手",c:["白","金"]},
- 戊:{t:"正印劫財年",p:"高山厚土，穩重可靠",s:["長輩貴人主動拉你一把","劫財暗藏，分財要清楚"],d:"進修考照、借重長輩",n:"合夥、借貸、作保",c:["白","金"]},
- 己:{t:"偏印比肩年",p:"田園沃土，包容務實",s:["靈感強，適合學專門技術","人多意見多，容易固執"],d:"學身心靈、冷門技能",n:"多疑、鑽牛角尖",c:["白","金"]},
- 庚:{t:"官印相生年",p:"刀劍之金，果斷剛直",s:["丁火煉金，百鍊成器","職位與名聲同步提升"],d:"爭取升遷、考核、證照",n:"與上級硬碰硬",c:["藍","黑"]},
- 辛:{t:"七殺化印年",p:"珠玉之金，精緻敏感",s:["壓力來得快，考驗應變","有印化殺，危機變轉機"],d:"轉型、危機處理",n:"熬夜焦慮、獨自硬撐",c:["藍","黑"]},
- 壬:{t:"正財正官年",p:"江河之水，聰明靈活",s:["丁壬相合，財與緣都來","責任加重，名分要扛起"],d:"穩健理財、談婚論嫁",n:"貪多嚼不爛",c:["白","金"]},
- 癸:{t:"偏財七殺年",p:"雨露之水，細膩敏銳",s:["機會多，壓力也大","火土雙旺，最需要保養"],d:"量力接案、穩住現金流",n:"過度承諾、熬夜",c:["白","金"]}
-};
-// 日支（配偶宮）與流年未土：感情・家庭
-const ZHI={
- 子:{r:"子未相害",s:["小摩擦容易累積","多說一句，誤會少一半"]},
- 丑:{r:"丑未相沖",s:["居家變動機率高","搬家、裝修宜挑好日子"]},
- 寅:{r:"寅木剋未土",s:["家中大小事由你主導","記得分工，別一肩扛"]},
- 卯:{r:"卯未半合",s:["感情和睦，有人牽線","適合談婚論嫁"]},
- 辰:{r:"辰未土氣比和",s:["家庭穩定有依靠","兩人都固執，多給空間"]},
- 巳:{r:"巳火生未土",s:["為家付出特別多","照顧家人，也照顧自己"]},
- 午:{r:"午未六合",s:["感情運強，單身易遇對象","已婚者感情升溫"]},
- 未:{r:"未未伏吟",s:["同樣的問題容易重演","一次處理乾淨最省事"]},
- 申:{r:"未土生申金",s:["伴侶與家人是後盾","遇事多商量，助力大"]},
- 酉:{r:"未土生酉金",s:["家庭和樂，伴侶帶財","適合一起規劃置產"]},
- 戌:{r:"戌未相刑",s:["家中易有口角","文件合約要細看"]},
- 亥:{r:"亥未半合",s:["感情有新的連結","溝通需要多點耐心"]}
-};
+const C={藍:"#2f5fa8",黑:"#111",綠:"#2e8b57",青:"#2a7f7f",白:"#f4f1ea",金:"#d4a93c",紅:"#c0392b",紫:"#7b3fa0",黃:"#d9a441",咖啡:"#7a5230"};
+const XICOL=[["綠","青"],["紅","紫"],["黃","咖啡"],["白","金"],["藍","黑"]];
 // 生肖（年支）以五行看與太歲未土的關係
 const SXD={
  鼠:{s:["未土剋子水，壓力感較重","凡事以穩為先"],ts:"屬鼠：未土剋水，受太歲影響"},
@@ -278,36 +272,6 @@ const SXD={
  雞:{s:["土生金，有人提攜","把握長輩給的機會"]},
  狗:{s:["土氣同旺，穩中求進","留意人際小口角"]},
  豬:{s:["未土剋亥水，壓力感較重","凡事以穩為先"],ts:"屬豬：未土剋水，受太歲影響"}
-};
-// 月令（出生月支）：職場・人脈，與流年未土
-const YUE={
- 寅:{r:"寅木剋未土",s:["工作上你有主導權","適合開疆闢土"]},
- 卯:{r:"卯未半合",s:["同事合作順暢","團隊有向心力"]},
- 辰:{r:"辰未土氣比和",s:["職場穩定","升遷要靠實績"]},
- 巳:{r:"巳火生未土",s:["為公司付出多","記得爭取回報"]},
- 午:{r:"午未六合",s:["長官賞識","貴人就在職場"]},
- 未:{r:"未未伏吟",s:["老問題容易重演","舊專案要收尾"]},
- 申:{r:"未土生申金",s:["有人提拔","適合轉調或進修"]},
- 酉:{r:"未土生酉金",s:["人脈帶來機會","多參加聚會交流"]},
- 戌:{r:"戌未相刑",s:["職場易有口舌","文件流程要謹慎"]},
- 亥:{r:"亥未半合",s:["新的合作出現","條件要先談清楚"]},
- 子:{r:"子未相害",s:["同事間易生誤會","訊息多確認一次"]},
- 丑:{r:"丑未相沖",s:["職務調動機率高","換跑道宜審慎評估"]}
-};
-// 時柱（時支）：子女・部屬，與流年未土
-const SHI={
- 子:{r:"子未相害",s:["晚輩易有小誤會","當下說清楚就好"]},
- 丑:{r:"丑未相沖",s:["子女或部屬有變動","升學、轉職要提早準備"]},
- 寅:{r:"寅木剋未土",s:["帶人由你主導","學著放手，讓人成長"]},
- 卯:{r:"卯未半合",s:["子女貼心","部屬得力"]},
- 辰:{r:"辰未土氣比和",s:["帶人穩定","溝通要再柔軟一點"]},
- 巳:{r:"巳火生未土",s:["為晚輩付出多","量力而為"]},
- 午:{r:"午未六合",s:["子女有喜事","部屬齊心"]},
- 未:{r:"未未伏吟",s:["舊問題容易重演","規矩一次立好"]},
- 申:{r:"未土生申金",s:["晚輩帶來好消息","適合培養接班人"]},
- 酉:{r:"未土生酉金",s:["晚輩助力大","適合交棒、帶新人"]},
- 戌:{r:"戌未相刑",s:["管教易起衝突","先聽再說"]},
- 亥:{r:"亥未半合",s:["有新成員加入","磨合需要耐心"]}
 };
 const HR_MID=[0.5,2,4,6,8,10,12,14,16,18,20,22,23.5];
 const ZWX={子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
@@ -350,6 +314,31 @@ function lichunDay(y){let jd=Date.UTC(y,1,2,-8)/86400000+2440587.5;
 const $=id=>document.getElementById(id);
 // 預留整合：沿用共用資料，輸入過一次就自動帶入
 try{const P=XF.getProfile();if(P.birth)$("bd").value=P.birth;if(P.hour!=null)$("hr").value=P.hour;if(P.sex){const r=document.querySelector('input[name=sex][value='+P.sex+']');if(r)r.checked=true}}catch(e){}
+// ===== 完整解讀的鎖：LINE 個人閱讀連結（24 小時）或講座「此刻時柱」口令 =====
+const UKEY="xunfeng-card-unlock",NOW=()=>Date.now();
+function unlocked(){try{const u=JSON.parse(localStorage.getItem(UKEY)||"null");return !!(u&&u.exp>NOW())}catch(e){return false}}
+function setUnlock(exp,via){try{localStorage.setItem(UKEY,JSON.stringify({exp,via}))}catch(e){}}
+const GAN10="甲乙丙丁戊己庚辛壬癸",ZHI12="子丑寅卯辰巳午未申酉戌亥";
+function hourPillar(t){const d=new Date(t+8*3600000);let y=d.getUTCFullYear(),m=d.getUTCMonth(),dd=d.getUTCDate(),h=d.getUTCHours();
+ if(h===23){const n=new Date(Date.UTC(y,m,dd+1));y=n.getUTCFullYear();m=n.getUTCMonth();dd=n.getUTCDate()}
+ const jdn=Math.floor(Date.UTC(y,m,dd)/86400000)+2440588,di=((jdn+49)%60+60)%60,hb=Math.floor((h+1)/2)%12;
+ return GAN10[((di%10)%5*2+hb)%10]+ZHI12[hb]}
+const LECT={q1121:{h:"df19688d172b887d7334ed4eee39aaabc9b316d2593b643d28b499973efc73d7",a:"2026-11-16T00:00:00+08:00",b:"2026-11-22T23:59:59+08:00"},q1123:{h:"a5827b080f4857f024e8d59fa326cfadbaf622ae3477960cbf33c0407f546320",a:"2026-11-23T17:00:00+08:00",b:"2026-11-24T23:59:59+08:00"}};
+const LW=LECT[REF],inLect=!!(LW&&NOW()>=new Date(LW.a).getTime()&&NOW()<=new Date(LW.b).getTime());
+function applyLock(){const ok=unlocked();$("full").hidden=!ok;$("gate").hidden=ok;$("cpwBox").hidden=!inLect}
+$("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").replace(/\s/g,"").replace(/時$/,"");let x="";
+ try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
+ const t=NOW();if(x===LW.h||[hourPillar(t),hourPillar(t-7200000),hourPillar(t+7200000)].includes(v)){setUnlock(new Date("2028-02-04T00:00:00+08:00").getTime(),REF);applyLock();try{window.va&&window.va("event",{name:"card-unlock",data:{via:REF}})}catch(e){}}
+ else $("gateErr").textContent="口令不正確，請看老師投影片上的時柱"});
+// LINE 連結：#u=閱讀碼&b=生日&h=時辰&s=性別
+const HS=new URLSearchParams(location.hash.slice(1));
+const autoRun=()=>{if(HS.get("b")){$("bd").value=HS.get("b");if(HS.get("h")!=null)$("hr").value=HS.get("h");const r=document.querySelector('input[name=sex][value='+HS.get("s")+']');if(r)r.checked=true}
+ if($("bd").value&&document.querySelector('input[name=sex]:checked'))$("f").requestSubmit()};
+if(HS.get("u")){fetch("/api/unlock?t="+encodeURIComponent(HS.get("u"))).then(r=>r.json()).then(j=>{
+  if(j.ok){setUnlock(j.exp*1000,"line");try{window.va&&window.va("event",{name:"card-unlock",data:{via:"line"}})}catch(e){}}
+  else $("err").textContent=j.reason==="expired"?"這個閱讀連結已過期，請到 LINE 再傳一次「流年卡解鎖」":"閱讀連結無效";
+  try{history.replaceState(null,"",location.pathname+(REF?"#r="+encodeURIComponent(REF):""))}catch(e){}
+  autoRun()}).catch(()=>autoRun())}
 $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  const v=$("bd").value;if(!v){$("err").textContent="請先選擇出生日期";return}
  let[y,m,d]=v.split("-").map(Number);if(y<1920||y>2026){$("err").textContent="請輸入 1920–2026 年之間的生日";return}
@@ -360,45 +349,52 @@ $("f").addEventListener("submit",e=>{e.preventDefault();$("err").textContent="";
  const lA=sunLon(jdOf(y,m,d,hk===null?24:HR_MID[hk])),l0=sunLon(jdOf(y,m,d,0)),l1=sunLon(jdOf(y,m,d,24));
  const yy=(m<=2&&lA<315&&lA>=240)?y-1:y,zi=((yy-4)%12+12)%12,sx=SX[zi];
  const mi=monthIdx(lA),medge=hk===null&&monthIdx(l0)!==monthIdx(l1),edge=medge&&m===2;
- const A=GAN[gan],B=ZHI[zhi],S=SXD[sx];
+ const S=SXD[sx];
  const sex=(document.querySelector('input[name=sex]:checked')||{}).value;
  if(!sex){$("err").textContent="請選擇性別";return}
  try{XF.saveProfile({birth:v,hour:hv,sex})}catch(e){}
  // 年柱、月柱
  const ygi=((yy-4)%10+10)%10,ygan=G[ygi],yzhi=Z[zi];
   const mz=Z[(mi+2)%12],mg=G[((ygi%5)*2+2+mi)%10];
- const Yd=YUE[mz],mwx=ZWX[mz],strong=(mwx===wx||SHENG[mwx]===wx);
  // 本命飛星
  const bm=benMing(yy,sex),gua=bm===5?(sex==="m"?2:8):bm,GU=GUA[gua],jd=JI[gua],at=POS27[bm];
  const hz=hk===null?null:Z[hk%12],hg=hk===null?null:G[((i%10)%5*2+(hk%12))%10];
  const col=(lb,gz,c)=>'<div class="'+(c||"")+'"><small>'+lb+'</small><b>'+gz[0]+'</b><b>'+gz[1]+'</b></div>';
  $("rPillar").innerHTML=col("時柱",hz?hg+hz:"？？",hz?"":"na")+col("日柱",gan+zhi,"me")+col("月柱",mg+mz)+col("年柱",ygan+yzhi);
- const sc=$("rShiCard");
- if(hz){sc.hidden=false;$("rShiCap").textContent="看時支「"+hz+"」與流年未土";$("rShiTag").textContent=SHI[hz].r;$("rShiS").innerHTML=lines(SHI[hz].s)}else sc.hidden=true;
- $("rTitle").textContent=gan+wx+"日主｜"+A.t;
- $("rTags").innerHTML='<span class="tag">屬'+sx+'</span><span class="tag">'+GU[0]+'卦・'+GU[2]+'</span>'+(hz?'':'<span class="tag">時辰未填</span>');
- $("rYueCap").textContent="看月令「"+mz+"」與流年未土"+(medge?"（生日逢節氣交界）":"");
- $("rYueTag").textContent=Yd.r;
- $("rYueS").innerHTML=lines(Yd.s);
- $("rYueQ").innerHTML=lines(["生於"+SEASON[mz]+mz+"月，日主"+(strong?"得令":"失令"),strong?"底氣足，可主動出擊":"宜借力使力，善用貴人"]);
+ const P4=[ygan+yzhi,mg+mz,gan+zhi,hz?hg+hz:null];
+ const o=XFReading.read(P4,sex),R=o.r,XJ=XFBazi.xiji(R.nat);
+ window._o=o;
+ $("rTitle").textContent=gan+wx+"日主｜"+o.axisLine;
+ $("rTags").innerHTML='<span class="tag">屬'+sx+'</span><span class="tag">日主'+(XJ.strong?"偏強":"偏弱")+'</span>'+(hz?'':'<span class="tag">時辰未填</span>')+(medge?'<span class="tag">生日逢節氣交界</span>':'');
+ $("rAxis").textContent=o.axisLine;
+ $("rAxisS").textContent=o.main?o.main.d:(o.sec.事業&&o.sec.事業.d)||"";
+ $("rSpecial").hidden=!o.special;
+ const MD=["2/4","3/6","4/5","5/6","6/6","7/7","8/8","9/8","10/8","11/7","12/7","1/6"];
+ $("rBar").innerHTML=R.months.map(m=>'<div class="'+(R.warn.includes(m.i)?"w":m.i===R.best?"b":"")+(m.key?" k":"")+'">'+m.gz[1]+'<small>'+MD[m.i]+'起</small></div>').join("");
+ const mn=i=>R.months[i].gz[1]+"月（"+MD[i]+"起）";
+ $("rBarS").innerHTML=lines(["最需注意："+R.warn.map(mn).join("、"),"機會最好："+mn(R.best)]);
+ window._bar={warn:R.warn.map(i=>R.months[i].gz[1]+"月").join("、"),best:R.months[R.best].gz[1]+"月"};
+ const HRN=["早子時","丑時","寅時","卯時","辰時","巳時","午時","未時","申時","酉時","戌時","亥時","晚子時"];
+ const who="生日："+v+"\n時辰："+(hk===null?"不知道":hk+"（"+HRN[hk]+"）")+"\n性別："+(sex==="m"?"男":"女");
+ $("lkXipi").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("我想預約流月細批（3,600 元）\n"+who);
+ $("lkUnlock").href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("流年卡解鎖\n"+who);
+ const ORD=["事業","財運","感情","健康","家宅"];
+ $("rTeaser").innerHTML='<li><b>喜忌</b><span>'+(XJ.strong?"日主偏強":"日主偏弱")+'・喜用與忌神</span></li>'+ORD.map(k=>'<li><b>'+k+'</b><span>'+o.sec[k].t+'</span></li>').join("");
+ $("rStrT").textContent="日主"+(XJ.strong?"偏強":"偏弱")+"｜喜"+XJ.xi.map(e=>XFBazi.WX[e]).join("")+"、忌"+XJ.ji.map(e=>XFBazi.WX[e]).join("");
+ $("rStr").innerHTML=[o.strength.lead,o.strength.xi,o.strength.ji,o.strength.xie].filter(Boolean).map(x=>'<span style="display:block;margin-bottom:4px">'+x+'</span>').join("");
+ $("rSecs").innerHTML=ORD.map(k=>{const x=o.sec[k];return '<div class="card sec"><h2>'+k+'</h2><p class="lead">'+x.t+'</p><p class="txt" style="margin:0">'+x.d+(x.extra?'<br>'+x.extra:'')+'</p><div class="dd"><b class="y">宜</b><span>'+x.y.join("、")+'</span><b class="n">忌</b><span>'+x.j.join("、")+'</span></div></div>'}).join("");
  $("rMingT").textContent=GU[0]+"卦・"+GU[1]+"｜"+GU[2];
  $("rMingS").innerHTML=lines(["2027 本命星飛入"+at].concat(PAL[at]));
  const gs=Y27[jd[0]],ys=Y27[jd[1]];
  $("rMingD").innerHTML='<b class="y">生氣</b><span>'+lines([jd[0]+"方・今年飛入"+STAR[gs],STARNOTE[gs]])+'</span><b class="y">延年</b><span>'+lines([jd[1]+"方・今年飛入"+STAR[ys],STARNOTE[ys]])+'</span>';
- $("rGanCap").textContent="看日干「"+gan+"」與流年丁火";
- $("rGanP").textContent=A.p;
- $("rGanS").innerHTML=lines(A.s);
- $("rDo").textContent=A.d;$("rDont").textContent=A.n;
- $("rZhiCap").textContent="看日支「"+zhi+"」（配偶宮）與流年未土";
- $("rZhiTag").textContent=B.r;
- $("rZhiS").innerHTML=lines(B.s);
  $("rSxCap").textContent="屬"+sx+"・以立春為界"+(edge?"（近立春，以交節時刻為準）":"");
  $("rSxS").innerHTML=lines(S.s);
  const ts=$("rTs");
  if(S.ts){ts.hidden=false;ts.innerHTML='<b class="ln">太歲提醒</b>'+lines([S.ts,"宜至宮廟安太歲"])}else ts.hidden=true;
- $("rColors").innerHTML=A.c.map(k=>'<span class="chip"><span class="dot" style="background:'+C[k]+'"></span>'+k+"色</span>").join("");
+ $("rColors").innerHTML=XICOL[XJ.xi[0]].map(k=>'<span class="chip"><span class="dot" style="background:'+C[k]+'"></span>'+k+"色</span>").join("");
  const r=$("result");r.hidden=false;
- window._card={gan,zhi,wx,t:A.t};
+ window._card={gan,zhi,wx,t:o.axisLine};
+ applyLock();
  setTimeout(()=>r.scrollIntoView({behavior:"smooth",block:"start"}),50);
  try{window.va&&window.va("event",{name:"card",data:{gan,zhi}})}catch(e){}
 });
@@ -428,7 +424,7 @@ async function makeShot(){
  T([...document.querySelectorAll("#rTags > *")].map(e=>e.innerText).join("・"),540,915,28,MUTE,"center","normal",620);
  g.strokeStyle="rgba(227,183,92,.45)";g.lineWidth=1.5;g.beginPath();g.moveTo(250,950);g.lineTo(830,950);g.stroke();
  const first=id=>{const e=$(id);return e?(e.innerText.split("\n").find(x=>x.trim())||"").trim():""};
- const rows=[["事業",first("rGanP")],["職場",first("rYueTag")],["感情",first("rZhiTag")],["生肖",first("rSxS")],["飛星",first("rMingT")],["開運",[...document.querySelectorAll("#rColors .chip")].map(e=>e.innerText.trim()).join("、")]].filter(r=>r[1]);
+ const B_=window._bar||{};const rows=[["主軸",(window._o||{}).axisLine||""],["生肖",first("rSxS")],["留意",B_.warn||""],["把握",B_.best||""]].filter(r=>r[1]);
  let y=1015;rows.forEach(([k,v])=>{g.fillStyle=RED;g.fillRect(250,y-34,8,40);T(k,272,y,32,GOLD,"left","bold");T(v,372,y,34,INK,"left","normal",460);y+=74});
  // QR
  try{const qr=await load("https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data="+encodeURIComponent("https://xunfeng-game.vercel.app/2027"));g.drawImage(qr,722,1436,118,118)}catch(e){}
