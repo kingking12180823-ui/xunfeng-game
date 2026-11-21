@@ -334,7 +334,7 @@ const inW=k=>LECT[k]&&NOW()>=new Date(LECT[k].a).getTime()&&NOW()<=new Date(LECT
 const LK=inW(REF)?REF:Object.keys(LECT).find(inW)||"",LW=LECT[LK];let inLect=!!LK;
 if(!inLect)fetch("/api/lecture").then(r=>r.json()).then(j=>{if(j.on){inLect=true;if($("gate"))applyLock()}}).catch(()=>{});
 // 老師測試用：網址加 ?reset=1 清除這支手機的解鎖紀錄，回到鎖住狀態
-if(/[?&]reset=1/.test(location.search)){try{localStorage.removeItem(UKEY);localStorage.removeItem("xunfeng-qian-unlock")}catch(e){}}
+if(/[?&]reset=1/.test(location.search)){try{localStorage.removeItem(UKEY);localStorage.removeItem("xunfeng-qian-unlock");localStorage.removeItem("xunfeng-qian-2027");sessionStorage.clear()}catch(e){}try{history.replaceState(null,"",location.pathname+location.hash)}catch(e){}}
 function applyLock(){const ok=unlocked();$("full").hidden=!ok;$("gate").hidden=ok;$("cpwBox").hidden=!inLect}
 $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").replace(/\s/g,"").replace(/時$/,"");let x="";
  try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
