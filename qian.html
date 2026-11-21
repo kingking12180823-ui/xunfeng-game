@@ -240,6 +240,8 @@ try{const q=qs.get("r")||(location.hash.match(/r=([^&]+)/)||[])[1];
  if(q){REF=decodeURIComponent(q);localStorage.setItem("xunfeng-ref",REF)}else REF=localStorage.getItem("xunfeng-ref")||""}catch(e){}
 const withRef=u=>REF?u+(u.indexOf("?")>-1?"&":"?")+"ref="+encodeURIComponent(REF):u;
 document.getElementById("lkTianji").href=withRef(document.getElementById("lkTianji").href);document.getElementById("lkFace").href=withRef(document.getElementById("lkFace").href);document.getElementById("lkAudio").href=withRef(document.getElementById("lkAudio").href);
+// 老師測試用：?reset=1 清除這支手機的抽籤紀錄與講座解鎖，回到學員第一次進來的狀態
+if(qs.get("reset")==="1"){try{localStorage.removeItem("xunfeng-qian-2027");localStorage.removeItem("xunfeng-qian-unlock");localStorage.removeItem("xunfeng-card-unlock")}catch(e){}location.replace("/qian")}
 const preview=qs.get("preview")==="1";
 const NOW=()=>preview&&qs.get("at")?new Date(qs.get("at")+"T12:00:00+08:00").getTime():Date.now();
 const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
