@@ -185,6 +185,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 <section class="step" id="s3">
   <h1>擲筊請示</h1>
   <p class="say"><span class="ln">籤已出筒，請神明確認</span><span class="ln">擲得聖筊，此籤即屬於你</span></p>
+  <p class="verdict" id="qno" style="font-size:22px;margin:4px 0 0"></p>
   <div class="bwei" id="bwei"><b></b><b></b></div>
   <p class="verdict" id="verdict"></p>
   <p class="mute" id="verdictSub"></p>
@@ -315,7 +316,7 @@ $("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8)
 let energy=0,drawn=null,motionOn=false;
 function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");snd("shake",.9,.9+Math.random()*.25,420);
  clearTimeout(addEnergy.t);addEnergy.t=setTimeout(()=>$("tube").classList.remove("shake"),350);
- if(energy>=100){drawn=pick();$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);snd("drop",1);setTimeout(()=>{show(3)},1300)}}
+ if(energy>=100){drawn=pick();$("qno").textContent="第"+CN(drawn.n)+"籤 出筒";$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);snd("drop",1);setTimeout(()=>{show(3)},1300)}}
 function pick(){const r=new Uint32Array(2);(crypto||window.msCrypto).getRandomValues(r);const q=pool[r[0]%pool.length],y=r[1]%6;return{n:q.n,y}}
 $("tube").addEventListener("pointerdown",()=>{enableMotion();addEnergy(9)});
 // 搖手機：一進頁面就開始偵測（只在「搖籤」這一步累積），以相鄰兩次加速度的變化量判斷搖動
@@ -338,8 +339,8 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
    setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
-  else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"，請再誠心搖籤";
-   setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("tube").classList.remove("drop");tossing=false;show(2)},2000);return}
+  else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"。此籤不屬於你，請放回籤筒，重新搖籤";
+   setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("qno").textContent="";$("tube").classList.remove("drop");tossing=false;show(2)},2400);return}
   },1100)});
 
 // 4 開籤
