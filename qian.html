@@ -330,11 +330,11 @@ function enableMotion(){if(motionOn)return;motionOn=true;
  try{if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function")DeviceMotionEvent.requestPermission().catch(()=>{})}catch(e){}}
 document.addEventListener("pointerdown",function once(){enableMotion();document.removeEventListener("pointerdown",once,true)},true);
 
-// 3 擲筊：聖筊 50%、笑筊 25%、陰筊 25%
+// 3 擲筊：聖筊、笑筊、陰筊各 1/3
 let tossing=false,tries=0;
 $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;const bw=$("bwei"),bs=bw.querySelectorAll("b");$("verdict").textContent="";$("verdictSub").textContent="";
  bw.classList.remove("toss");void bw.offsetWidth;bw.classList.add("toss");
- const r=new Uint32Array(1);crypto.getRandomValues(r);const k=r[0]%4; // 0,1 聖 2 笑 3 陰
+ const r=new Uint32Array(1);crypto.getRandomValues(r);const k=[0,2,3][r[0]%3]; // 聖、笑、陰各 1/3（老師訂：約三成過）
  setTimeout(()=>snd("bwei"+(1+Math.floor(Math.random()*3)),1),770);setTimeout(()=>{
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
