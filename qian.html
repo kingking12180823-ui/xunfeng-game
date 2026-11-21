@@ -314,7 +314,7 @@ $("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8)
 
 // 2 搖籤：搖動或連點，累積到 100%
 let energy=0,drawn=null,motionOn=false;
-function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");snd("shake",.9,.9+Math.random()*.25,420);
+function addEnergy(v){if(drawn)return;energy=Math.min(100,energy+v);$("meter").style.width=energy+"%";$("tube").classList.add("shake");buzz(35);snd("shake",.9,.9+Math.random()*.25,420);
  clearTimeout(addEnergy.t);addEnergy.t=setTimeout(()=>$("tube").classList.remove("shake"),350);
  if(energy>=100){drawn=pick();$("qno").textContent="第"+CN(drawn.n)+"籤 出筒";$("tube").classList.remove("shake");$("tube").classList.add("drop");buzz([40,40,120]);snd("drop",1);setTimeout(()=>{show(3)},1300)}}
 function pick(){const r=new Uint32Array(2);(crypto||window.msCrypto).getRandomValues(r);const q=pool[r[0]%pool.length],y=r[1]%6;return{n:q.n,y}}
