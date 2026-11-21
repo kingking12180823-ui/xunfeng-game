@@ -38,6 +38,7 @@ th{background:var(--panel2);color:var(--gold);white-space:nowrap}
     <label><input type="radio" name="s" value="m" required>男</label><label><input type="radio" name="s" value="f">女</label>
     <button>推算</button>
     <button type="button" id="pr" style="background:var(--panel2);color:var(--gold)">列印</button>
+    <button type="button" id="lg" style="background:var(--panel2);color:var(--gold)">最近問事</button>
   </form>
   <p class="mute" id="st">時間請輸入出生的鐘錶時（台灣時間）。</p>
   <p class="err" id="err"></p>
@@ -52,8 +53,13 @@ const KEY="xunfeng-teacher-token";
 const hp=new URLSearchParams(location.hash.slice(1));
 if(hp.get("t")){try{sessionStorage.setItem(KEY,hp.get("t"))}catch(e){}history.replaceState(null,"",location.pathname)}
 let TOK="";try{TOK=sessionStorage.getItem(KEY)||""}catch(e){}
-if(!TOK){$("f").querySelector("button").disabled=true;$("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結後再開啟。"}
+if(!TOK){$("f").querySelector("button").disabled=true;$("lg").disabled=true;$("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結後再開啟。"}
 $("pr").onclick=()=>print();
+const ASKN=["事業","財運","感情","家宅","出行","整體運勢","健康"];
+$("lg").onclick=async()=>{$("err").textContent="";const j=await fetch("/api/ask?op=log&tt="+encodeURIComponent(TOK)).then(r=>r.json()).catch(()=>({ok:false}));
+ if(!j.ok){$("err").textContent="讀取失敗，請在 LINE 再傳一次「老師後台」";return}
+ const f=t=>{const d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+ $("out").innerHTML='<div class="card"><h2>最近問事（'+j.list.length+' 筆）</h2>'+(j.list.length?'<table><tr><th>時間</th><th>LINE 名稱</th><th>類別</th><th>所問之事</th><th>籤</th></tr>'+j.list.map(x=>'<tr><td>'+f(x.t)+'</td><td>'+esc(x.name||"—")+(x.who?'<br><span class="mute">稟告：'+esc(x.who)+'</span>':'')+'</td><td>'+ASKN[x.a]+'</td><td>'+esc(x.q)+'</td><td>第'+((x.n-1)*6+x.y+1)+'籤</td></tr>').join("")+'</table>':'<p class="mute">還沒有人問事</p>')+'</div>'};
 $("f").addEventListener("submit",async e=>{e.preventDefault();$("err").textContent="";$("out").innerHTML="";
  const q=new URLSearchParams({t:TOK,b:$("bd").value,h:$("hh").value,mi:$("mi").value,s:document.querySelector("input[name=s]:checked").value});
  const j=await fetch("/api/teacher?"+q).then(r=>r.json()).catch(()=>({ok:false,reason:"net"}));

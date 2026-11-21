@@ -137,7 +137,23 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
   <div id="pwBox" hidden style="margin:14px auto 0;max-width:260px"><input id="pw" placeholder="請輸入講座口令" autocomplete="off" style="width:100%;padding:11px;border-radius:10px;border:1px solid rgba(201,168,76,.5);background:rgba(0,0,0,.35);color:#f3e7c4;font-size:16px;text-align:center"><p class="mute" id="pwErr" style="color:#ffb4a8;min-height:1.2em;margin-top:6px"></p></div>
   <div class="spacer"></div>
   <button class="btn main" id="go0">誠心求籤</button>
-  <p class="mute" style="margin-top:10px"><span class="ln">求籤前請準備好一件想問的事</span><span class="ln">一年只能求一次，求過即鎖定</span></p>
+  <p class="mute" style="margin-top:10px" id="s0note"><span class="ln">求籤前請準備好一件想問的事</span><span class="ln">一年只能求一次，求過即鎖定</span><span class="ln" style="opacity:.75">酒後、盛怒，或為賭博投機，不宜求籤</span></p>
+  <a class="btn ghost" id="goAsk" href="/qian?m=ask" hidden>另有一事想問・問事籤<small>一件事問一次，隨時可問</small></a>
+</section>
+
+<!-- 問事：寫下所問之事 -->
+<section class="step" id="sQ">
+  <h1>問事</h1>
+  <p class="say"><span class="ln">一件事，問一次</span><span class="ln">寫清楚你想問的事</span></p>
+  <div class="form">
+    <label for="qq">所問之事</label>
+    <textarea id="qq" maxlength="60" rows="3" placeholder="例如：明年三月該不該換工作" style="width:100%;font:inherit;font-size:16px;padding:10px;border-radius:10px;border:1px solid rgba(201,168,76,.5);background:rgba(0,0,0,.35);color:#f3e7c4"></textarea>
+    <label for="qa">屬於哪一類</label>
+    <select id="qa"><option value="0">事業</option><option value="1">財運</option><option value="2">感情</option><option value="6">健康</option><option value="3">家宅</option><option value="4">出行</option><option value="5">整體運勢</option></select>
+    <p class="mute" id="qErr" style="color:#ffb4a8;min-height:1.2em"></p>
+    <button class="btn main" id="goQ" type="button">稟告此事</button>
+    <p class="mute" style="font-size:12px"><span class="ln">同一件事再問，會是同一支籤</span><span class="ln">所問之事由巽風堪輿研究中心保存，供老師為你解籤參考</span></p>
+  </div>
 </section>
 
 <!-- 0.5 上香稟告 -->
@@ -161,7 +177,7 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
 <!-- 1 靜心 -->
 <section class="step" id="s1">
   <h1>靜心</h1>
-  <p class="say"><span class="ln">心中默念姓名、生日</span><span class="ln">與你想問的事</span></p>
+  <p class="say"><span class="ln">心中默念姓名、生日</span><span class="ln">與你想問的事</span><span class="ln" style="font-size:.85em;opacity:.8">替家人求，就默念家人的</span></p>
   <div class="ring" id="ring">
     <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="none" stroke="#3a2a18" stroke-width="6"/><circle id="arc" cx="100" cy="100" r="92" fill="none" stroke="#E3B75C" stroke-width="6" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578"/></svg>
     <div class="core">按住</div>
@@ -217,13 +233,15 @@ h1{font-family:var(--display);font-size:clamp(28px,8.5vw,34px);color:var(--gold2
     <a class="btn main" id="lkHua" href="https://www.xunfeng.tw/booking" target="_blank" rel="noopener">預約風羿老師化解<small>專業服務・依項目收費</small></a>
     <p class="fee">籤為提醒，不必驚慌；趨吉避凶，事在人為</p>
   </div>
-  <div class="jie" id="jie" hidden><div class="t">解　曰</div><dl id="jieDl"></dl></div>
+  <div class="jie" id="jie" hidden><div class="t">解　曰</div><p class="mute" style="text-align:center;margin:0 0 8px;font-size:13px">先看籤等，再看爻象、斷曰，最後看你問的那一項</p><dl id="jieDl"></dl><p class="mute" id="hNote" hidden style="font-size:13px;margin:8px 0 0">籤為保養提醒，身體不適請就醫</p></div>
+  <div class="hua" id="askBox" hidden></div>
   <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>結合四柱與這支籤，深入解析你的問題</small></a>
   <a class="btn gold" id="lkFace" href="https://www.xunfeng.tw/member-ai/face" target="_blank" rel="noopener">巽風面相系統<small>一張正面照，讀懂你的面相</small></a>
   <a class="btn ghost" id="lkAudio" href="https://xunfeng-audio.kingking12180823.workers.dev/" target="_blank" rel="noopener">有聲大藏經<small>白話導讀，每天聽一部經</small></a>
   <a class="btn main" href="/2027" id="lkCard">看我的 2027 流年卡</a>
   <button class="btn gold" type="button" id="shot">存成籤紙圖片<small>可存相簿、分享到 LINE／FB</small></button>
   <a class="btn line" id="lkSave" href="https://lin.ee/QPJ7XDY" target="_blank" rel="noopener">傳到 LINE 給風羿老師保存<small>換手機也找得到・立春開封時通知你</small></a>
+  <a class="btn ghost" id="goAsk2" href="/qian?m=ask" hidden>另有一事想問・問事籤<small>一件事問一次</small></a>
   <button class="btn ghost" id="lkCopy" type="button">複製我的籤連結<small id="copyMsg">任何手機打開都能還原這支籤</small></button>
 </section>
 </main>
@@ -244,6 +262,9 @@ document.getElementById("lkTianji").href=withRef(document.getElementById("lkTian
 // 老師測試用：?reset=1 清除這支手機的抽籤紀錄與講座解鎖，回到學員第一次進來的狀態
 if(qs.get("reset")==="1"){try{localStorage.removeItem("xunfeng-qian-2027");localStorage.removeItem("xunfeng-qian-unlock");localStorage.removeItem("xunfeng-card-unlock")}catch(e){}location.replace("/qian")}
 const preview=qs.get("preview")==="1";
+// 問事籤：?m=ask，LINE 回覆的連結帶 #a=問事碼（存本次瀏覽）
+let ATOK="";{const am=location.hash.match(/a=([0-9a-z]+\.[0-9a-f]{16}\.[A-Za-z0-9_-]{16})/);try{if(am){sessionStorage.setItem("xf-ask-tok",am[1]);history.replaceState(null,"","/qian?m=ask")}ATOK=sessionStorage.getItem("xf-ask-tok")||""}catch(e){if(am)ATOK=am[1]}}
+const ASKMODE=qs.get("m")==="ask"||!!ATOK;
 const NOW=()=>preview&&qs.get("at")?new Date(qs.get("at")+"T12:00:00+08:00").getTime():Date.now();
 const pool=(window.QIAN||[]).filter(q=>q.ok||preview);
 const $=id=>document.getElementById(id);
@@ -260,6 +281,39 @@ window._xs={snd,amb,sb:SB,get m(){return MUTE},set m(v){MUTE=v;amb(!v&&!!documen
 document.addEventListener("pointerdown",()=>{try{sctx()}catch(e){}},{once:true});
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
+// ===== 問事籤 =====
+let QTEXT="";
+function setAsk(){$("gateMsg").innerHTML=lines(["問事籤・一件事問一次","同一件事再問，會是同一支籤"]);$("s0note").hidden=true;$("pwBox").hidden=true;$("goAsk").hidden=true;
+ $("ask").style.display="none";$("ask").previousElementSibling.style.display="none";
+ if(!ATOK){$("go0").textContent="到 LINE 領取問事連結";$("go0").onclick=()=>{location.href="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("我要問事")}}
+ else{$("go0").textContent="寫下所問之事";$("go0").onclick=()=>{show("Q")}}}
+$("goQ").addEventListener("click",async()=>{const q=$("qq").value.trim();if(q.replace(/\s/g,"").length<4){$("qErr").textContent="請寫清楚一點（至少 4 個字）";return}
+ $("goQ").disabled=true;$("qErr").textContent="";
+ const j=await fetch("/api/ask?op=check&t="+encodeURIComponent(ATOK)+"&q="+encodeURIComponent(q)).then(r=>r.json()).catch(()=>({ok:false}));
+ $("goQ").disabled=false;
+ if(!j.ok){$("qErr").textContent=j.reason==="expired"||j.reason==="invalid"?"問事連結已失效，請到 LINE 再傳一次「我要問事」":"連線失敗，請再試一次";return}
+ QTEXT=q;ASKI=+$("qa").value;
+ if(j.rec){renderAsk(j.rec,true);show(4);return}
+ amb(true);show(5)});
+function renderAsk(r,existed){
+ const rec={n:r.n,y:r.y,t:r.t||Date.now(),ask:r.a,who:r.who||"",ed:"open"};render(rec,false);
+ const q=(window.QIAN||[]).find(x=>x.n===r.n);if(!q)return;const no=(q.n-1)*6+r.y+1,ai=r.a;
+ $("pSign").innerHTML=lines(["求籤人　"+(r.who||"善信"),"問事　"+r.q,new Date(rec.t).getFullYear()+"年"+(new Date(rec.t).getMonth()+1)+"月"+new Date(rec.t).getDate()+"日","於巽風堪輿研究中心求得"]);
+ $("sealed").hidden=true;$("jie").hidden=false;
+ $("jieDl").innerHTML='<dt>'+ASK[ai]+'</dt><dd class="me">'+(q.S&&q.S[ai]||"")+'</dd>';$("hNote").hidden=ai!==6;
+ $("lkSave").hidden=true;$("lkCopy").hidden=true;
+ const NEXT={0:["四象天機書（200 元）","這件事能不能做，給你明確答案","https://www.xunfeng.tw/member-ai/decision"],1:["四象天機書（200 元）","這筆錢該不該動，給你明確答案","https://www.xunfeng.tw/member-ai/decision"],
+  2:["巽風面相系統（200 元）","一張正面照，看你的人際與感情","https://www.xunfeng.tw/member-ai/face"],3:["預約到府堪驗","搬家、裝修、買房，現場看最準","https://www.xunfeng.tw/booking"],
+  4:["流月細批","哪個月出行、行動最適合","/xipi"],5:["流月細批","丁未年逐月的吉凶與宜忌","/xipi"],6:["預約老師諮詢","保養方向與居家調整",""]}[ai];
+ const consult="https://line.me/R/oaMessage/@mhb5020o/?"+encodeURIComponent("我想預約老師諮詢\n問事："+r.q+"\n抽到：第"+no+"籤（"+(q.full||q.g)+"・"+yaoName(q,r.y)+"）");
+ const b=$("askBox");b.hidden=false;
+ b.innerHTML='<div class="t">下一步</div>'+(existed?'<p class="say" style="margin:0 0 6px;text-align:center">這件事你已問過，這是當時的籤</p>':'')+
+  '<p class="say" style="margin:0;text-align:center">'+lines(["籤給的是方向","要明確答案與做法，請往下一步"])+'</p>'+
+  (NEXT[2]?'<a class="btn gold" href="'+withRef(NEXT[2])+'" target="_blank" rel="noopener">'+NEXT[0]+'<small>'+NEXT[1]+'</small></a>':'')+
+  '<a class="btn line" href="'+consult+'" target="_blank" rel="noopener">預約老師諮詢<small>帶著這支籤，請風羿老師為你解</small></a>'+
+  '<a class="btn ghost" href="/qian?m=ask">再問另一件事<small>一件事問一次</small></a>';
+ try{window.va&&window.va("event",{name:"ask",data:{no,a:ai}})}catch(e){}}
+
 // 已求過：直接顯示
 const SALT="xf2027";function ck(x){let h=2166136261;for(const c of SALT+x){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h.toString(36).slice(-4)}
 function encRec(r){const j=JSON.stringify([r.n,r.y,r.t,r.ask==null?5:r.ask,r.lamp?1:0,r.ed==="lecture"?1:0,r.who||""]);const b=btoa(unescape(encodeURIComponent(j))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");return b+"."+ck(b)}
@@ -267,7 +321,7 @@ function decRec(k){try{const[b,c]=k.split(".");if(ck(b)!==c)return null;const a=
 const recURL=r=>location.origin+"/qian#k="+encRec(r);
 let LINKED=false,saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
 {const km=location.hash.match(/k=([A-Za-z0-9_-]+\.[a-z0-9]+)/);const lr=km&&decRec(km[1]);if(lr){LINKED=true;if(!saved&&!preview){try{localStorage.setItem(KEY,JSON.stringify(lr))}catch(e){}}saved=lr}}
-if(saved&&(!preview||LINKED)){render(saved,false);show(4)}else{
+if(saved&&(!preview||LINKED)&&!ASKMODE){render(saved,false);show(4);try{if(!LINKED)$("goAsk2").hidden=false}catch(e){}}else{
 const GAN10="甲乙丙丁戊己庚辛壬癸",ZHI12="子丑寅卯辰巳午未申酉戌亥";
 function hourPillar(t){const d=new Date(t+8*3600000);let y=d.getUTCFullYear(),m=d.getUTCMonth(),dd=d.getUTCDate(),h=d.getUTCHours();
  if(h===23){const n=new Date(Date.UTC(y,m,dd+1));y=n.getUTCFullYear();m=n.getUTCMonth();dd=n.getUTCDate()}
@@ -282,12 +336,14 @@ function hourPillars(){const t=NOW();return [hourPillar(t),hourPillar(t-7200000)
  const needPw=!canNow&&inWin;
  function pwGate(){$("gateMsg").innerHTML=lines(["講座學員限定・提前求籤","請輸入講座口令"]);$("pw").placeholder="講座口令";$("pwBox").hidden=false;$("go0").textContent="驗證口令";
   $("go0").onclick=async()=>{const v=($("pw").value||"").replace(/\s/g,"");let x="";try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
-   if((L&&x===L.h)||hourPillars().includes(v.replace(/時$/,""))){try{localStorage.setItem("xunfeng-qian-unlock",LK||"live")}catch(e){}$("pwBox").hidden=true;$("gateMsg").innerHTML=lines(["口令正確，歡迎求籤"]);$("go0").textContent="誠心求籤";$("go0").onclick=null}else $("pwErr").textContent="口令不正確"}}
+   if((L&&x===L.h)||hourPillars().includes(v.replace(/時$/,""))){try{localStorage.setItem("xunfeng-qian-unlock",LK||"live")}catch(e){}$("pwBox").hidden=true;$("gateMsg").innerHTML=lines(["口令正確，歡迎求籤"]);$("go0").textContent="誠心求籤";$("go0").onclick=null;if(ASKMODE)setAsk()}else $("pwErr").textContent="口令不正確"}}
  if(!pool.length){$("gateMsg").innerHTML=lines(["籤筒開光中，敬請期待"]);$("go0").disabled=true;$("go0").style.opacity=.4}
  else if(needPw)pwGate();
  else if(!canNow){$("gateMsg").innerHTML=lines(["2027 立春（2/4）開籤","現在可先看你的流年卡"]);$("go0").textContent="先看我的流年卡";$("go0").onclick=()=>location.href="/2027";
   // 老師在 LINE 開啟講座模式時，也顯示口令欄
   fetch("/api/lecture").then(r=>r.json()).then(j=>{if(j.on)pwGate()}).catch(()=>{})}
+ if(pool.length&&ASKMODE){if(canNow)setAsk();else if(!needPw){$("gateMsg").innerHTML=lines(["問事籤於 2027 立春開放","講座學員可提前使用"])}}
+ else if(pool.length&&canNow)$("goAsk").hidden=false;
  show(0)}
 $("go0").addEventListener("click",()=>{if($("go0").onclick)return;amb(true);show(5)});
 // 上香：三炷依序點燃
@@ -302,7 +358,7 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
 $("lamp").addEventListener("click",()=>{const l=$("lamp");if(l.classList.contains("lit"))return;LAMP=true;l.classList.add("lit");buzz(30);
  $("xiangTip").textContent="心燈已明，請靜心稟告";setTimeout(()=>{$("bing").hidden=false},500)});
 let WHO="",ASKI=5,LAMP=false;
-$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}ASKI=+$("ask").value;show(1)});
+$("go5").addEventListener("click",()=>{WHO=($("nm").value||"").trim().slice(0,8);try{if(WHO)XF.saveProfile({name:WHO})}catch(e){}if(!ASKMODE)ASKI=+$("ask").value;show(1)});
 
 // 1 靜心：按住 6 秒
 (function(){const ring=$("ring"),arc=$("arc"),core=ring.querySelector(".core");let t0=0,raf=0,done=false;const DUR=6000;
@@ -338,7 +394,8 @@ $("toss").addEventListener("click",()=>{if(tossing)return;tossing=true;tries++;c
  setTimeout(()=>snd("bwei"+(1+Math.floor(Math.random()*3)),1),770);setTimeout(()=>{
   const flat=k<2?[true,false]:k===2?[true,true]:[false,false];bs.forEach((b,i)=>b.classList.toggle("flat",flat[i]));
   if(k<2){$("verdict").textContent="聖筊";$("verdictSub").textContent="神明應允，此籤屬於你";buzz([60,60,200]);
-   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
+   setTimeout(()=>{const rec={n:drawn.n,y:drawn.y,t:NOW(),tries,who:WHO,lamp:LAMP,ask:ASKI,ed:NOW()<OPEN.getTime()?"lecture":"open"};if(ASKMODE){fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({op:"save",t:ATOK,q:QTEXT,a:ASKI,n:rec.n,y:rec.y,who:WHO})}).then(r=>r.json()).catch(()=>null).then(j=>{renderAsk(j&&j.rec?j.rec:{n:rec.n,y:rec.y,a:ASKI,q:QTEXT,who:WHO,t:rec.t},!!(j&&j.existed));show(4)});return}
+    try{if(!preview)localStorage.setItem(KEY,JSON.stringify(rec))}catch(e){}render(rec,true);show(4)},1600)}
   else{$("verdict").textContent=k===2?"笑筊":"陰筊";$("verdictSub").textContent=(k===2?"神明笑而未答":"神明未允")+"。此籤不屬於你，請放回籤筒，重新搖籤";
    setTimeout(()=>{drawn=null;energy=0;$("meter").style.width="0";$("qno").textContent="";$("tube").classList.remove("drop");tossing=false;show(2)},2400);return}
   },1100)});
@@ -367,7 +424,7 @@ function render(rec,fresh){const q=(window.QIAN||[]).find(x=>x.n===rec.n);if(!q)
   try{window.va&&window.va("event",{name:"qian_xiong",data:{no}})}catch(e){}}
  // 講座學員（立春前抽的籤）抽完即可看完整解曰；其他人立春開籤，抽到就看得到
  if((NOW()>=OPEN.getTime()||rec.ed==="lecture")&&q.S){$("sealed").hidden=true;$("jie").hidden=false;
-  $("jieDl").innerHTML=ASKORD.filter(i=>q.S[i]).map(i=>'<dt>'+ASK[i]+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");
+  $("jieDl").innerHTML=ASKORD.filter(i=>q.S[i]).map(i=>'<dt>'+ASK[i]+'</dt><dd'+(i===ai?' class="me"':'')+'>'+q.S[i]+'</dd>').join("");$("hNote").hidden=false;
   $("lkSave").innerHTML="傳到 LINE 給風羿老師保存<small>老師可依此籤為你詳解</small>"}
  else{$("sealTxt").innerHTML=lines(["事業、財運、感情、健康、家宅、出行","你問的「"+ASKNAME[ai]+"」，開封時特別標示"]);cd();setInterval(cd,1000)}
  try{window.va&&window.va("event",{name:"qian",data:{no}})}catch(e){}}

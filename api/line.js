@@ -2,7 +2,7 @@
 // 客人傳「流年卡解鎖」→ 回一條 24 小時有效的個人閱讀連結（之後自動失效，不用人工換口令）。
 // 需要 Vercel 環境變數（由老師自己貼上）：LINE_CHANNEL_SECRET、LINE_CHANNEL_ACCESS_TOKEN
 const crypto = require("crypto");
-const { makeToken } = require("./_token.js");
+const { makeToken, makeUserToken } = require("./_token.js");
 
 const SECRET = (process.env.LINE_CHANNEL_SECRET || "").trim();
 const TOKEN = (process.env.LINE_CHANNEL_ACCESS_TOKEN || "").trim();
@@ -83,6 +83,17 @@ module.exports = async function handler(req, res) {
         const { token } = makeToken(SECRET, 24 * 30, "teacher");
         await reply(ev.replyToken, `老師專用・流月詳批（30 天內有效，請勿轉傳）：\n${SITE}/teacher#t=${token}`);
       }
+      continue;
+    }
+    if (/我要問事|問事籤/.test(t)) {
+      // 問事籤：連結綁定這位 LINE 使用者，同一句問題永遠是同一支籤
+      const uh = crypto.createHash("sha256").update("xf-user:" + uid).digest("hex").slice(0, 16);
+      try {
+        const pr = await fetch("https://api.line.me/v2/bot/profile/" + encodeURIComponent(uid), { headers: { Authorization: "Bearer " + TOKEN } });
+        if (pr.ok) { const j = await pr.json(); if (j.displayName) await redis([["HSET", "xf:names", uh, String(j.displayName).slice(0, 30)]]); }
+      } catch (e) {}
+      const { token } = makeUserToken(SECRET, 24, "ask", uh);
+      await reply(ev.replyToken, `您的問事籤連結（24 小時內有效）：\n${SITE}/qian?m=ask#a=${token}\n\n一件事問一次；同一件事再問，會是同一支籤。`);
       continue;
     }
     if (/流年卡/.test(t) && /解鎖|閱讀|看完整/.test(t)) {
