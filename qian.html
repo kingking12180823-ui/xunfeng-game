@@ -464,7 +464,7 @@ $("shotClose").addEventListener("click",()=>$("shotBox").hidden=true);
 // LINE 內建瀏覽器不支援下載與分享圖片：用手機瀏覽器開啟這支籤（連結會自動還原）
 if(/Line\//i.test(navigator.userAgent)){
  document.querySelector("#shotBox p").innerHTML=lines(["LINE 內無法儲存圖片","請改用手機瀏覽器開啟，你的籤會自動帶過去"]);
- $("shotShare").textContent="用手機瀏覽器開啟";
+ $("shotShare").textContent="瀏覽器開啟";$("shotShare").style.whiteSpace="nowrap";
  $("shotShare").addEventListener("click",e=>{e.stopImmediatePropagation();const R=window._QR&&window._QR[0];
   location.href=location.origin+"/qian?openExternalBrowser=1"+(R&&!ASKMODE?"#k="+encRec(R):(ASKMODE?"&m=ask":""))},true)}
 $("shotShare").addEventListener("click",async()=>{try{const bl=await (await fetch(window._shot)).blob();const f=new File([bl],"巽風丁未籤.jpg",{type:"image/jpeg"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"我的丁未籤"});return}}catch(e){}

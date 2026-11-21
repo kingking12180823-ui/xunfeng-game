@@ -447,7 +447,7 @@ $("shotClose").addEventListener("click",()=>$("shotBox").hidden=true);
 // LINE 內建瀏覽器不支援下載與分享圖片：改請使用者用手機瀏覽器開啟
 if(/Line\//i.test(navigator.userAgent)){
  document.querySelector("#shotBox p").innerHTML='<span class="ln">LINE 內無法儲存圖片</span><span class="ln">請改用手機瀏覽器開啟，再輸入一次生日</span>';
- $("shotShare").textContent="用手機瀏覽器開啟";
+ $("shotShare").textContent="瀏覽器開啟";$("shotShare").style.whiteSpace="nowrap";
  $("shotShare").addEventListener("click",e=>{e.stopImmediatePropagation();location.href=location.origin+"/2027?openExternalBrowser=1"+(REF?"#r="+encodeURIComponent(REF):"")},true)}
 $("shotShare").addEventListener("click",async()=>{try{const bl=await (await fetch(window._shot)).blob();const f=new File([bl],"2027丁未流年卡.jpg",{type:"image/jpeg"});
  if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"我的 2027 丁未流年卡"});return}}catch(e){}
