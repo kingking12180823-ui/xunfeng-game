@@ -53,7 +53,7 @@ const KEY="xunfeng-teacher-token";
 const hp=new URLSearchParams(location.hash.slice(1));
 if(hp.get("t")){try{sessionStorage.setItem(KEY,hp.get("t"))}catch(e){}history.replaceState(null,"",location.pathname)}
 let TOK="";try{TOK=sessionStorage.getItem(KEY)||""}catch(e){}
-if(!TOK){$("f").querySelector("button").disabled=true;$("lg").disabled=true;$("err").textContent="確認站長身分中…";fetch("/api/owner").then(r=>r.json()).then(j=>{if(j.owner){$("f").querySelector("button").disabled=false;$("lg").disabled=false;$("err").textContent=""}else $("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結，或先到 xunfengtw.com/admin 用站長帳號登入。"}).catch(()=>{$("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結後再開啟。"})}
+if(!TOK){$("f").querySelector("button").disabled=true;$("lg").disabled=true;$("err").textContent="確認站長身分中…";fetch("/api/owner").then(r=>r.json()).then(j=>{if(j.owner){$("f").querySelector("button").disabled=false;$("lg").disabled=false;$("err").textContent=""}else $("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結，或先到 xunfengtw.com/owner 用站長帳號登入。"}).catch(()=>{$("err").textContent="請從官方 LINE 傳「老師後台」取得專用連結後再開啟。"})}
 $("pr").onclick=()=>print();
 const ASKN=["事業","財運","感情","家宅","出行","整體運勢","健康"];
 $("lg").onclick=async()=>{$("err").textContent="";const j=await fetch("/api/ask?op=log&tt="+encodeURIComponent(TOK)).then(r=>r.json()).catch(()=>({ok:false}));
