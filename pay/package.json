@@ -1,0 +1,12 @@
+{
+  "name": "xunfeng-pay",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/run.mjs",
+    "deploy": "wrangler d1 migrations apply xunfeng-pay --remote && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

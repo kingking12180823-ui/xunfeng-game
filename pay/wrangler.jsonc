@@ -1,0 +1,11 @@
+{
+  // 巽風收費服務 pay.xunfengtw.com（2027 流月詳批），與大藏經／頭像檢核分開
+  "name": "xunfeng-pay",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "xunfeng-pay", "database_id": "079f9e7d-c3cd-4aed-828b-77d467e24b0f", "migrations_dir": "migrations" }
+  ]
+  // 機密：ADMIN_TOKEN（後台登入密鑰），在 Cloudflare 後台設定，不寫進程式
+}

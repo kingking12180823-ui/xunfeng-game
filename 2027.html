@@ -197,7 +197,8 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
   <div class="card">
     <h2>每個月怎麼走</h2>
     <p class="txt" style="margin:0"><span class="ln">流年卡是一整年的粗批</span><span class="ln">各月上下半月的吉凶與宜忌</span><span class="ln">屬於風羿老師的流月細批</span></p>
-    <a class="small-link" href="/xipi" style="color:var(--gold)">了解流月細批 →</a>
+    <a class="btn gold lyBuy" href="https://pay.xunfengtw.com/liuyue" target="_blank" rel="noopener">2027 流月詳批（系統版）<small>12 個月 × 上下半月逐段詳批・單人 NT$199／全家 NT$499</small></a>
+    <a class="small-link" href="/xipi" style="color:var(--gold)">要老師親批？了解流月細批 →</a>
   </div>
   <div class="card">
     <h2>本命飛星</h2>
@@ -239,6 +240,7 @@ h2::before{content:"";width:5px;height:18px;background:var(--red);border-radius:
   <div class="card">
     <h2>下一步</h2>
     <p class="txt"><span class="ln">流年卡是一整年的天氣</span><span class="ln">具體的一件事，交給天機書判斷</span></p>
+    <a class="btn main lyBuy" href="https://pay.xunfengtw.com/liuyue" target="_blank" rel="noopener">2027 流月詳批<small>每個月上下半月怎麼走・NT$199 起</small></a>
     <a class="btn gold" id="lkTianji" href="https://www.xunfeng.tw/member-ai/decision" target="_blank" rel="noopener">四象天機書<small>這件事今年能不能做？</small></a>
     <a class="btn gold" id="lkFace" href="https://www.xunfeng.tw/member-ai/face" target="_blank" rel="noopener">巽風面相系統<small>看懂自己的五官氣色</small></a>
     <a class="btn ghost" id="lkAudio" href="https://xunfeng-audio.kingking12180823.workers.dev/" target="_blank" rel="noopener">有聲大藏經<small>白話導讀，每天聽一部經</small></a>
@@ -342,6 +344,7 @@ $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").repla
  else $("gateErr").textContent="口令不正確"});
 // 電腦開不了 line.me 的傳訊連結：改顯示 QR，用手機掃
 const MOBILE=/Android|iPhone|iPad|iPod|Mobile|Line\//i.test(navigator.userAgent);
+document.querySelectorAll(".lyBuy").forEach(a=>a.addEventListener("click",()=>{const u=new URL("https://pay.xunfengtw.com/liuyue"),b=$("bd").value,h=$("hr").value,s=(document.querySelector('input[name=sex]:checked')||{}).value;if(b)u.searchParams.set("b",b);if(h!=="")u.searchParams.set("h",h);if(s)u.searchParams.set("s",s);a.href=u.toString();try{window.va&&window.va("event",{name:"liuyue-buy"})}catch(e){}}));
 $("lkUnlock").addEventListener("click",e=>{if(MOBILE)return;e.preventDefault();$("qrImg").src="https://api.qrserver.com/v1/create-qr-code/?size=480x480&margin=4&data="+encodeURIComponent($("lkUnlock").href);$("qrBox").hidden=false});
 $("qrClose").addEventListener("click",()=>$("qrBox").hidden=true);
 // LINE 連結：#u=閱讀碼&b=生日&h=時辰&s=性別
