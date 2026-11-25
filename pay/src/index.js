@@ -51,7 +51,7 @@ footer{margin-top:36px;color:var(--mute);font-size:13px;border-top:1px solid var
 const shell = (title, body) => `<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}｜巽風堪輿研究中心</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="wrap">
 <header class="top noprint"><a href="/liuyue">巽風・2027 流月詳批</a></header>${body}
-<footer>本詳批依巽風科學八字推算，屬象數觀點的趨勢參考，不是定論，也不涉及醫療、投資或法律判斷；重要決定請合參現況。<br>© 巽風堪輿研究中心　<a href="${LINE}">官方 LINE</a>　<a href="https://xunfengtw.com/owner" style="color:#5a4d3a;text-decoration:none">站長</a></footer></div></body></html>`;
+<footer>本詳批依巽風科學八字推算，屬象數觀點的趨勢參考，不是定論，也不涉及醫療、投資或法律判斷；重要決定請合參現況。<br>© 巽風堪輿研究中心　<a href="${LINE}">官方 LINE</a></footer></div></body></html>`;
 
 const hourOpts = (sel) => `<option value="">不知道（不排時柱）</option>${HOUR_NAME.map((n, i) => `<option value="${i}"${String(sel) === String(i) ? ' selected' : ''}>${n}</option>`).join('')}`;
 const personBlock = (i, p = {}) => `<div class="person"${i > 0 ? ' data-extra' : ''}><label>第 ${i + 1} 位${i === 0 ? '' : '（全家方案）'}　稱呼（選填）</label><input name="p${i}_n" maxlength="12" value="${esc(p.n || '')}" placeholder="例如：爸爸、自己">
