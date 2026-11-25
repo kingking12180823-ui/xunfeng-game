@@ -65,5 +65,10 @@ await h('/admin/codes', { ...form({ batch: '講座', n: '10', plan: 'family' }),
 ok((await DB.prepare("SELECT COUNT(*) n FROM ly_codes WHERE batch='講座' AND plan='family'").first()).n === 10, '後台產生全家兌換碼');
 ok((await (await h('/admin', { headers: { Cookie: cookie } })).text()).includes('流月詳批後台'), '後台頁面正常');
 
+const dr = await h('/admin/direct', { ...form({ p0_b: '1985-06-20', p0_s: 'f', p0_n: '家人' }), headers: { Cookie: cookie } });
+ok(dr.status === 303 && (await (await h(dr.headers.get('Location'))).text()).includes('家人'), '站長直接開詳批');
+await h('/admin/direct', form({ p0_b: '1985-06-20', p0_s: 'f' }));
+ok((await DB.prepare("SELECT COUNT(*) n FROM ly_orders WHERE paid_via='owner'").first()).n === 1, '未登入不能直接開詳批');
+ok(lg.headers.get('Set-Cookie').includes('Domain=xunfengtw.com'), '後台登入在 xunfengtw.com 共用');
 console.log(`\n${pass} 通過，${fail} 失敗`);
 process.exit(fail ? 1 : 0);

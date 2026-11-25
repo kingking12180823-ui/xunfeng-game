@@ -51,7 +51,7 @@ footer{margin-top:36px;color:var(--mute);font-size:13px;border-top:1px solid var
 const shell = (title, body) => `<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}｜巽風堪輿研究中心</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="wrap">
 <header class="top noprint"><a href="/liuyue">巽風・2027 流月詳批</a></header>${body}
-<footer>本詳批依巽風科學八字推算，屬象數觀點的趨勢參考，不是定論，也不涉及醫療、投資或法律判斷；重要決定請合參現況。<br>© 巽風堪輿研究中心　<a href="${LINE}">官方 LINE</a></footer></div></body></html>`;
+<footer>本詳批依巽風科學八字推算，屬象數觀點的趨勢參考，不是定論，也不涉及醫療、投資或法律判斷；重要決定請合參現況。<br>© 巽風堪輿研究中心　<a href="${LINE}">官方 LINE</a>　<a href="https://xunfengtw.com/admin" style="color:#5a4d3a;text-decoration:none">站長</a></footer></div></body></html>`;
 
 const hourOpts = (sel) => `<option value="">不知道（不排時柱）</option>${HOUR_NAME.map((n, i) => `<option value="${i}"${String(sel) === String(i) ? ' selected' : ''}>${n}</option>`).join('')}`;
 const personBlock = (i, p = {}) => `<div class="person"${i > 0 ? ' data-extra' : ''}><label>第 ${i + 1} 位${i === 0 ? '' : '（全家方案）'}　稱呼（選填）</label><input name="p${i}_n" maxlength="12" value="${esc(p.n || '')}" placeholder="例如：爸爸、自己">
@@ -147,6 +147,7 @@ function adminPage({ conf, orders, batches, codes, batch, stats, msg }) {
 <label>HashIV</label><input name="iv" type="password" placeholder="${conf.hasKeys ? '已設定（留空不變）' : ''}">
 <div class="seg" style="margin-top:12px"><label><input type="radio" name="mode" value="stage"${conf.mode !== 'prod' ? ' checked' : ''}> 測試</label><label><input type="radio" name="mode" value="prod"${conf.mode === 'prod' ? ' checked' : ''}> 正式收款</label></div>
 <p style="margin-top:14px"><button>儲存</button></p></form>
+<h2>站長直接開詳批</h2><form class="card" method="post" action="/admin/direct">${personBlock(0)}<p style="margin-top:12px"><button>開出詳批</button></p><p class="muted">不收費、不用兌換碼，開出後會列在下方訂單（金額 0、站長）。</p></form>
 <h2>講座兌換碼</h2><form class="card" method="post" action="/admin/codes"><div class="row2"><div><label>批次名稱</label><input name="batch" required></div><div><label>數量</label><input name="n" value="30"></div></div>
 <div class="seg" style="margin-top:10px"><label><input type="radio" name="plan" value="single" checked> 單人</label><label><input type="radio" name="plan" value="family"> 全家</label></div><p><button>產生</button></p>
 ${batches.map((b) => `<p><a href="/admin?batch=${encodeURIComponent(b.batch)}">${esc(b.batch)}</a>　${b.n} 組・已用 ${b.used}</p>`).join('')}
@@ -236,7 +237,7 @@ export async function handle(req, env) {
   if (p === '/admin/login') {
     if (isPost) {
       const f = await req.formData();
-      if (env.ADMIN_TOKEN && String(f.get('token') || '') === env.ADMIN_TOKEN) return redirect('/admin', { 'Set-Cookie': `xfp_admin=${await hmac(env.ADMIN_TOKEN, 'admin-v1')}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000` });
+      if (env.ADMIN_TOKEN && String(f.get('token') || '') === env.ADMIN_TOKEN) return redirect('/admin', { 'Set-Cookie': `xfp_admin=${await hmac(env.ADMIN_TOKEN, 'admin-v1')}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000${url.hostname.endsWith('xunfengtw.com') ? '; Domain=xunfengtw.com' : ''}` });
     }
     return html(shell('後台登入', '<h1>後台登入</h1><form class="card" method="post"><label>管理密鑰</label><input name="token" type="password"><p><button>登入</button></p></form>'));
   }
@@ -249,6 +250,13 @@ export async function handle(req, env) {
       const iv = String(f.get('iv') || '').trim(); if (/^\w{8,40}$/.test(iv)) await setKV(env, 'ecpay_iv', iv);
       await setKV(env, 'ecpay_mode', f.get('mode') === 'prod' ? 'prod' : 'stage');
       return redirect('/admin?m=saved');
+    }
+    if (p === '/admin/direct' && isPost) {
+      const pr = parsePersons(await req.formData(), 1);
+      if (pr.err) return html(shell('錯誤', `<h1>${esc(pr.err)}</h1><p><a href="/admin">返回</a></p>`), 400);
+      const id = newId();
+      await env.DB.prepare("INSERT INTO ly_orders (id, plan, persons, amount_twd, email, status, paid_via, paid_at) VALUES (?,'single',?,0,'owner','paid','owner',datetime('now'))").bind(id, JSON.stringify(pr.persons)).run();
+      return redirect(`/liuyue/r/${id}`);
     }
     if (p === '/admin/codes' && isPost) {
       const f = await req.formData();
