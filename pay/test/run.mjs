@@ -74,5 +74,9 @@ const env2 = { DB, AUDIO: { fetch: async (u, init) => new Response(JSON.stringif
 const h2 = (path, init) => handle(new Request('https://pay.xunfengtw.com' + path, init), env2);
 ok((await h2('/admin', { headers: { Cookie: 'sid=good' } })).status === 200, '在 xunfengtw.com 登入的站長直接進後台，不用另一組密碼');
 ok((await h2('/admin', { headers: { Cookie: 'sid=bad' } })).status === 303, '非站長仍被擋');
+ok((await (await h2('/liuyue', { headers: { Cookie: 'sid=good' } })).text()).includes('站長直接開出詳批'), '站長在購買頁看到免付費按鈕');
+const so = await h2('/liuyue/order', { ...form({ plan: 'family', p0_b: '1970-01-02', p0_s: 'm', p1_b: '1972-03-04', p1_s: 'f' }), headers: { Cookie: 'sid=good' } });
+ok(so.status === 303 && /\/liuyue\/r\//.test(so.headers.get('Location')), '站長送出不用付款，直接進報告');
+ok(!(await (await h2('/liuyue', { headers: { Cookie: 'sid=bad' } })).text()).includes('站長直接開出詳批'), '一般人仍要付款');
 console.log(`\n${pass} 通過，${fail} 失敗`);
 process.exit(fail ? 1 : 0);

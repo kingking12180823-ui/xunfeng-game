@@ -59,7 +59,7 @@ const personBlock = (i, p = {}) => `<div class="person"${i > 0 ? ' data-extra' :
 <div><label>出生時辰</label><select name="p${i}_h">${hourOpts(p.h ?? '')}</select></div></div>
 <div class="seg" style="margin-top:10px"><label><input type="radio" name="p${i}_s" value="m"${p.s === 'm' ? ' checked' : ''}> 男</label><label><input type="radio" name="p${i}_s" value="f"${p.s === 'f' ? ' checked' : ''}> 女</label></div></div>`;
 
-function orderPage({ q, conf, msg }) {
+function orderPage({ q, conf, msg, owner }) {
   const first = { b: q.get('b') || '', h: q.get('h') ?? '', s: q.get('s') || '', n: q.get('n') || '' };
   return shell('2027 流月詳批', `<h1>2027 丁未流月詳批（系統版）</h1>
 <p class="lead">流年卡看的是一整年的天氣；流月詳批把 2027 的十二個月，各拆成上半月、下半月，逐段寫出運勢起伏、主題，以及該把握與該留意的事。</p>
@@ -69,10 +69,10 @@ ${conf.mode !== 'prod' ? '<p class="card muted">⚠ 目前為金流測試模式�
 <form class="card" method="post" action="/liuyue/order" id="f">
 <label>方案</label><div class="seg"><label><input type="radio" name="plan" value="single" checked> 單人 NT$199</label><label><input type="radio" name="plan" value="family"> 全家 NT$499</label></div>
 ${personBlock(0, first)}<div id="extra" hidden>${personBlock(1)}${personBlock(2)}${personBlock(3)}</div>
-<label>Email（用來找回報告）</label><input type="email" name="email" required maxlength="120" placeholder="you@example.com">
+${owner ? `<p style="margin-top:18px"><button>站長直接開出詳批（免付費）</button></p><p class="muted">已辨識為站長，不用填 Email、不用付款。</p></form>` : `<label>Email（用來找回報告）</label><input type="email" name="email" required maxlength="120" placeholder="you@example.com">
 <label>付款方式</label><select name="method"><option value="credit">信用卡</option><option value="cvs">超商代碼</option><option value="atm">ATM 轉帳</option></select>
 <label>講座兌換碼（有的話填這裡，就不用付款）</label><input name="code" maxlength="20" placeholder="LY-XXXX-XXXX">
-<p style="margin-top:18px"><button>前往付款</button></p><p class="muted">由綠界科技處理付款，卡號不經過本站。</p></form>
+<p style="margin-top:18px"><button>前往付款</button></p><p class="muted">由綠界科技處理付款，卡號不經過本站。</p></form>`}
 <p class="muted">想要老師親自逐月細批、合參你的現況？請看 <a href="${XIPI}">流月細批（老師親批）</a>。</p>
 <script>const f=document.getElementById('f'),x=document.getElementById('extra');f.querySelectorAll('[name=plan]').forEach(r=>r.addEventListener('change',()=>{x.hidden=f.plan.value!=='family'}));</script>`);
 }
@@ -172,13 +172,21 @@ export async function handle(req, env) {
   if (isPost && !p.startsWith('/ecpay/') && !sameOrigin(req, url)) return new Response('Forbidden', { status: 403 });
   if (p === '/' || p === '/liuyue/') return redirect('/liuyue' + url.search);
 
-  if (p === '/liuyue' && req.method === 'GET') return html(orderPage({ q: url.searchParams, conf: await getConf(env), msg: '' }));
+  if (p === '/liuyue' && req.method === 'GET') return html(orderPage({ q: url.searchParams, conf: await getConf(env), msg: '', owner: await isAdmin(req, env) }));
 
   if (p === '/liuyue/order' && isPost) {
     const f = await req.formData(), conf = await getConf(env);
     const plan = f.get('plan') === 'family' ? 'family' : 'single';
     const email = String(f.get('email') || '').trim().toLowerCase(), method = String(f.get('method') || 'credit');
-    const back = (msg) => html(orderPage({ q: new URLSearchParams(), conf, msg }), 400);
+    const owner = await isAdmin(req, env);
+    const back = (msg) => html(orderPage({ q: new URLSearchParams(), conf, msg, owner }), 400);
+    if (owner) {
+      const pr0 = parsePersons(f, PLANS[plan].max);
+      if (pr0.err) return back(pr0.err);
+      const oid = newId();
+      await env.DB.prepare("INSERT INTO ly_orders (id, plan, persons, amount_twd, email, status, paid_via, paid_at) VALUES (?,?,?,0,'owner','paid','owner',datetime('now'))").bind(oid, plan, JSON.stringify(pr0.persons)).run();
+      return redirect(`/liuyue/r/${oid}`);
+    }
     if (!EMAIL_RE.test(email)) return back('Email 格式不正確');
     if (!['credit', 'cvs', 'atm'].includes(method)) return back('付款方式不正確');
     const pr = parsePersons(f, PLANS[plan].max);
