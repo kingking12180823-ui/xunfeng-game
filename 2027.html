@@ -338,6 +338,8 @@ if(!inLect)fetch("/api/lecture").then(r=>r.json()).then(j=>{if(j.on){inLect=true
 // 老師測試用：網址加 ?reset=1 清除這支手機的解鎖紀錄，回到鎖住狀態
 if(/[?&]reset=1/.test(location.search)){try{localStorage.removeItem(UKEY);localStorage.removeItem("xunfeng-qian-unlock");localStorage.removeItem("xunfeng-qian-2027");sessionStorage.clear()}catch(e){}try{history.replaceState(null,"",location.pathname+location.hash)}catch(e){}}
 function applyLock(){const ok=unlocked();$("full").hidden=!ok;$("gate").hidden=ok;$("cpwBox").hidden=!inLect}
+// 站長（在 xunfengtw.com 登入過）直接解鎖完整解讀
+if(/(^|\.)xunfengtw\.com$/.test(location.hostname)){fetch("https://audio.xunfengtw.com/api/owner-check",{credentials:"include"}).then(r=>r.json()).then(j=>{if(j&&j.owner){if(!unlocked())setUnlock(NOW()+30*864e5,"owner");applyLock()}}).catch(()=>{})}
 $("cpwGo").addEventListener("click",async()=>{const v=($("cpw").value||"").replace(/\s/g,"").replace(/時$/,"");let x="";
  try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("xf-"+v));x=[...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,"0")).join("")}catch(e){}
  const t=NOW();if((LW&&x===LW.h)||[hourPillar(t),hourPillar(t-7200000),hourPillar(t+7200000)].includes(v)){setUnlock(new Date("2028-02-04T00:00:00+08:00").getTime(),LK||"live");applyLock();try{window.va&&window.va("event",{name:"card-unlock",data:{via:REF}})}catch(e){}}
