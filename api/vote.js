@@ -77,9 +77,11 @@ function send(res, status, body, cache) {
   res.end(JSON.stringify(body));
 }
 
-function isHost(req) {
+const { isOwner } = require("./_owner.js");
+async function isHost(req) {
   const key = process.env.VOTE_KEY;
-  return !!key && req.headers["x-vote-key"] === key;
+  if (key && req.headers["x-vote-key"] === key) return true;
+  return isOwner(req);   // 站長登入後不需密鑰
 }
 
 module.exports = async function handler(req, res) {
@@ -89,7 +91,7 @@ module.exports = async function handler(req, res) {
     if (req.method === "GET") {
       const state = await loadState();
       if (url.searchParams.get("host") === "1") {
-        if (!isHost(req)) return send(res, 403, { error: "主持密鑰不正確" });
+        if (!(await isHost(req))) return send(res, 403, { error: "主持密鑰不正確" });
         const view = publicView(state);
         if (state.phase === "open") {
           const [n] = await redis([["HLEN", voteKey(state.sid, state.index)]]);
@@ -119,7 +121,7 @@ module.exports = async function handler(req, res) {
       return send(res, 200, { ok: true });
     }
 
-    if (!isHost(req)) return send(res, 403, { error: "這是主持人操作" });
+    if (!(await isHost(req))) return send(res, 403, { error: "這是主持人操作" });
     let state = await loadState();
     const act = body.action;
 

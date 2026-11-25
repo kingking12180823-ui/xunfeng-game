@@ -4,6 +4,7 @@
 // GET  ?op=log&tt=老師碼     → 最近問事紀錄（老師專用）
 const crypto = require("crypto");
 const { checkUserToken, checkToken } = require("./_token.js");
+const { isOwner } = require("./_owner.js");
 const { redis } = require("./_redis.js");
 const SECRET = () => (process.env.LINE_CHANNEL_SECRET || "").trim();
 const norm = q => String(q || "").normalize("NFKC").replace(/[\s\p{P}\p{S}]/gu, "").toLowerCase().slice(0, 80);
@@ -22,7 +23,7 @@ module.exports = async function handler(req, res) {
   try {
     if (p.op === "log") {
       const ok = checkToken(SECRET(), p.tt, "teacher");
-      if (!ok || ok.expired) { res.status(403).json({ ok: false }); return; }
+      if ((!ok || ok.expired) && !(await isOwner(req))) { res.status(403).json({ ok: false }); return; }
       const [list] = await redis([["LRANGE", "xf:asklog", "0", "199"]]);
       res.status(200).json({ ok: true, list: (list || []).map(x => { try { return JSON.parse(x) } catch (e) { return null } }).filter(Boolean) });
       return;

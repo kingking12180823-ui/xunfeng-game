@@ -70,5 +70,9 @@ ok(dr.status === 303 && (await (await h(dr.headers.get('Location'))).text()).inc
 await h('/admin/direct', form({ p0_b: '1985-06-20', p0_s: 'f' }));
 ok((await DB.prepare("SELECT COUNT(*) n FROM ly_orders WHERE paid_via='owner'").first()).n === 1, '未登入不能直接開詳批');
 ok(lg.headers.get('Set-Cookie').includes('Domain=xunfengtw.com'), '後台登入在 xunfengtw.com 共用');
+const env2 = { DB, AUDIO: { fetch: async (u, init) => new Response(JSON.stringify({ owner: /sid=good/.test(init.headers.Cookie) })) } };
+const h2 = (path, init) => handle(new Request('https://pay.xunfengtw.com' + path, init), env2);
+ok((await h2('/admin', { headers: { Cookie: 'sid=good' } })).status === 200, '在 xunfengtw.com 登入的站長直接進後台，不用另一組密碼');
+ok((await h2('/admin', { headers: { Cookie: 'sid=bad' } })).status === 303, '非站長仍被擋');
 console.log(`\n${pass} 通過，${fail} 失敗`);
 process.exit(fail ? 1 : 0);

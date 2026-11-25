@@ -306,7 +306,7 @@ function manualNext() {
 if (isHost) {
   el("action").onclick = hostAct;
   el("manual").onclick = manualStart;
-  if (!hostKey) { el("status").textContent = "主持網址缺少密鑰（#k=…），目前只能用舉手模式"; el("manual").hidden = false; }
+  if (!hostKey) { el("status").textContent = "確認站長身分中…"; fetch("/api/owner").then(r => r.json()).then(j => { if (j.owner) { el("status").textContent = ""; refresh(); setInterval(refresh, 1500); } else { el("status").textContent = "主持網址缺少密鑰（#k=…），目前只能用舉手模式"; el("manual").hidden = false; } }).catch(() => { el("status").textContent = "主持網址缺少密鑰（#k=…），目前只能用舉手模式"; el("manual").hidden = false; }); }
   document.addEventListener("keydown", e => {
     if (e.code === "Space" && !e.repeat) { e.preventDefault(); hostAct(); }
   });

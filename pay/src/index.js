@@ -133,9 +133,14 @@ function payForm(conf, params) {
 
 // ---------- 後台 ----------
 async function isAdmin(req, env) {
-  if (!env.ADMIN_TOKEN) return false;
-  const c = /(?:^|;\s*)xfp_admin=([0-9a-f]{64})/.exec(req.headers.get('Cookie') || '');
-  return !!c && c[1] === (await hmac(env.ADMIN_TOKEN, 'admin-v1'));
+  const ck = req.headers.get('Cookie') || '';
+  const c = /(?:^|;\s*)xfp_admin=([0-9a-f]{64})/.exec(ck);
+  if (env.ADMIN_TOKEN && c && c[1] === (await hmac(env.ADMIN_TOKEN, 'admin-v1'))) return true;
+  // 在 xunfengtw.com 用站長帳號登入過，就直接是站長（不用另一組密碼）
+  if (env.AUDIO && /(?:^|;\s*)(sid|adm)=/.test(ck)) {
+    try { const r = await env.AUDIO.fetch('https://audio.xunfengtw.com/api/owner-check', { headers: { Cookie: ck } }); return !!(await r.json()).owner; } catch { return false; }
+  }
+  return false;
 }
 function adminPage({ conf, orders, batches, codes, batch, stats, msg }) {
   return shell('後台', `<h1>流月詳批後台</h1>${msg ? `<p class="card ok">${esc(msg)}</p>` : ''}

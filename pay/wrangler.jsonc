@@ -6,6 +6,8 @@
   "observability": { "enabled": true },
   "d1_databases": [
     { "binding": "DB", "database_name": "xunfeng-pay", "database_id": "079f9e7d-c3cd-4aed-828b-77d467e24b0f", "migrations_dir": "migrations" }
-  ]
+  ],
+  // 站長辨識：向大藏經／頭像那套共用的站長登入確認
+  "services": [{ "binding": "AUDIO", "service": "xunfeng-audio" }]
   // 機密：ADMIN_TOKEN（後台登入密鑰），在 Cloudflare 後台設定，不寫進程式
 }
